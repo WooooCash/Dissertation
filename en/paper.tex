@@ -1,0 +1,100 @@
+\documentclass[a4paper, 12pt]{article} \linespread{1.3}
+
+\usepackage[T1]{fontenc} \usepackage[utf8]{inputenc} \usepackage{indentfirst}
+
+\usepackage[english]{babel}
+
+\usepackage[margin=3cm]{geometry}
+
+\title{Skeletal Animation Using Inverse Kinematics in the Unity Engine}
+\author{Łukasz Białczak} \date{}
+	
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Intro}
+
+\textbf{Motive}
+
+In standard skeletal animation the skeleton is represented by a tree-like
+structure of transforms. Animation sequences are usually performed by updating
+the position and rotation attributes of these transforms starting from the root
+and propagating to the leaves. When applying inverse kinematics to skeletal
+animation, as the name suggests, the transforms are updated starting from a leaf
+and then back up the chain up to a selected node. This allows for a procedural
+approach to creating animation sequences which better reflect a realistic
+interaction between an animated object and its surroundings without the need to
+manually bake the sequence. Interactions such as a character pressing a sequence
+of buttons or pulling a lever are very well suited for the application of inverse
+kinematics. Adjusting a characters limbs to uneven terrain is another popular
+use for the technique. However, finding the proper parameter values for the
+skeletal transforms is not always a trivial task and may require advanced
+optimization methods. The purpose of this dissertation is to acquire a more
+in-depth understanding of the basic algorithms used in inverse kinematics, as
+well as discovering the built-in functionalities that the Unity engine offers
+which are geared towards such implementations.
+
+
+\textbf{Goal}
+
+\textbf{Scope}
+
+\section{Problem Analysis}
+\begin{itemize}
+    \item Describe the problem
+    \item Don't mention the solution
+    \item Assume the reader has no knowledge of the subject. Describe the
+        problem domain and only then proceed to describe the comp sci version of
+        the problem
+\end{itemize}
+
+\section{Existing Solutions}
+\begin{itemize}
+    \item Describe known solutions
+    \item Consider the pros and cons 
+\end{itemize}
+
+\section{Planned Solution}
+\begin{itemize}
+    \item Present the general idea of the suggested solution (shouldn't be
+        a duplication of the existing solutions pepelaugh)
+\end{itemize}
+
+\section{Project Design and System Requirements}
+\begin{itemize}
+    \item Apply knowledge from IO
+\end{itemize}
+
+\section{Technologies Used}
+\begin{itemize}
+    \item Description of used technologies, should be critical and indicate as
+        to why the given technology was chosen
+    \item Follow up with a more in depth explanation on the technologies and why
+        they were chosen
+\end{itemize}
+
+\section{Application Description}
+\begin{itemize}
+    \item Implementation solutions
+    \item Integration
+    \item Tests
+    \item User instructions
+\end{itemize}
+
+\section{Conclusion}
+\begin{itemize}
+    \item Conclusions - what was done
+    \item Tie it back to the goals described at the beginning. "The goal was..."
+        "... and these were the things that got done..."
+    \item What didn't work out and potential improvements to be done in the
+        future?
+    \item Conclusion should be 1-2 pages
+\end{itemize}
+
+\section{Sources}
+
+
+\end{document}
