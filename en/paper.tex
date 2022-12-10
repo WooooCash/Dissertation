@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{article} \linespread{1.3}
+\documentclass[a4paper, 12pt]{report} \linespread{1.3}
 
 \usepackage[T1]{fontenc} \usepackage[utf8]{inputenc} \usepackage{indentfirst}
 
@@ -15,7 +15,7 @@
 
 \tableofcontents
 
-\section{Intro}
+\chapter{Intro}
 
 \textbf{Motive}
 
@@ -42,7 +42,7 @@ which are geared towards such implementations.
 
 \textbf{Scope}
 
-\section{Problem Analysis}
+\chapter{Problem Analysis}
 \begin{itemize}
     \item Describe the problem
     \item Don't mention the solution
@@ -51,24 +51,32 @@ which are geared towards such implementations.
         the problem
 \end{itemize}
 
-\section{Existing Solutions}
+\chapter{Existing Solutions}
+\section{Overview}
+\section{Comparisons}
 \begin{itemize}
-    \item Describe known solutions
     \item Consider the pros and cons 
 \end{itemize}
+\section{Optimizations}
 
-\section{Planned Solution}
-\begin{itemize}
-    \item Present the general idea of the suggested solution (shouldn't be
-        a duplication of the existing solutions pepelaugh)
-\end{itemize}
+\chapter{Planned Solution}
+\section{FABRIK algorithm overview}
+\section{Advantages and Disadvantages}
+\section{In-depth algorithm explanation}
 
-\section{Project Design and System Requirements}
+\chapter{Project Design}
 \begin{itemize}
     \item Apply knowledge from IO
 \end{itemize}
+\section{Project Structure}
+\section{Implementation Strategy}
+\section{Implementation Details}
+\subsection{Scene Setup}
+\subsection{Scripts}
+\section{Additional Algorithm Modifications}
+\section{Tests}
 
-\section{Technologies Used}
+\chapter{Technologies Used}
 \begin{itemize}
     \item Description of used technologies, should be critical and indicate as
         to why the given technology was chosen
@@ -76,7 +84,10 @@ which are geared towards such implementations.
         they were chosen
 \end{itemize}
 
-\section{Application Description}
+\section{Unity Engine}
+\subsection{Scripting}
+\subsection{Scene Hierarchy}
+\subsection{Animation Rigging Package}
 \begin{itemize}
     \item Implementation solutions
     \item Integration
@@ -84,7 +95,7 @@ which are geared towards such implementations.
     \item User instructions
 \end{itemize}
 
-\section{Conclusion}
+\chapter{Conclusion}
 \begin{itemize}
     \item Conclusions - what was done
     \item Tie it back to the goals described at the beginning. "The goal was..."
