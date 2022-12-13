@@ -1,0 +1,42 @@
+\begin{thebibliography}{10}
+
+\bibitem{NagraTC02}
+Jasvir Nagra, Clark~D. Thomborson, and Christian~S. Collberg.
+\newblock A functional taxonomy for software watermarking.
+\newblock In {\em ACSC}, pages 177--186, 2002.
+
+\bibitem{iso9126}
+{{ISO/IEC}-9126, International Standard {ISO/IEC}.}
+\newblock In {\em {{I}nformation technology: Software product evaluation:
+  Quality characteristics and guidelines for their use}}. {International
+  Standards Organisation}, 1991.
+
+\bibitem{przyklad}
+http://www.tex.ac.uk/cgi-bin/texfaq2html?label=multirow.
+
+\bibitem{przyklad2}
+http://www.texample.net/tikz/examples/computer-science-mindmap/.
+
+\bibitem{lshort}
+H.~Partl i~inni T.~Oetiker.
+\newblock Nie za krótkie wprowadzenie do systemu {\LaTeX}.
+
+\bibitem{e-do-pi}
+R.~Kostecki.
+\newblock W miarê krótki i praktyczny kurs {\LaTeX} w {$\pi^{e}$} minut.
+
+\bibitem{pgfman}
+Wykresy - {TikZ \& PGF Manual for Version 2.00}.
+
+\bibitem{grafika}
+Wojciech Myszka.
+\newblock W³¹czanie grafik do tekstów w {\LaTeX}.
+
+\bibitem{gust}
+Forum gust.
+\newblock http://www.gust.org.pl/.
+
+\bibitem{przyklad3}
+http://www.ctan.org/.
+
+\end{thebibliography}

@@ -1,0 +1,43 @@
+\documentclass[oneside,12pt]{wipb}
+\usetikzlibrary{mindmap,trees}%dla diagramu Computer science mindmap
+\usepackage[english]{babel}
+
+\katedra{Biometrii}
+\typpracy{ %magisterska
+           inżynierska
+         }
+\temat{Skeletal Animation Using Inverse Kinematics in the Unity Engine}
+\autor{Łukasz Białczak}
+\promotor{dr inż. Adam Borowicz}
+
+\hypersetup{ %wpisy w pdf info
+pdfauthor={Łukasz Białczak},
+pdftitle={Skeletal Animation Using Inverse Kinematics in the Unity Engine},
+pdfsubject={},
+pdfkeywords={Praca dyplomowa},
+pdfpagemode=UseNone,
+linkcolor=black,
+citecolor=black
+} 
+
+\begin{document}
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+\setcounter{page}{0}
+\pagestyle{plain}
+\input{introduction.tex}
+\input{related_work.tex}
+\input{inverse_kinematics.tex}
+\input{experiments.tex}
+\input{conclusion.tex}
+
+\nocite{*} %wszystkie wpisy w bibliografi
+\bibliographystyle{unsrt} %{latex8} posortowane wzgledem wystepowania
+\bibliography{bibliografia}%
+
+
+
+
+%\biblioteka{tak} % tak/nie
+\end{document}
