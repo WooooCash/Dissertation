@@ -1,3 +1,20 @@
 \chapter{Introduction}
 \section{Motivation}
 \section{Problem Formulation}
+In standard skeletal animation the skeleton is represented by a tree-like
+structure of transforms. Animation sequences are usually performed by updating
+the position and rotation attributes of these transforms starting from the root
+and propagating to the leaves. When applying inverse kinematics to skeletal
+animation, as the name suggests, the transforms are updated starting from a leaf
+and then back up the chain up to a selected node. This allows for a procedural
+approach to creating animation sequences which better reflect a realistic
+interaction between an animated object and its surroundings without the need to
+manually bake the sequence. Interactions such as a character pressing a sequence
+of buttons or pulling a lever are very well suited for the application of inverse
+kinematics. Adjusting a characters limbs to uneven terrain is another popular
+use for the technique. However, finding the proper parameter values for the
+skeletal transforms is not always a trivial task and may require advanced
+optimization methods. The purpose of this dissertation is to acquire a more
+in-depth understanding of the basic algorithms used in inverse kinematics, as
+well as discovering the built-in functionalities that the Unity engine offers
+which are geared towards such implementations.
