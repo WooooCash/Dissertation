@@ -10,8 +10,7 @@ compromise on the quality and realism of the sequence in order to optimize for
 gameplay. Furthermore, the interactive nature of video games makes it impossible
 for the artist to create predefined animation sequences for every possible
 situation that may occur in the game. As a result, predefined animation
-sequences are often generic and do not allow the character or object to interact
-naturally with their surroundings.
+sequences are often generic and do not allow the character or object to interact naturally with their surroundings.
 
 Game developers have come up with many methods to improve the realism of
 animation in games such as playing cutscenes for critical interactions between
@@ -19,19 +18,15 @@ a character and the world. However, this paper will focus on the use of
 procedural animation and, more specifically, the application of inverse
 kinematics to skeletal animations in video games.
 \section{Problem Formulation}
-In standard skeletal animation, the skeleton is represented by a tree-like
-structure of transforms. Animation sequences are typically performed by updating
-the position and rotation attributes of these transforms, starting from the root
-and propagating to the leaves. When applying inverse kinematics to skeletal
-animation, the transforms are updated starting from a leaf and then back up the
-chain up to a selected node, allowing for a procedural approach to creating
-animation sequences that better reflect a realistic interaction between an
-animated object and its surroundings without the need to manually bake the
-sequence. Examples of interactions that are well-suited for the application of
-inverse kinematics include a character pressing a sequence of buttons or pulling
-a lever, or adjusting a character's limbs to uneven terrain. However, finding
-the proper parameter values for the skeletal transforms is not always a trivial
-task and may require advanced optimization methods. This dissertation aims to
-acquire a more in-depth understanding of the basic algorithms used in inverse
-kinematics, as well as discover the built-in functionalities that the Unity
-engine offers for such implementations.
+
+Skeletal animation is a popular technique for animating character models in
+computer graphics. Animation sequences are preformed by manipulating a tree-like
+structure of interconnected bones, represented by transforms, to create the
+desired motion of the character. In standard skeletal animation, these
+manipulations are done starting from the root node to a leaf node. When applying
+inverse kinematics, they are instead done from the leaf node to a selected
+ancestral node. The technique calculates the joint angles required to achieve
+the desired position of the end effector. This dissertation's aim is to gain
+a better understanding of the basic algorithms used in inverse kinematics, as
+well as discover the built-in functionalities that the Unity engine offers for
+such implementation.
