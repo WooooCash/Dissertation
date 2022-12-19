@@ -101,11 +101,33 @@ Each one of the spiders legs is treated as a separate kinematic chain. The
 spider prefab consists of a container which holds the spider object itself, set
 of empty objects to which the four IK scripts are attached for the purpose of
 easy yet separated access. The prefab also contains sets of ray casts and
-targets.
-\subsubsection{hihihi}
+targets. The ray casts serve to scan the surface of the terrain under the
+spider, and mark the targets to which each leg should move.
 
+Ray casts are dispatched from above the spiders legs, and aim in the creatures
+local negative Y axis. This ensures that no matter what orientation the spider
+finds itself in, the rays are always pointing at the surface which it is
+standing on. Masks are applied to the rays, making sure that only terrain
+objects are taken into account, while the creature's body itself is not. The ray
+cast hit point positions are then applied to each leg's respective target
+object. These targets serve as markers for the limbs end effectors. 
 
 \subsection{Scripts}
+With the project set up in this manner, scripts must now be added on to make the
+scene functional. A script is required for the main movement of the spider, the
+ray cast logic, and \textbf{CHECK BACK LATER}.
+
+\subsubsection{Ray casts}
+The ray cast objects contain a script component which dispatches the rays and
+sets the appropriate target positions. First, a mask must established, which
+will then be passed into the ray cast operation. This is required so that only
+terrain is counted as a valid hit. The lack of such mask may result in
+unexpected behaviour, such as targets being set on the spiders body itself. The
+ray cast object is then created, shooting in the local negative Y axis
+direction. This ensures that no matter the orientation of the creature, the rays
+are sent towards the surface that the spider is standing on.
+
+
 \section{Human Animation Sequence}
 \subsection{Project Setup}
 \subsection{Scripts}
