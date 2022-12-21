@@ -115,17 +115,57 @@ object. These targets serve as markers for the limbs end effectors.
 \subsection{Scripts}
 With the project set up in this manner, scripts must now be added on to make the
 scene functional. A script is required for the main movement of the spider, the
-ray cast logic, and \textbf{CHECK BACK LATER}.
+ray cast logic, and the mechanism which controls the ik targets.
 
 \subsubsection{Ray casts}
 The ray cast objects contain a script component which dispatches the rays and
-sets the appropriate target positions. First, a mask must established, which
+sets the appropriate target positions. First, a mask must be established, which
 will then be passed into the ray cast operation. This is required so that only
-terrain is counted as a valid hit. The lack of such mask may result in
-unexpected behaviour, such as targets being set on the spiders body itself. The
+terrain is counted as a valid hit. The lack of such a mask may result in
+unexpected behavior, such as targets being set on the spider's body itself. The
 ray cast object is then created, shooting in the local negative Y axis
 direction. This ensures that no matter the orientation of the creature, the rays
-are sent towards the surface that the spider is standing on.
+are sent towards the surface that the spider is standing on. The targets
+controlling the spider's legs will not be updating their positions to the
+ray cast hit points each frame, though their scripts must have knowledge of the
+hit positions at any given time. Given this, a separate set of objects are set
+to track the ray cast hit points each frame.
+
+\subsubsection{Target Logic}
+In order for the spider's movement to seem realistic, the targets controlling
+each leg must adhere to a set of rules pertaining to their movement. As
+mentioned in the ray cast section, the IK targets cannot simply be set to track
+the ray cast hit points. The following is an outline of the rules specified for
+the IK targets, which define if it should start moving towards its ray cast hit
+target:
+\itemize
+    \item A target must be grounded to be eligible for a movement sequence.
+
+    \item A target will only begin moving towards the ray cast hit point if the
+        distance between them is above a specified threshold.
+
+    \item A target is only allowed to begin moving towards the ray cast hit
+        point if both legs on the opposite diagonal are grounded.
+        \textbf{CREATE A DIAGRAM AND REFERENCE IT HERE}
+\enditemize
+
+When a target satisfies all of these conditions, it makes note of the ray cast
+hit's current position, which it will use for its upcoming movement sequence.
+Once it begins moving, the \textit{Grounded} boolean is set to be false, so that
+the other targets know whether they can begin moving or not.
+
+The movement sequence itself is done using Unity's \textit{Vector3.MoveTowards}
+method, which takes in a current position vector, a vector to move to, and the
+maximum distance to move per frame, which can be used to control the movement
+speed. This method allows the target to interpolate its position every frame.
+The values fed into this method are simply the target's current position, the
+ray cast hit target's position, which was recorded right before the beginning of
+the movement sequence, and an arbitrary speed value, which is dependent on
+\textit{Time.deltaTime} to avoid variations when the frame rate changes. The
+only caveat is that in the first half of the movement, the destination vector's
+height component is increased to achieve an arc-like movement. This produces the
+effect of lifting the spider's leg. \textbf{FIX THIS IN CODE. USING WORLD Y-AXIS
+CURRENTLY}
 
 
 \section{Human Animation Sequence}
