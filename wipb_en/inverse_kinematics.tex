@@ -138,7 +138,7 @@ mentioned in the ray cast section, the IK targets cannot simply be set to track
 the ray cast hit points. The following is an outline of the rules specified for
 the IK targets, which define if it should start moving towards its ray cast hit
 target:
-\itemize
+\begin{itemize}
     \item A target must be grounded to be eligible for a movement sequence.
 
     \item A target will only begin moving towards the ray cast hit point if the
@@ -147,7 +147,7 @@ target:
     \item A target is only allowed to begin moving towards the ray cast hit
         point if both legs on the opposite diagonal are grounded.
         \textbf{CREATE A DIAGRAM AND REFERENCE IT HERE}
-\enditemize
+\end{itemize}
 
 When a target satisfies all of these conditions, it makes note of the ray cast
 hit's current position, which it will use for its upcoming movement sequence.
@@ -165,7 +165,61 @@ the movement sequence, and an arbitrary speed value, which is dependent on
 only caveat is that in the first half of the movement, the destination vector's
 height component is increased to achieve an arc-like movement. This produces the
 effect of lifting the spider's leg. \textbf{FIX THIS IN CODE. USING WORLD Y-AXIS
-CURRENTLY}
+CURRENTLY. CHECK THIS, MAYBE SINCE THE WHOLE CONTAINER IS ROTATED IT'S ACTUALLY
+DONE RIGHT}
+
+\subsubsection{General Movement}
+The main movement script for the IK spider implementation brings the whole
+system together. It has three main objectives:
+
+\begin{itemize}
+
+    \item Calculate the rotation of the spider so that it's local up and forward
+        vectors can be set accordingly.
+
+    \item React to input by moving the main body of the spider along with the
+        ray casts.
+
+    \item Regulate the height of the spiders body above the ground.
+
+\end{itemize}
+
+The first objective - calculating the rotation of the spider - is what allows it
+to scale walls and walk upside down on the ceiling. The rotation is determined
+based on the limb positions at the beginning of each \textit{Update} call.
+First, two vectors are constructed from the end effectors of both sets of
+diagonally opposed legs. The local up vector of the spider is then calculated by
+taking the cross product of these two vectors. This determines the orientation
+of the spider's main body, and it also affects the direction that the four legs'
+rays are cast. The local forward vector is then obtained from the cross product
+between the newfound up vector and the spider's right vector. This new vector is
+what will be used to determine the direction of movement when the spider
+receives input from the user.
+
+The second objective - reacting according to input - is quite simple once the
+local directional axes are determined. When the script detects a non-zero value
+on either the \textit{Horizontal} or \textit{Vertical} axis, it reacts
+accordingly by moving the spider along with all the ray cast objects. The
+\textit{Vertical} axis corresponds to the forward and backward movement of the
+spider. The script reacts by simply moving the spider's main body along the
+local forward axis mentioned previously. Additionally, the ray casting objects
+are offset either forwards or backward depending on the direction of the
+movement. This is done because the ray casts must be slightly ahead of the
+default leg positions so that the legs end up moving in a natural manner.
+The \textit{Horizontal} axis is responsible for rotating the spider about it's
+local up axis which allows the spider to turn around. 
+
+Finally, the spider's height off of the surface must be regulated each frame.
+The lack of a gravitational force acting on the body to keep it flush with the
+ground, and the unconstrained rotational capability of the creature, means that
+the distance between the spider and the surface it is walking on must be
+procedurally kept in check. This is done with yet another ray cast which
+originates from the center of the spider's body and points in the negative up
+axis direction. If the distance to the hit point exceeds an acceptable range,
+the body is moved towards said range, again using the
+\textit{Vector3.MoveTowards} method to linearly interpolate the spiders position
+and avoid excessive jerkiness which occurs with a frequent variation in height. 
+
 
 
 \section{Human Animation Sequence}
