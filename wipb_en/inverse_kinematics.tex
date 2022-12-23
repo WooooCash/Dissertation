@@ -30,7 +30,7 @@ aforementioned parameters are required for the script to function. Additionally,
 a pole target object may be optionally passed in if the use case requires it to
 function in a manner that is desired.
 
-\textit{Maybe throw in a snippet of the script which takes in parameters}
+\textit{show image of script parameters}
 
 The first case which the algorithm must cover is if the distance from the root
 to the target object is greater than the sum of distances between each adjacent
@@ -44,7 +44,34 @@ In the implementation below, square magnitudes are used to
 avoid the calculation of square roots, thus slightly optimizing the initial
 check.
 
-\textit{Show code}
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
+reach},captionpos=b, label=stretch, language={[Sharp]c}]
+void LateUpdate() 
+{
+    float distRootToTargetSqr = (
+        target.position - chainRoot.position
+    ).sqrMagnitude;
+    if (distRootToTargetSqr > totalDistance * totalDistance)
+    {
+        StretchToTarget();
+    }
+    ...
+}
+
+void StretchToTarget()
+{
+    for (var i = 0; i < chainLen; i++)
+    {
+        float jointDistToTarget = (
+            target.position - tempPositions[i]
+        ).magnitude;
+        var lambda = jointDistances[i] / jointDistToTarget;
+
+        tempPositions[i + 1] =
+            (1 - lambda) * tempPositions[i] + lambda * target.position;
+    }
+}
+\end{lstlisting}
 
 The scenario where the target is within the reach of the kinematic chain
 utilizes iterative forward and backward component after which the algorithm is
