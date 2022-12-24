@@ -94,7 +94,21 @@ interpolated along the line so that the original distance between the two nodes
 is kept. The same operation is performed for each pair of neighbouring nodes
 throughout the pass. 
 
-\textit{show code}
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Forward pass},captionpos=b, label=stretch, language={[Sharp]c}]
+void ForwardReachingPass()
+{
+    tempPositions[chainLen] = target.position;
+    for (var i = chainLen - 1; i >= 0; i--)
+    {
+        var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
+        var lambda = jointDistances[i] / dist;
+        tempPositions[i] =
+            (1 - lambda) * tempPositions[i + 1]
+            + lambda * tempPositions[i];
+    }
+}
+\end{lstlisting}
 
 When the forward pass is complete, the root node is displaced from its original
 position. This is undesired, as the root's node position should not be affected
@@ -104,16 +118,54 @@ at the beginning of the frame. The next node is then interpolated between its
 current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
-\textit{show code}
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Backward pass},captionpos=b, label=stretch, language={[Sharp]c}]
+void BackwardReachingPass()
+{
+    tempPositions[0] = chainRoot.position;
+    for (var i = 0; i < chainLen; i++)
+    {
+        var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
+        var lambda = jointDistances[i] / dist;
+        tempPositions[i + 1] =
+            (1 - lambda) * tempPositions[i]
+            + lambda * tempPositions[i + 1];
+    }
+}
+\end{lstlisting}
 
 These two steps are repeated together until the end effector is within
 a threshold distance of the target. The FABRIK algorithm is a heuristic
-algorithm, and as such is does not lead to an exact result. Instead, it aims to
+algorithm, and as such it does not lead to an exact result. Instead, it aims to
 approximate the correct solution and solves the problem in a less complex and
 more optimized way. Again, the square distances are used to avoid the
 calculation of square roots. 
 
-\textit{show code}
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={FABRIK Loop},captionpos=b, label=stretch, language={[Sharp]c}]
+void LateUpdate()
+{
+    ...
+    else
+    {
+        var distEffectorToTargetSqr = (
+            tempPositions[chainLen] - target.position
+        ).sqrMagnitude;
+        while (distEffectorToTargetSqr > tolerance * tolerance)
+        {
+            ForwardReachingPass();
+            BackwardReachingPass();
+
+            distEffectorToTargetSqr = (
+                tempPositions[chainLen] - target.position
+            ).sqrMagnitude;
+        }
+        ...
+    }
+
+    ApplyTempPositions();
+}
+\end{lstlisting}
 
 \textbf{POLE TARGETS. FIND A SOURCE WHICH EXPLAINS THE METHOD USED IN MY
 PROGRAM. IF NOT THEN REFER TO THE YOUTUBE VIDEO LOLOL}
@@ -233,7 +285,7 @@ local forward axis mentioned previously. Additionally, the ray casting objects
 are offset either forwards or backward depending on the direction of the
 movement. This is done because the ray casts must be slightly ahead of the
 default leg positions so that the legs end up moving in a natural manner.
-The \textit{Horizontal} axis is responsible for rotating the spider about it's
+The \textit{Horizontal} axis is responsible for rotating the spider about its
 local up axis which allows the spider to turn around. 
 
 Finally, the spider's height off of the surface must be regulated each frame.
