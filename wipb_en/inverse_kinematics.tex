@@ -22,15 +22,22 @@ this implementation is that of pole targets which will be further explained when
 discussing the code behind them.
 
 The script which implements the algorithm in this project takes in a few
-parameters required to set up the mechanism. First and foremost, the root and
-leaf nodes must be provided in order to define the kinematic chain which is to
-be manipulated. The next object which the script must have knowledge of is the
-target transform which the end effector will attempt to move to. All the
-aforementioned parameters are required for the script to function. Additionally,
-a pole target object may be optionally passed in if the use case requires it to
-function in a manner that is desired.
+parameters required to set up the mechanism which are shown in figure
+\ref{fig:params}. First and foremost, the root and leaf nodes must be provided
+in order to define the kinematic chain which is to be manipulated. The next
+object which the script must have knowledge of is the target transform which the
+end effector will attempt to move to. The script must also have a tolerance
+parameter which dictates how close the end effector must be to the target for
+the position to be considered as a valid solved position. All the aforementioned
+parameters are required for the script to function. Additionally, a pole target
+object may be optionally passed in if the use case requires it to function in
+a desired manner. 
 
-\textit{show image of script parameters}
+\begin{figure}
+    \includegraphics{grafika/parametry_ik.png}
+    \caption{FABRIK script parameters}
+    \label{fig:params}
+\end{figure}
 
 The first case which the algorithm must cover is if the distance from the root
 to the target object is greater than the sum of distances between each adjacent
@@ -95,7 +102,7 @@ is kept. The same operation is performed for each pair of neighbouring nodes
 throughout the pass. 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Forward pass},captionpos=b, label=stretch, language={[Sharp]c}]
+caption={Forward pass},captionpos=b, label=forwards, language={[Sharp]c}]
 void ForwardReachingPass()
 {
     tempPositions[chainLen] = target.position;
@@ -119,7 +126,7 @@ current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Backward pass},captionpos=b, label=stretch, language={[Sharp]c}]
+caption={Backward pass},captionpos=b, label=backwards, language={[Sharp]c}]
 void BackwardReachingPass()
 {
     tempPositions[0] = chainRoot.position;
@@ -142,7 +149,7 @@ more optimized way. Again, the square distances are used to avoid the
 calculation of square roots. 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={FABRIK Loop},captionpos=b, label=stretch, language={[Sharp]c}]
+caption={FABRIK Loop},captionpos=b, label=loop, language={[Sharp]c}]
 void LateUpdate()
 {
     ...

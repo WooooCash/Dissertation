@@ -12,13 +12,17 @@ animation sequences are performed by manipulating a tree-like structure of
 interconnected bones, represented by transforms, to create the desired motion of
 the character. Furthermore, the interactive nature of video games makes it
 impossible for the artist to create predefined animation sequences for every
-possible situation that may occur in the game. As a result, predefined animation
-sequences are often generic and do not allow the character or object to interact
-naturally with their surroundings. Game developers have come up with many
-methods to improve the realism of animation in games such as playing cutscenes
-for critical interactions between a character and the world. However, this paper
-will focus on the use of procedural animation and, more specifically, the
-application of inverse kinematics to skeletal animations in video games.
+possible situation that may occur in the game. For example, an animation of
+a hand pressing a button is only valid if the character to which the hand
+belongs is placed exactly in a predefined position. If the button changes its
+size or position, the baked animation must be altered, or it simply loses its
+realism. As a result, predefined animation sequences are often generic and
+do not allow the character or object to interact naturally with their
+surroundings. Game developers have come up with many methods to improve the
+realism of animation in games such as playing cutscenes for critical
+interactions between a character and the world. However, this paper will focus
+on the use of procedural animation and, more specifically, the application of
+inverse kinematics to skeletal animations in video games.
 
 Inverse kinematics is a technique used in fields such as robotics and computer
 graphics to determine the joint angles of a kinematic chain that will result in
