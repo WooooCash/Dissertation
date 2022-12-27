@@ -51,34 +51,34 @@ In the implementation below, square magnitudes are used to
 avoid the calculation of square roots, thus slightly optimizing the initial
 check.
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
-reach},captionpos=b, label=stretch, language={[Sharp]c}]
-void LateUpdate() 
-{
-    float distRootToTargetSqr = (
-        target.position - chainRoot.position
-    ).sqrMagnitude;
-    if (distRootToTargetSqr > totalDistance * totalDistance)
-    {
-        StretchToTarget();
-    }
-    ...
-}
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
+% reach},captionpos=b, label=stretch, language={[Sharp]c}]
+% void LateUpdate() 
+% {
+%     float distRootToTargetSqr = (
+%         target.position - chainRoot.position
+%     ).sqrMagnitude;
+%     if (distRootToTargetSqr > totalDistance * totalDistance)
+%     {
+%         StretchToTarget();
+%     }
+%     ...
+% }
 
-void StretchToTarget()
-{
-    for (var i = 0; i < chainLen; i++)
-    {
-        float jointDistToTarget = (
-            target.position - tempPositions[i]
-        ).magnitude;
-        var lambda = jointDistances[i] / jointDistToTarget;
+% void StretchToTarget()
+% {
+%     for (var i = 0; i < chainLen; i++)
+%     {
+%         float jointDistToTarget = (
+%             target.position - tempPositions[i]
+%         ).magnitude;
+%         var lambda = jointDistances[i] / jointDistToTarget;
 
-        tempPositions[i + 1] =
-            (1 - lambda) * tempPositions[i] + lambda * target.position;
-    }
-}
-\end{lstlisting}
+%         tempPositions[i + 1] =
+%             (1 - lambda) * tempPositions[i] + lambda * target.position;
+%     }
+% }
+% \end{lstlisting}
 
 The scenario where the target is within the reach of the kinematic chain
 utilizes iterative forward and backward component after which the algorithm is
@@ -101,21 +101,21 @@ interpolated along the line so that the original distance between the two nodes
 is kept. The same operation is performed for each pair of neighbouring nodes
 throughout the pass. 
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Forward pass},captionpos=b, label=forwards, language={[Sharp]c}]
-void ForwardReachingPass()
-{
-    tempPositions[chainLen] = target.position;
-    for (var i = chainLen - 1; i >= 0; i--)
-    {
-        var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
-        var lambda = jointDistances[i] / dist;
-        tempPositions[i] =
-            (1 - lambda) * tempPositions[i + 1]
-            + lambda * tempPositions[i];
-    }
-}
-\end{lstlisting}
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+% caption={Forward pass},captionpos=b, label=forwards, language={[Sharp]c}]
+% void ForwardReachingPass()
+% {
+%     tempPositions[chainLen] = target.position;
+%     for (var i = chainLen - 1; i >= 0; i--)
+%     {
+%         var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
+%         var lambda = jointDistances[i] / dist;
+%         tempPositions[i] =
+%             (1 - lambda) * tempPositions[i + 1]
+%             + lambda * tempPositions[i];
+%     }
+% }
+% \end{lstlisting}
 
 When the forward pass is complete, the root node is displaced from its original
 position. This is undesired, as the root's node position should not be affected
@@ -125,21 +125,21 @@ at the beginning of the frame. The next node is then interpolated between its
 current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Backward pass},captionpos=b, label=backwards, language={[Sharp]c}]
-void BackwardReachingPass()
-{
-    tempPositions[0] = chainRoot.position;
-    for (var i = 0; i < chainLen; i++)
-    {
-        var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
-        var lambda = jointDistances[i] / dist;
-        tempPositions[i + 1] =
-            (1 - lambda) * tempPositions[i]
-            + lambda * tempPositions[i + 1];
-    }
-}
-\end{lstlisting}
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+% caption={Backward pass},captionpos=b, label=backwards, language={[Sharp]c}]
+% void BackwardReachingPass()
+% {
+%     tempPositions[0] = chainRoot.position;
+%     for (var i = 0; i < chainLen; i++)
+%     {
+%         var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
+%         var lambda = jointDistances[i] / dist;
+%         tempPositions[i + 1] =
+%             (1 - lambda) * tempPositions[i]
+%             + lambda * tempPositions[i + 1];
+%     }
+% }
+% \end{lstlisting}
 
 These two steps are repeated together until the end effector is within
 a threshold distance of the target. The FABRIK algorithm is a heuristic
@@ -148,31 +148,31 @@ approximate the correct solution and solves the problem in a less complex and
 more optimized way. Again, the square distances are used to avoid the
 calculation of square roots. 
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={FABRIK Loop},captionpos=b, label=loop, language={[Sharp]c}]
-void LateUpdate()
-{
-    ...
-    else
-    {
-        var distEffectorToTargetSqr = (
-            tempPositions[chainLen] - target.position
-        ).sqrMagnitude;
-        while (distEffectorToTargetSqr > tolerance * tolerance)
-        {
-            ForwardReachingPass();
-            BackwardReachingPass();
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+% caption={FABRIK Loop},captionpos=b, label=loop, language={[Sharp]c}]
+% void LateUpdate()
+% {
+%     ...
+%     else
+%     {
+%         var distEffectorToTargetSqr = (
+%             tempPositions[chainLen] - target.position
+%         ).sqrMagnitude;
+%         while (distEffectorToTargetSqr > tolerance * tolerance)
+%         {
+%             ForwardReachingPass();
+%             BackwardReachingPass();
 
-            distEffectorToTargetSqr = (
-                tempPositions[chainLen] - target.position
-            ).sqrMagnitude;
-        }
-        ...
-    }
+%             distEffectorToTargetSqr = (
+%                 tempPositions[chainLen] - target.position
+%             ).sqrMagnitude;
+%         }
+%         ...
+%     }
 
-    ApplyTempPositions();
-}
-\end{lstlisting}
+%     ApplyTempPositions();
+% }
+% \end{lstlisting}
 
 \textbf{POLE TARGETS. FIND A SOURCE WHICH EXPLAINS THE METHOD USED IN MY
 PROGRAM. IF NOT THEN REFER TO THE YOUTUBE VIDEO LOLOL}
@@ -231,9 +231,20 @@ target:
         distance between them is above a specified threshold.
 
     \item A target is only allowed to begin moving towards the ray cast hit
-        point if both legs on the opposite diagonal are grounded.
-        \textbf{CREATE A DIAGRAM AND REFERENCE IT HERE}
+        point if both legs on the opposite diagonal are grounded (See Figure
+        \ref{fig:diagonals}).
 \end{itemize}
+
+
+\begin{figure}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\textwidth]{grafika/diagonals.png}
+    \caption{The diagonals referencing the spiders legs which are used when
+    checking if a target is allowed to begin moving, where A and D are on an
+opposite diagonal to B and C}
+    \label{fig:diagonals}
+\end{figure}
 
 When a target satisfies all of these conditions, it makes note of the ray cast
 hit's current position, which it will use for its upcoming movement sequence.
@@ -250,9 +261,7 @@ the movement sequence, and an arbitrary speed value, which is dependent on
 \textit{Time.deltaTime} to avoid variations when the frame rate changes. The
 only caveat is that in the first half of the movement, the destination vector's
 height component is increased to achieve an arc-like movement. This produces the
-effect of lifting the spider's leg. \textbf{FIX THIS IN CODE. USING WORLD Y-AXIS
-CURRENTLY. CHECK THIS, MAYBE SINCE THE WHOLE CONTAINER IS ROTATED IT'S ACTUALLY
-DONE RIGHT}
+effect of lifting the spider's leg.
 
 \subsubsection{General Movement}
 The main movement script for the IK spider implementation brings the whole

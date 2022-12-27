@@ -1,11 +1,12 @@
 \documentclass[oneside,12pt]{wipb}
 \usetikzlibrary{mindmap,trees}%dla diagramu Computer science mindmap
 \usepackage[english]{babel}
+\usepackage{url}
 
 \katedra{Biometrii}
 \typpracy{ %magisterska
            inżynierska
-         }
+         } 
 \temat{Skeletal Animation Using Inverse Kinematics in the Unity Engine}
 \autor{Łukasz Białczak}
 \promotor{dr inż. Adam Borowicz}
@@ -27,17 +28,18 @@ citecolor=black
 \pagestyle{plain}
 \input{introduction.tex}
 \input{related_work.tex}
+\input{tools.tex}
 \input{inverse_kinematics.tex}
 \input{experiments.tex}
 \input{conclusion.tex}
 
 
-\nocite{*} %wszystkie wpisy w bibliografi
-\bibliographystyle{unsrt} %{latex8} posortowane wzgledem wystepowania
+% \nocite{*} %wszystkie wpisy w bibliografi
+\bibliographystyle{plain} %{latex8} posortowane wzgledem wystepowania
+\urlstyle{same}
 \bibliography{bibliografia}%
 
 
 
 
-%\biblioteka{tak} % tak/nie
 \end{document}
