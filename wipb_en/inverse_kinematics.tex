@@ -1,39 +1,38 @@
 \chapter{Inverse Kinematics in the Unity Engine} 
-The demo application written for the purpose of this dissertation includes two
-separate use cases of skeletal animation using inverse kinematics in the Unity
-engine. The first example is that of a four legged spider which uses the
-technique as a means to more naturally adjust its limbs to the terrain it moves
-around upon. The second example is the application of inverse kinematics to an
-animation sequence of a human character pressing multiple buttons in succession.
-The use of inverse kinematics allows the character to adjust its animation to hit
-all the buttons without the need for a baked animation targeted towards each
-button, as well as dynamically adjust the order of the buttons to be hit.
-
-Although there are two separate use cases demonstrated in this application, both
-use the same implementation of the FABRIK algorithm. 
+The demo application written for the purpose of this paper includes two separate
+use cases of skeletal animation using inverse kinematics in the Unity engine.
+The first example is that of a four legged spider which uses IK as a means to
+more naturally adjust its limbs to the terrain it moves around upon. The second
+example is the application of inverse kinematics to an animation sequence of
+a human character pressing multiple buttons in succession. The use of inverse
+kinematics allows the character to adjust its animation to hit all the buttons
+without the need for a baked animation targeted towards each button, as well as
+dynamically adjust the order of the buttons to be hit. Although there are two
+separate use cases demonstrated in this application, both use the same
+implementation of the FABRIK algorithm. 
 
 
 \section{FABRIK implementation}
 This implementation of the FABRIK algorithm is based on the paper written by the
-author of the Unity engine FABRIK implementation. (CITE THE PAPER LMAO). For the
+author of the Unity engine FABRIK implementation \cite{Aristidou2011}. For the
 purposes of this application, the basic algorithm is implemented without many
-additional constraints and options available. The one constraint added on to
-this implementation is that of pole targets which will be further explained when
-discussing the code behind them.
+additional constraints and limitation on the chain's degrees of freedom. The one
+constraint added on to this implementation is that of pole targets which will be
+further explained when discussing the code behind them.
 
 The script which implements the algorithm in this project takes in a few
-parameters required to set up the mechanism which are shown in figure
+parameters required to set up the mechanism which are shown in Figure
 \ref{fig:params}. First and foremost, the root and leaf nodes must be provided
 in order to define the kinematic chain which is to be manipulated. The next
 object which the script must have knowledge of is the target transform which the
 end effector will attempt to move to. The script must also have a tolerance
 parameter which dictates how close the end effector must be to the target for
-the position to be considered as a valid solved position. All the aforementioned
-parameters are required for the script to function. Additionally, a pole target
-object may be optionally passed in if the use case requires it to function in
-a desired manner. 
+the position to be considered as solved. All the aforementioned parameters are
+required for the script to function. Optionally, a pole target object may be
+passed in if the use case requires it to function in a desired manner. 
 
 \begin{figure}
+    \centering
     \includegraphics{grafika/parametry_ik.png}
     \caption{FABRIK script parameters}
     \label{fig:params}
@@ -41,15 +40,15 @@ a desired manner.
 
 The first case which the algorithm must cover is if the distance from the root
 to the target object is greater than the sum of distances between each adjacent
-bone in the defined kinematic chain. In this case, the target is out of reach. Given
-that the bones in a skeleton are expected to keep a fixed length, the end
-effector will not be able to reach the target, and instead the kinematic chain
-straightens and extends in the direction of the target. There is no need to
-continue with the iterative portion of the algorithm.
+bone transform in the defined kinematic chain. In this case, the target is out
+of reach. Given that the bones in a skeleton are expected to keep a fixed
+length, the end effector will not be able to reach the target, and instead the
+kinematic chain straightens and extends in the direction of the target. There is
+no need to continue with the iterative portion of the algorithm.
 
-In the implementation below, square magnitudes are used to
-avoid the calculation of square roots, thus slightly optimizing the initial
-check.
+A minor optimization in the implementation is the use of square magnitudes when
+comparing distances to avoid the calculation of square roots, thus reducing the
+computational costs.
 
 % \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
 % reach},captionpos=b, label=stretch, language={[Sharp]c}]
@@ -81,25 +80,24 @@ check.
 % \end{lstlisting}
 
 The scenario where the target is within the reach of the kinematic chain
-utilizes iterative forward and backward component after which the algorithm is
+utilizes an iterative forward and backward component after which the algorithm is
 named. Before each iteration, the positions of the joint transforms are copied.
 All operations and calculations are performed on these copied transforms and at
 the end of the full pass, the new positions are then copied back to the
-kinematic chain. \textbf{CHECK IF THE ALGORITHM WORKS WITHOUT THIS. MIGHT SAVE
-SOME MEMORY LMAO}. It is also important to note that the modification of the
+kinematic chain. It is also important to note that the modification of the
 transforms is done in Unity's \textit{LateUpdate} function. When using a mix of
 inverse kinematics and baked animation, the object to which the IK script is
-attached will have Unity's built-in \textit{Animator} component. If the IK
-script updates joint transforms in the \textit{Update} method, then they may be
-overwritten by the \textit{Animator} component. 
+attached will have Unity's built-in \textit{Animator} component attached. If the
+custom IK script were to update joint transforms in the \textit{Update} method,
+then their attributes may be overwritten by the \textit{Animator} component. 
 
 The forward pass of the algorithm iterates through the chain starting from the
 end effector and ending at the root. At the start, the end effector's position
-is set to be equal to the position of the target. A straight line is then drawn
-from the end effector to the following node. This neighbours position is then
-interpolated along the line so that the original distance between the two nodes
-is kept. The same operation is performed for each pair of neighbouring nodes
-throughout the pass. 
+is set to be equal to the position of the target. A straight line can then be
+imagined to exist between the end effector and the following node. This
+neighbor's position is then interpolated along the line so that the original
+distance between the two nodes is kept the same. The same operation is performed
+for each pair of neighboring nodes throughout the pass. 
 
 % \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
 % caption={Forward pass},captionpos=b, label=forwards, language={[Sharp]c}]
@@ -181,7 +179,9 @@ PROGRAM. IF NOT THEN REFER TO THE YOUTUBE VIDEO LOLOL}
 \section{Spider Movement}
 The first use case for inverse kinematics in the demo application is that of
 a four legged spider. The algorithm is used to adjust the creature's limbs to
-uneven terrain, leading to a much more natural and realistic movement.
+uneven terrain, leading to a much more natural and realistic movement. The IK
+version of the spider does not have an Animator component, and the whole of the
+animation and movement of the spider and its legs is done procedurally.
 \subsection{Project Setup}
 Each one of the spiders legs is treated as a separate kinematic chain. The
 spider prefab consists of a container which holds the spider object itself, set
@@ -318,5 +318,30 @@ and avoid excessive jerkiness which occurs with a frequent variation in height.
 
 
 \section{Human Animation Sequence}
+The second example created to demonstrate the use of inverse kinematics for
+skeletal animation in Unity is that of a human animation sequence which consists
+of pressing multiple buttons in succession. While this may seem like a simple
+animation to create in a tool like Blender, such an animation lacks the
+adaptability needed for a game which has many differing button pressing
+scenarios. The integration of IK into this kind of animation sequence adds the
+ability to adjust to multiple amounts of buttons on a panel, different
+configurations of button positions, various sequences of buttons to press, and
+keep a consistent hand placement on the buttons without the need to force the
+character to stand in one defined position. The example was not made solely
+through the use of IK, and instead it uses a mix of baked animations for the
+part of the animation which doesn't require variation, and IK for the part of
+the animation which is subject to change.
+
 \subsection{Project Setup}
+The scene is set up with a set of buttons which are positioned on a wall. The
+buttons themselves have an \textit{EmptyObject} which will provide the transform
+needed in order to aim the hand at a given button. The human character is posted
+in front of this set up. An Animator component is attached to the human model in
+order to make use of certain animations which were extracted from the full
+button press animation created in Blender when importing the model into Unity.
+Namely, the portions of the animation which consist of raising the hand to the
+default pressing position and lowering it back down, are useful in the IK
+version of this animation sequence. This is because these two animations are not
+dependent on the amount of buttons on the wall, nor the position of the
+character relative to the buttons.
 \subsection{Scripts}
