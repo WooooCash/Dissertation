@@ -333,15 +333,98 @@ part of the animation which doesn't require variation, and IK for the part of
 the animation which is subject to change.
 
 \subsection{Project Setup}
-The scene is set up with a set of buttons which are positioned on a wall. The
-buttons themselves have an \textit{EmptyObject} which will provide the transform
-needed in order to aim the hand at a given button. The human character is posted
-in front of this set up. An Animator component is attached to the human model in
-order to make use of certain animations which were extracted from the full
-button press animation created in Blender when importing the model into Unity.
-Namely, the portions of the animation which consist of raising the hand to the
-default pressing position and lowering it back down, are useful in the IK
+A human model is exported from the MakeHuman software, imported into Blender for
+animation, and then again exported and imported into the Unity engine. The scene
+is set up with a group of buttons which are positioned on a wall. The buttons
+themselves each have an \textit{EmptyObject} which will provide the transform
+needed in order to aim the hand at the given button. The human character is
+posted in front of this set up. An Animator component is attached to the human
+model in order to make use of certain animations which were extracted from the
+full button press animation created in Blender when importing the model into
+Unity. Namely, the portions of the animation which consist of raising the hand
+to the default pressing position and lowering it back down, are useful in the IK
 version of this animation sequence. This is because these two animations are not
 dependent on the amount of buttons on the wall, nor the position of the
 character relative to the buttons.
 \subsection{Scripts}
+The whole logic around this animation sequence is done using one script. It must
+take in a few public objects as parameters in order to work correctly (Figure
+ref). Firstly, the hand's IK target must be passed in to enable the procedural
+control of the model's position. The script must also have a reference to the
+\textit{Rig} object to which the FABRIK script component is attached to. This is
+needed in order to enable and disable the IK depending on the phase of the
+animation sequence. When raising and lowering the hand, the baked animations are
+used and the IK should be disabled. The next parameter is a list of transforms
+for each button to which the IK target will move to in order to achieve the
+effect of pressing a button. A couple of private variables are also declared to
+make the script functional. These variables hold information such as references
+to the animator and FABRIK script components, an idle variable which prevents
+the character from starting a new animation sequence before finishing one that
+was previously initiated, a value which determines the speed of the hand's
+movement, and a list of integers which decide the sequence of buttons to be
+pressed. One last variable holds the \textit{origin} position which is set to
+the hand's position at the moment between the raising of the hand and the press
+of a button. This transform is important because it is required in order for the
+IK target to know where to return to after it is done pressing a given button. 
+
+The main functionality of the script revolves around Unity's coroutines.
+Coroutines enable a method to pause it's execution and then continue where it
+left off on the next frame \cite{unity_coroutines}. This allows the method to
+spread a task over multiple frames. It is useful when chaining together a series
+of events which must wait for a previous event to finish its task before
+beginning its own. The fundamental part of a coroutine is its \textit{yield}
+statement which is what pauses the methods execution. A yield may be used to
+wait for a certain amount of time, to wait for a certain boolean expression to
+evaluate as true, or it can initiate a nested coroutine and wait for it to end
+before continuing its own execution. The yield can also simply return a null
+value which pauses the execution of the method until the next frame, which can
+be useful to spread out a loop to execute each iteration in a separate frame. In
+this human animation sequence demo, nested coroutines are used to enhance
+readability and maintainability, allowing for easy reconfiguration of the main
+loop. 
+
+The first coroutine which is used as a basic building block is the
+\textit{HandAnimation} coroutine which takes in an animation name as a string,
+executes the animation, and allows the calling function to continue its
+execution only after the animation is done. This is possible by checking the
+animators state info for the \textit{normalizedTime} attribute. This floating
+point value starts at 0 and grows as the animation plays through, with the end
+of the animation mapping to a value of 1. The coroutine can therefore yield
+a boolean expression checking if the \textit{normalizedTime} value is equal or
+greater than one. 
+
+The second building block is the \textit{MoveToTarget} coroutine. This method
+takes in a destination vector and a duration. Its purpose is to move the IK
+target to a provided destination over a given amount of time. This is
+implemented by keeping track of the time elapsed since the beginning of the
+coroutine, and then linearly interpolating (lerping) the position of the target
+in a while loop which checks to see if the time elapsed hasn't exceeded the
+desired duration of the movement. A \textit{yield return null} in the while loop
+ensures that each of its iterations are separated in a way where only one
+iteration is executed per frame. A set of two of these coroutines are combined
+in the \textit{PressButton} coroutine which combines the movement of the hand
+from its origin position to the button and the movement back to the origin
+position.
+
+When the script receives a certain input from the player, and an animation is
+not already being played - which is monitored through the \textit{idle} boolean,
+the \textit{PressButtons} coroutine begins execution. This coroutine acts as the
+main event loop for the entire animation sequence. The \textit{idle} boolean is
+then set to false in order to block the initiation of a subsequent animation
+sequence before the current one is finished. The \textit{HandAnimation}
+coroutine is executed to play the baked animation of the hand, raising it to its
+origin position. The origin position is then saved in the \textit{origin}
+variable which will later be used during the IK movements. Now that the baked
+animation part of the animation sequence is complete, the IK component of the
+rig must be enabled to use its functionality, and have the hand track the IK
+target. The \textit{PressButton} coroutine is then executed multiple times in
+a loop for every value in the \textit{buttonSequence} array. This can ideally be
+integrated with player input in a real game scenario, where the
+\textit{PressButton} coroutine is played in reaction to sequence entered by the
+player. After the pressing sequence is complete, the IK component must be
+disabled before playing the animation responsible for lowering the character's
+hand back to its default position. Lastly, the \textit{idle} boolean can be set
+back to true as the current animation sequence is complete the initiating of
+subsequent animations should not be blocked.
+
+
