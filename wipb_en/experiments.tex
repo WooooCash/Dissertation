@@ -23,7 +23,7 @@ earlier in the "tools" chapter of this paper (Figure \ref{fig:anim_chunk}).
     \label{fig:timeline}
 \end{figure}
 
-Once the animations have been imported, a new animation controller was created
+Once the animations have been imported, a new animation controller is created
 for the new spider. The animations are added, this time with the use of a blend
 tree (Figure \ref{fig:s_blendtree}) to, as the name suggests, blend between the
 animation smoothly CITE. A third animation state is added to the blend tree
@@ -76,13 +76,64 @@ Additionally, when the spider encounters a vertical wall, it begins moving
 vertically instead of horizontally until it scales the entire obstacle.
 
 \subsubsection{Human}
-The baked version of the human character which performs an animation sequence
-consisting of pressing buttons is also animated in Blender. The animation plays
+The baked version of the human character, which performs an animation sequence
+consisting of pressing buttons, is also animated in Blender. The animation plays
 one full sequence of pressing a single button. Chunks of the same animation are
 used in the IK version of this animation sequence which is described in the
 previous chapter, however the baked animation utilizes the full animation while
 the IK version uses only the beginning and the end. Nevertheless, the animation
 is still broken up into three parts when imported into Unity: the raising of the
-hand, the button pressing motion, and the lowering of the hand.
+hand, the button pressing motion, and the lowering of the hand (Figure
+\ref{fig:bp_clips}). This is done because when the character is pressing
+multiple buttons in a row, the hand should not be lowered to its starting
+position after every press.
 
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.7\textwidth]{grafika/bp_clips.png}
+    \caption{The full button press animation is broken up into 3 separate clips}
+    \label{fig:bp_clips}
+\end{figure}
 
+Another animation controller is created for this version of the human. Unlike
+the spider example, the animation states do not have to be blended as they are
+all clips which combine to create the full button press animation, and the
+transitions are seamless as they are. Because of this, the animation states for
+the three animation clips are not part of a blend tree, and instead are just
+"floating" states with no defined transitions. The logic for which animation
+should be played at what time is defined in the main script attached to the
+character. 
+
+The script is a simplified version of the one which controls the IK version of
+this character's animation. It has no need for the public parameters present in
+it's IK version because there is no IK rig, IK target, or button transforms
+which it needs to control. Due to this, there is no list containing the sequence
+of buttons to be pressed. It is instead replaced by an integer value which
+dictates the number of button presses to execute in one animation sequence in
+order to convey the idea that the character is pressing multiple buttons in
+a sequence. 
+
+As with the IK version of this script, the logic is based on a set of coroutines
+which control the flow of the animation sequence. However, only the
+\textit{HandAnimation} coroutine is used as a building block for the sequence
+because the whole action is now constructed using baked animations. When the
+script receives an input and the animation is not already playing, the sequence
+begins by setting the \textit{idle} variable to true to prevent the sequence
+from being repeated while it is still in progress. All required animation clips
+are then set off one after the other, starting with the animation to lift the
+hand. This is then followed by the animation clip which is responsible for
+hitting the button, and it is repeated in a loop for a number of times defined
+by the button press count parameter. Finally, the animation clip for lowering
+the hand is executed, and the \textit{idle} boolean is set to false before
+terminating the sequence.
+
+\section{Visual Comparison}
+
+\subsubsection{Spider}
+\subsubsection{Human}
+
+\section{Performance Comparison}
+
+\subsubsection{Spider}
+\subsubsection{Human}
