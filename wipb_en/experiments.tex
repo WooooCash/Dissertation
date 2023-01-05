@@ -145,23 +145,51 @@ two version of the spider implemented in the demo application created for the
 purpose of this paper. 
 
 Starting with the idle position, both models look quite natural standing on
-a flat surface, as seen in Figures ref and ref (one figure with two images).
+a flat surface, as seen in Figure \ref{fig:sp_flat}.
+
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_flat.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_flat.png}
+    \caption{A comparison of both models standing on a flat surface}
+    \label{fig:sp_flat}
+\end{figure}
 
 However, this changes when as soon as the surface is uneven. The IK acting on
 the legs of the spider in Figure ref is able to use its ray casts to match the
 surface exactly, while the baked version of the spider doesn't have this
-mechanism, and its legs can be seen floating in the air (Figure ref). The same
-effect is observed when the spider is moving. The baked version's legs float
-when it is moving over uneven or slanted surfaces, which gives it an effect as
-if the spider was swimming through the air. 
+mechanism, and its legs can be seen floating in the air (Figure
+\ref{fig:sp_round}). The same effect is observed when the spider is moving. The
+baked version's legs float when it is moving over uneven or slanted surfaces,
+which gives it an effect as if the spider was swimming through the air. 
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_round.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_round.png}
+    \caption{A comparison of both models standing on an uneven surface}
+    \label{fig:sp_round}
+\end{figure}
 
 Another difference between the two spiders is how they climb walls. Whereas the
 IK version is able to treat it the same as any other surface, the baked version
 keeps does not adjust its rotation, and instead climbs the wall head on (Figure
-ref). This kind of rotation could have been implemented, however, the transition
-between floor and wall would be very unnatural either way and so an
-implementation inspired by the spiders in the popular game Minecraft was used
+\ref{fig:sp_wall}). This kind of rotation could have been implemented, however,
+the transition between floor and wall would be very unnatural either way and so
+an implementation inspired by the spiders in the popular game Minecraft was used
 instead.
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_wall.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_wall.png}
+    \caption{A comparison of both models scaling a wall}
+    \label{fig:sp_wall}
+\end{figure}
 
 One important aspect to note when comparing the realism of both animations is
 how the legs move relative to the surface on which they stand. In the case of
@@ -186,31 +214,86 @@ comparison between the baked and IK versions of the button press animation.
 
 When the character is only required to press a single button, while also having
 a proper position and orientation relative to the button, the baked animation
-looks quite natural, and looks no different than the IK version (Figure ref)
+looks quite natural, and looks no different from the IK version (Figure
+\ref{fig:h_single})
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[width=\linewidth]{grafika/h_b_single.png}
+        \subcaption{Baked animation}
+    \end{subfigure}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[width=\linewidth]{grafika/h_ik_single.png}
+        \subcaption{IK animation}
+    \end{subfigure}
+    \caption{A comparison of both models pressing a single button}
+    \label{fig:h_single}
+\end{figure}
 
 The difference start to be noticeable when the character is offset or rotated
 from the default position. While the IK target leads the hand correctly to the
-button (Figure ref a), the baked animation has no knowledge of the characters
-surroundings, and misses its mark (Figure ref b). Due to this, for realism to be
-preserved when using a baked animation, either the character must be reoriented
-as part of the action, or a cutscene should be played for the duration of the
-action. 
+button (Figure \ref{fig:h_ik_offset}), the baked animation has no knowledge of
+the characters surroundings, and misses its mark (Figure \ref{fig:h_b_offset}).
+Due to this, for realism to be preserved when using a baked animation, either
+the character must be reoriented as part of the action, or a cutscene should be
+played for the duration of the action. 
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[width=\linewidth]{grafika/h_b_offset.png}
+        \subcaption{Baked animation}
+        \label{fig:h_b_offset}
+    \end{subfigure}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[width=\linewidth]{grafika/h_ik_offset.png}
+        \subcaption{IK animation}
+        \label{fig:h_ik_offset}
+    \end{subfigure}
+    \caption{A comparison of both models pressing a single button after
+    offsetting the position and rotation of the characters}
+    \label{fig:h_offset}
+\end{figure}
 
 The next benefit of the procedural animation is its ability to adapt to a panel
-with multiple buttons. A seen in Figure ref, the IK target leads the hand to the
-appropriate position for each separate button. This allows for a specific
-sequence of buttons - taking the door hacking example from before this would be
-a player's input - to be pressed in a way which visually conveys the exact
-action which was commanded, in a responsive manner.
+with multiple buttons. The character which is using the baked animation is only
+able to aim its hand at one specific point, consequently missing all the buttons
+(Figure \ref{fig:h_b_multiple}). In the case of a sequence of buttons being
+pressed, the character repeats the press in a single spot which doesn't
+realistically convey the pressing of a sequence of buttons. This can be slightly
+improved by constructing the animation to aim at different buttons on the panel
+in a generic order. The downside of this patch is that it falls apart if there
+is a change in the amount of buttons, or their positions and configuration. 
 
-Comparing this to the baked animation sequence, the character is only able to
-aim its hand at one specific point, consequently missing all the buttons (Figure
-ref). In the case of a sequence of buttons being pressed, the character repeats
-the press in a single spot which doesn't realistically convey the pressing of
-a sequence of buttons. This can be slightly improved by constructing the
-animation to aim at different buttons on the panel in a generic order. The
-downside of this patch is that it falls apart if there is a change in the amount
-of buttons, or their positions and configuration. 
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.4\textwidth]{grafika/h_b_multiple.png}
+    \caption{The baked model executing the button press animation on a panel of
+    buttons}
+    \label{fig:h_b_multiple}
+\end{figure}
+
+Comparing this to the IK animation, as seen in Figure \ref{fig:h_ik_multiple},
+the IK target leads the hand to the appropriate position for each separate
+button. This allows for a specific sequence of buttons - taking the door hacking
+example from before this would be a player's input - to be pressed in a way
+which visually conveys the exact action which was commanded, in a responsive
+manner.
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_1.png}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_2.png}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_3.png}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_4.png}
+    \caption{The IK model pressing each of the four buttons on a panel}
+    \label{fig:h_ik_multiple}
+\end{figure}
 
 
 
