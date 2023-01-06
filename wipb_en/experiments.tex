@@ -298,6 +298,116 @@ manner.
 
 
 \section{Performance Comparison}
+One thing to consider when procedurally implementing a task procedurally is the
+effect it may have on the performance of the application. Resorting to the use
+of code and calculations instead of executing a predefined sequence introduces
+the potential of increasing the CPU usage and slowing decreasing performance. An
+analysis was conducted on the examples created in the demo application using the
+Unity Profiler \cite{unity_profiler}. Each experiment was carried out by
+spawning 100 objects of each type and comparing the CPU usages both while they
+were idle and while they were moving. Some usage categories were discarded as
+they were not relevant to the analysis (Figure \ref{fig:profiler_settings}).
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.5\textwidth]{grafika/profiler_settings.png}
+    \caption{Usage categories selected when analyzing CPU usage}
+    \label{fig:profiler_settings}
+\end{figure}
 
 \subsubsection{Spider}
+Starting with the baked version of the spider, a hundred duplicates spawned
+simultaneously produced the result seen in Figure \ref{fig:pr_sp_b}. Similarly
+to the IK version presented further down, most of the CPU usage comes from the
+"scripts" usage category. A clear distinction can be made between when the
+spider was moving and when it was not. During the profiling, the state of the
+spider started out as idle, and then alternated between moving and idle at
+approximately each quarter of the graph presented. In the idle state, the CPU
+load for the selected usage categories remains steadily below 10 milliseconds.
+However, when the spider is moving the load rises, with an initial spike which
+is almost double that of the idle state, and then lowering to around 10
+milliseconds. The increase in CPU usage, as seen from the profiler, is mostly in
+the "scripts" usage category, which means that the animations themselves are not
+influencing the performance of the application too much.
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\textwidth]{grafika/pr_sp_b.png}
+    \caption{Profiling of a hundred instances of the baked animation spider for
+    CPU usage}
+    \label{fig:pr_sp_b}
+\end{figure}
+
+The IK version of the spider has a much more steady average regardless of its
+moving or idle state. In Figure \ref{fig:pr_sp_ik}, the graph rises minimally at the
+halfway mark which is where the spiders were transitioned to a moving state.
+The lack of distinct change between states can be attributed to the fact that
+the IK calculations done on the kinematic chains and their respective targets
+are done regardless if the spider is moving or not. The same can be said for the
+raycasts and body rotation calculations which are executed no matter the state.
+The slight increase is most likely due to the calculations required to determine
+the forward movement vector when the spider receives input. 
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\textwidth]{grafika/pr_sp_ik.png}
+    \caption{Profiling of a hundred instances of the procedurally animated
+    spider for CPU usage}
+    \label{fig:pr_sp_ik}
+\end{figure}
+
+The average CPU usage for the IK version of the spider is around half that of its
+baked counterpart. This is most likely due to the baked animation spider
+requiring more checks and calculations which pertain to the physics of its
+movement. The IK version does not need many physics checks as the simple ray
+cast system keeps the spider stuck to the surface and combined with the ik
+mechanism moves the spider along without the need for collision checking.
+However, this is true for the implementation presented in this demo application,
+and may not be the case if a given use case required the spider to be able to
+register collisions and be affected by gravity.
+
 \subsubsection{Human}
+The purpose of the human character in the demo application is to demonstrate
+a specific animation sequence executed through the means of baked and procedural
+animations. Because there are no collisions, movement, or other checks, the baked
+animation character's script contains almost no major calculations. Because
+baked animations do not have a big influence on the CPU usage as seen earlier in
+the case of the spider, the performance of the application does not vary in
+relation to when the button pressing sequence is executed. Figure
+\ref{fig:pr_h_b} displays the results of profiling one hundred instances of the
+baked animation human characters executing the animation sequence
+simultaneously, and no spike in CPU usage, which hovers around 1ms, can be
+observed
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\textwidth]{grafika/pr_h_b.png}
+    \caption{Profiling of a hundred instances of the human character with baked
+    animations for CPU usage}
+    \label{fig:pr_h_b}
+\end{figure}
+
+In contrast, the procedurally animated human does require a few calculations
+during the animations sequence. While it does use baked animations for the
+beginning and end of the sequence, the middle section switches to using inverse
+kinematics, and the linear interpolation of the IK target between the hand's
+starting position and the button target positions. These calculations can be
+seen in Figure \ref{fig:pr_h_ik} where during the execution of the animation
+there is a noticeable spike in the "scripts" usage category. Other than that,
+the rest of the graph looks very similar to the baked animation variant, sitting
+at around 10 milliseconds of CPU usage.
+
+\begin{figure}[h!]
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\textwidth]{grafika/pr_h_ik.png}
+    \caption{Profiling of a hundred instances of the procedurally animated human
+    for CPU usage}
+    \label{fig:pr_h_ik}
+\end{figure}
+
+
