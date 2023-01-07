@@ -172,9 +172,69 @@ calculation of square roots.
 % }
 % \end{lstlisting}
 
-\textbf{POLE TARGETS. FIND A SOURCE WHICH EXPLAINS THE METHOD USED IN MY
-PROGRAM. IF NOT THEN REFER TO THE YOUTUBE VIDEO LOLOL}
+While the basic FABRIK algorithm allows a kinematic chain adjust so that the end
+effector reaches a defined target, the lack of control over this process can
+lead to unnatural poses in certain use cases, defeating the purpose of the
+procedural animations which are designed to produce a more natural effect. In
+order to achieve a higher degree of control in one of the use cases described in
+the following section, pole target constraints were implemented as an optional
+supplement to the existing algorithm. This approach to the pole target algorithm
+is inspired by a video demonstrating this concept CITE.
 
+The pole algorithm acts on every joint in a given kinematic chain excluding the
+root and the target which already have positions which are defined exactly. For
+each of the iterated joints \textit{p[i]}, calculations must take into account
+the positions of their preceding joint \textit{p[i-1]} and succeeding joint
+\textit{p[i+1]}. A plane is constructed at the position the \textit{p[i-1]},
+with a normal vector which points from \textit{p[i-1]} to \textit{p[i+1]}. Both
+the pole and the currently manipulated joint are then projected onto the plane
+(Figure \ref{fig:pole_start}) using Unity plane's \textit{ClosestPointOnPlane}
+method. The \textit{Vector3.SignedAngle} method then allows an angle to be found
+between both projections by passing the plane's normal vector as the angle axis
+(Figure \ref{fig:pole_projection}). Finally, the current joint's desired
+position is calculated by rotating the vector between it and \textit{p[i-1]}
+around the plane's normal by the obtained angle, using the
+\textit{Quaternion.AngleAxis} method. This can be imagined as lining up the
+joint so that its planar projection exists on the line between the origin of the
+plane and the pole target's planar projection (Figure \ref{fig:pole_end}). The
+joint keeps its relation to its preceding and succeeding joints (the angle
+between vectors pointing from the joint to both surrounding joints is the same),
+but it is rotated in order to be positioned as close to the pole target as
+possible.
+
+\begin{figure}[!h]
+    \centering
+    \captionsetup{justification=centering}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.6\linewidth]{grafika/pole_start.png}
+        \subcaption{The initial setup where a plane is constructed with the
+        vector from \textit{p[i+1]} to \textit{p[i-1]} as the normal. Both the
+        current joint \textit{p[i]} and the pole target are projected onto the
+        plane}
+        \label{fig:pole_start}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/pole_projection.png}
+        \subcaption{A view of the plane and the angle between the
+            projections which dictates the new position of the joint
+            \textit{p[i]}}
+        \label{fig:pole_projection}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.6\linewidth]{grafika/pole_end.png}
+        \subcaption{The final position of the joint as a result of the pole
+        target mechanism}
+    \end{subfigure}
+    \caption{A diagram showing the concept behind the implemented pole target
+    mechanism}
+    \label{fig:pole_diagram}
+\end{figure}
+
+
+FIGURE
 
 \section{Spider Movement}
 The first use case for inverse kinematics in the demo application is that of
@@ -239,7 +299,7 @@ target:
 \begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/diagonals.png}
+    \includegraphics[width=0.8\textwidth]{grafika/diagonals.png}
     \caption{The diagonals referencing the spiders legs which are used when
     checking if a target is allowed to begin moving, where A and D are on an
 opposite diagonal to B and C}
