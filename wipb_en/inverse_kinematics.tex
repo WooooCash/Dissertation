@@ -318,24 +318,37 @@ dependent on the amount of buttons on the wall, nor the position of the
 character relative to the buttons.
 \subsection{Scripts}
 The whole logic around this animation sequence is done using one script. It must
-take in a few public objects as parameters in order to work correctly (Figure
-ref). Firstly, the hand's IK target must be passed in to enable the procedural
-control of the model's position. The script must also have a reference to the
-\textit{Rig} object to which the FABRIK script component is attached to. This is
-needed in order to enable and disable the IK depending on the phase of the
-animation sequence. When raising and lowering the hand, the baked animations are
-used and the IK should be disabled. The next parameter is a list of transforms
-for each button to which the IK target will move to in order to achieve the
-effect of pressing a button. A couple of private variables are also declared to
-make the script functional. These variables hold information such as references
-to the animator and FABRIK script components, an idle variable which prevents
-the character from starting a new animation sequence before finishing one that
-was previously initiated, a value which determines the speed of the hand's
-movement, and a list of integers which decide the sequence of buttons to be
-pressed. One last variable holds the \textit{origin} position which is set to
-the hand's position at the moment between the raising of the hand and the press
-of a button. This transform is important because it is required in order for the
-IK target to know where to return to after it is done pressing a given button. 
+take in a few public objects as parameters in order to work correctly. Firstly,
+the hand's IK target must be passed in to enable the procedural control of the
+model's position. The script must also have a reference to the \textit{Rig}
+object to which the FABRIK script component is attached to. This is needed in
+order to enable and disable the IK depending on the phase of the animation
+sequence. When raising and lowering the hand, the baked animations are used and
+the IK should be disabled. The next parameter is a list of transforms for each
+button to which the IK target will move to in order to achieve the effect of
+pressing a button. A couple of private variables are also declared to make the
+script functional. These variables hold information such as references to the
+animator and FABRIK script components, an idle variable which prevents the
+character from starting a new animation sequence before finishing one that was
+previously initiated, a value which determines the speed of the hand's movement,
+and a list of integers which decide the sequence of buttons to be pressed. One
+variable holds the \textit{origin} position which is set to the hand's
+position at the moment between the raising of the hand and the press of
+a button. This transform is important because it is required in order for the IK
+target to know where to return to after it is done pressing a given button. To
+be able to set the origin to the appropriate position, a reference to the hand
+transform is taken in as the last parameter of the script.
+
+
+\begin{figure}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=0.8\textwidth]{grafika/button_press_ik_params.png}
+    \caption{The diagonals referencing the spiders legs which are used when
+    checking if a target is allowed to begin moving, where A and D are on an
+opposite diagonal to B and C}
+    \label{fig:diagonals}
+\end{figure}
 
 The main functionality of the script revolves around Unity's coroutines.
 Coroutines enable a method to pause it's execution and then continue where it
