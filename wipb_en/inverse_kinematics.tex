@@ -44,76 +44,30 @@ bone transform in the defined kinematic chain. In this case, the target is out
 of reach. Given that the bones in a skeleton are expected to keep a fixed
 length, the end effector will not be able to reach the target, and instead the
 kinematic chain straightens and extends in the direction of the target. There is
-no need to continue with the iterative portion of the algorithm.
-
-A minor optimization in the implementation is the use of square magnitudes when
+no need to continue with the iterative portion of the algorithm. A minor
+optimization in the implementation is the use of square magnitudes when
 comparing distances to avoid the calculation of square roots, thus reducing the
 computational costs.
 
-% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
-% reach},captionpos=b, label=stretch, language={[Sharp]c}]
-% void LateUpdate() 
-% {
-%     float distRootToTargetSqr = (
-%         target.position - chainRoot.position
-%     ).sqrMagnitude;
-%     if (distRootToTargetSqr > totalDistance * totalDistance)
-%     {
-%         StretchToTarget();
-%     }
-%     ...
-% }
-
-% void StretchToTarget()
-% {
-%     for (var i = 0; i < chainLen; i++)
-%     {
-%         float jointDistToTarget = (
-%             target.position - tempPositions[i]
-%         ).magnitude;
-%         var lambda = jointDistances[i] / jointDistToTarget;
-
-%         tempPositions[i + 1] =
-%             (1 - lambda) * tempPositions[i] + lambda * target.position;
-%     }
-% }
-% \end{lstlisting}
-
-The scenario where the target is within the reach of the kinematic chain
-utilizes an iterative forward and backward component after which the algorithm is
-named. Before each iteration, the positions of the joint transforms are copied.
-All operations and calculations are performed on these copied transforms and at
-the end of the full pass, the new positions are then copied back to the
-kinematic chain. It is also important to note that the modification of the
-transforms is done in Unity's \textit{LateUpdate} function. When using a mix of
-inverse kinematics and baked animation, the object to which the IK script is
-attached will have Unity's built-in \textit{Animator} component attached. If the
-custom IK script were to update joint transforms in the \textit{Update} method,
+If the target is within the reach of the kinematic chain, the iterative process
+of forward and backward passes, after which the algorithm is named, is executed.
+Before each iteration, the positions of the joint transforms are copied. All
+operations and calculations are performed on these copied transforms and at the
+end of the full pass, the new positions are then copied back to the kinematic
+chain. It is also important to note that the modification of the transforms is
+done in Unity's \textit{LateUpdate} function. When using a mix of inverse
+kinematics and baked animation, the object to which the IK script is attached
+will have Unity's built-in \textit{Animator} component attached as well. If the
+custom IK script updates joint transforms in the \textit{Update} method,
 then their attributes may be overwritten by the \textit{Animator} component. 
 
-The forward pass of the algorithm iterates through the chain starting from the
+The forward pass of the algorithm iterates through the chain, starting from the
 end effector and ending at the root. At the start, the end effector's position
-is set to be equal to the position of the target. A straight line can then be
-imagined to exist between the end effector and the following node. This
-neighbor's position is then interpolated along the line so that the original
-distance between the two nodes is kept the same. The same operation is performed
-for each pair of neighboring nodes throughout the pass. 
-
-% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-% caption={Forward pass},captionpos=b, label=forwards, language={[Sharp]c}]
-% void ForwardReachingPass()
-% {
-%     tempPositions[chainLen] = target.position;
-%     for (var i = chainLen - 1; i >= 0; i--)
-%     {
-%         var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
-%         var lambda = jointDistances[i] / dist;
-%         tempPositions[i] =
-%             (1 - lambda) * tempPositions[i + 1]
-%             + lambda * tempPositions[i];
-%     }
-% }
-% \end{lstlisting}
+is set to be equal to the position of the target. A vector is then defined which
+spans between the end effector and the following joint. This neighbor's position
+is then interpolated along the vector so that the original distance between the
+two nodes is kept the same. The same operation is performed for each pair of
+neighboring nodes throughout the pass. 
 
 When the forward pass is complete, the root node is displaced from its original
 position. This is undesired, as the root's node position should not be affected
@@ -123,54 +77,12 @@ at the beginning of the frame. The next node is then interpolated between its
 current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
-% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-% caption={Backward pass},captionpos=b, label=backwards, language={[Sharp]c}]
-% void BackwardReachingPass()
-% {
-%     tempPositions[0] = chainRoot.position;
-%     for (var i = 0; i < chainLen; i++)
-%     {
-%         var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
-%         var lambda = jointDistances[i] / dist;
-%         tempPositions[i + 1] =
-%             (1 - lambda) * tempPositions[i]
-%             + lambda * tempPositions[i + 1];
-%     }
-% }
-% \end{lstlisting}
-
 These two steps are repeated together until the end effector is within
 a threshold distance of the target. The FABRIK algorithm is a heuristic
 algorithm, and as such it does not lead to an exact result. Instead, it aims to
 approximate the correct solution and solves the problem in a less complex and
 more optimized way. Again, the square distances are used to avoid the
 calculation of square roots. 
-
-% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-% caption={FABRIK Loop},captionpos=b, label=loop, language={[Sharp]c}]
-% void LateUpdate()
-% {
-%     ...
-%     else
-%     {
-%         var distEffectorToTargetSqr = (
-%             tempPositions[chainLen] - target.position
-%         ).sqrMagnitude;
-%         while (distEffectorToTargetSqr > tolerance * tolerance)
-%         {
-%             ForwardReachingPass();
-%             BackwardReachingPass();
-
-%             distEffectorToTargetSqr = (
-%                 tempPositions[chainLen] - target.position
-%             ).sqrMagnitude;
-%         }
-%         ...
-%     }
-
-%     ApplyTempPositions();
-% }
-% \end{lstlisting}
 
 While the basic FABRIK algorithm allows a kinematic chain adjust so that the end
 effector reaches a defined target, the lack of control over this process can
@@ -179,21 +91,21 @@ procedural animations which are designed to produce a more natural effect. In
 order to achieve a higher degree of control in one of the use cases described in
 the following section, pole target constraints were implemented as an optional
 supplement to the existing algorithm. This approach to the pole target algorithm
-is inspired by a video demonstrating this concept CITE.
+is inspired by a video demonstrating this concept \cite{youtube_ik}. 
 
 The pole algorithm acts on every joint in a given kinematic chain excluding the
-root and the target which already have positions which are defined exactly. For
-each of the iterated joints \textit{p[i]}, calculations must take into account
-the positions of their preceding joint \textit{p[i-1]} and succeeding joint
-\textit{p[i+1]}. A plane is constructed at the position the \textit{p[i-1]},
-with a normal vector which points from \textit{p[i-1]} to \textit{p[i+1]}. Both
-the pole and the currently manipulated joint are then projected onto the plane
-(Figure \ref{fig:pole_start}) using Unity plane's \textit{ClosestPointOnPlane}
-method. The \textit{Vector3.SignedAngle} method then allows an angle to be found
-between both projections by passing the plane's normal vector as the angle axis
-(Figure \ref{fig:pole_projection}). Finally, the current joint's desired
-position is calculated by rotating the vector between it and \textit{p[i-1]}
-around the plane's normal by the obtained angle, using the
+root and the end effector which already have defined target positions. For each
+of the iterated joints \(p[i]\), calculations must take into account the
+positions of their preceding joint \(p[i-1]\) and succeeding joint \(p[i+1]\).
+A plane is constructed at the position \(p[i-1]\), with a normal vector which
+points from \(p[i-1]\) to \(p[i+1]\). Both the pole and the currently
+manipulated joint are then projected onto the plane (Figure
+\ref{fig:pole_start}) using Unity plane's \textit{ClosestPointOnPlane} method.
+The \textit{Vector3.SignedAngle} method then allows an angle to be found between
+both projections by passing the plane's normal vector as the angle axis (Figure
+\ref{fig:pole_projection}). Finally, the current joint's desired position is
+calculated by rotating the vector pointing from \(p[i-1]\) to \(p[i]\) around
+the plane's normal by the obtained angle, using the
 \textit{Quaternion.AngleAxis} method. This can be imagined as lining up the
 joint so that its planar projection exists on the line between the origin of the
 plane and the pole target's planar projection (Figure \ref{fig:pole_end}). The
@@ -234,24 +146,21 @@ possible.
     \label{fig:pole_diagram}
 \end{figure}
 
-
-FIGURE
-
 \section{Spider Movement}
 The first use case for inverse kinematics in the demo application is that of
 a four legged spider. The algorithm is used to adjust the creature's limbs to
 uneven terrain, leading to a much more natural and realistic movement. The IK
 version of the spider does not have an Animator component, and the whole of the
-animation and movement of the spider and its legs is done procedurally.
+animation and movement of the spider is done procedurally.
 \subsection{Project Setup}
 Each one of the spiders legs is treated as a separate kinematic chain. The
-spider prefab consists of a container which holds the spider object itself, set
-of empty objects to which the four IK scripts are attached for the purpose of
-easy yet separated access. The prefab also contains sets of ray casts and
-targets. The ray casts serve to scan the surface of the terrain under the
-spider, and mark the targets to which each leg should move.
+spider prefab consists of a container which holds the spider object itself, and
+a set of empty objects which the four IK scripts are attached to. The prefab
+also contains sets of raycasts and targets. The raycasts serve to scan the
+surface of the terrain under the spider, and mark the targets to which each leg
+should move.
 
-Ray casts are dispatched from above the spiders legs, and aim in the creatures
+Raycasts are dispatched from above the spiders legs, and aim in the creatures
 local negative Y axis. This ensures that no matter what orientation the spider
 finds itself in, the rays are always pointing at the surface which it is
 standing on. Masks are applied to the rays, making sure that only terrain
@@ -262,36 +171,36 @@ object. These targets serve as markers for the limbs end effectors.
 \subsection{Scripts}
 With the project set up in this manner, scripts must now be added on to make the
 scene functional. A script is required for the main movement of the spider, the
-ray cast logic, and the mechanism which controls the ik targets.
+raycast logic, and the mechanism which controls the ik targets.
 
-\subsubsection{Ray casts}
-The ray cast objects contain a script component which dispatches the rays and
+\subsubsection{Raycasts}
+The raycast objects contain a script component which dispatches the rays and
 sets the appropriate target positions. First, a mask must be established, which
-will then be passed into the ray cast operation. This is required so that only
+will then be passed into the raycast operation. This is required so that only
 terrain is counted as a valid hit. The lack of such a mask may result in
 unexpected behavior, such as targets being set on the spider's body itself. The
-ray cast object is then created, shooting in the local negative Y axis
+raycast object is then created, shooting in the local negative Y axis
 direction. This ensures that no matter the orientation of the creature, the rays
 are sent towards the surface that the spider is standing on. The targets
 controlling the spider's legs will not be updating their positions to the
-ray cast hit points each frame, though their scripts must have knowledge of the
+raycast hit points each frame, though their scripts must have knowledge of the
 hit positions at any given time. Given this, a separate set of objects are set
-to track the ray cast hit points each frame.
+to track the raycast hit points each frame.
 
 \subsubsection{Target Logic}
 In order for the spider's movement to seem realistic, the targets controlling
 each leg must adhere to a set of rules pertaining to their movement. As
-mentioned in the ray cast section, the IK targets cannot simply be set to track
-the ray cast hit points. The following is an outline of the rules specified for
-the IK targets, which define if it should start moving towards its ray cast hit
+mentioned in the raycast section, the IK targets cannot simply be set to track
+the raycast hit points. The following is an outline of the rules specified for
+the IK targets, which define if it should start moving towards its raycast hit
 target:
 \begin{itemize}
     \item A target must be grounded to be eligible for a movement sequence.
 
-    \item A target will only begin moving towards the ray cast hit point if the
+    \item A target will only begin moving towards the raycast hit point if the
         distance between them is above a specified threshold.
 
-    \item A target is only allowed to begin moving towards the ray cast hit
+    \item A target is only allowed to begin moving towards the raycast hit
         point if both legs on the opposite diagonal are grounded (See Figure
         \ref{fig:diagonals}).
 \end{itemize}
@@ -307,7 +216,7 @@ opposite diagonal to B and C}
     \label{fig:diagonals}
 \end{figure}
 
-When a target satisfies all of these conditions, it makes note of the ray cast
+When a target satisfies all of these conditions, it makes note of the raycast
 hit's current position, which it will use for its upcoming movement sequence.
 Once it begins moving, the \textit{Grounded} boolean is set to be false, so that
 the other targets know whether they can begin moving or not.
@@ -317,12 +226,12 @@ method, which takes in a current position vector, a vector to move to, and the
 maximum distance to move per frame, which can be used to control the movement
 speed. This method allows the target to interpolate its position every frame.
 The values fed into this method are simply the target's current position, the
-ray cast hit target's position, which was recorded right before the beginning of
+raycast hit target's position, which was recorded right before the beginning of
 the movement sequence, and an arbitrary speed value, which is dependent on
 \textit{Time.deltaTime} to avoid variations when the frame rate changes. The
 only caveat is that in the first half of the movement, the destination vector's
-height component is increased to achieve an arc-like movement. This produces the
-effect of lifting the spider's leg.
+height component is increased with an offset to achieve an arc-like movement.
+This produces the effect of lifting the spider's leg.
 
 \subsubsection{General Movement}
 The main movement script for the IK spider implementation brings the whole
@@ -334,7 +243,7 @@ system together. It has three main objectives:
         vectors can be set accordingly.
 
     \item React to input by moving the main body of the spider along with the
-        ray casts.
+        raycasts.
 
     \item Regulate the height of the spiders body above the ground.
 
@@ -346,7 +255,7 @@ based on the limb positions at the beginning of each \textit{Update} call.
 First, two vectors are constructed from the end effectors of both sets of
 diagonally opposed legs. The local up vector of the spider is then calculated by
 taking the cross product of these two vectors. This determines the orientation
-of the spider's main body, and it also affects the direction that the four legs'
+of the spider's main body, and it also affects the direction in which the four legs'
 rays are cast. The local forward vector is then obtained from the cross product
 between the newfound up vector and the spider's right vector. This new vector is
 what will be used to determine the direction of movement when the spider
@@ -355,12 +264,12 @@ receives input from the user.
 The second objective - reacting according to input - is quite simple once the
 local directional axes are determined. When the script detects a non-zero value
 on either the \textit{Horizontal} or \textit{Vertical} axis, it reacts
-accordingly by moving the spider along with all the ray cast objects. The
+accordingly by moving the spider along with all the raycast objects. The
 \textit{Vertical} axis corresponds to the forward and backward movement of the
 spider. The script reacts by simply moving the spider's main body along the
-local forward axis mentioned previously. Additionally, the ray casting objects
+local forward axis mentioned previously. Additionally, the raycasting objects
 are offset either forwards or backward depending on the direction of the
-movement. This is done because the ray casts must be slightly ahead of the
+movement. This is done because the raycasts must be slightly ahead of the
 default leg positions so that the legs end up moving in a natural manner.
 The \textit{Horizontal} axis is responsible for rotating the spider about its
 local up axis which allows the spider to turn around. 
@@ -369,7 +278,7 @@ Finally, the spider's height off of the surface must be regulated each frame.
 The lack of a gravitational force acting on the body to keep it flush with the
 ground, and the unconstrained rotational capability of the creature, means that
 the distance between the spider and the surface it is walking on must be
-procedurally kept in check. This is done with yet another ray cast which
+procedurally kept in check. This is done with yet another raycast which
 originates from the center of the spider's body and points in the negative up
 axis direction. If the distance to the hit point exceeds an acceptable range,
 the body is moved towards said range, again using the
@@ -387,11 +296,11 @@ adaptability needed for a game which has many differing button pressing
 scenarios. The integration of IK into this kind of animation sequence adds the
 ability to adjust to multiple amounts of buttons on a panel, different
 configurations of button positions, various sequences of buttons to press, and
-keep a consistent hand placement on the buttons without the need to force the
+keeps a consistent hand placement on the buttons without the need to force the
 character to stand in one defined position. The example was not made solely
 through the use of IK, and instead it uses a mix of baked animations for the
 part of the animation which doesn't require variation, and IK for the part of
-the animation which is subject to change.
+the animation which should be adaptable.
 
 \subsection{Project Setup}
 A human model is exported from the MakeHuman software, imported into Blender for
@@ -444,7 +353,7 @@ this human animation sequence demo, nested coroutines are used to enhance
 readability and maintainability, allowing for easy reconfiguration of the main
 loop. 
 
-The first coroutine which is used as a basic building block is the
+The first coroutine which is created as a basic building block is the
 \textit{HandAnimation} coroutine which takes in an animation name as a string,
 executes the animation, and allows the calling function to continue its
 execution only after the animation is done. This is possible by checking the
@@ -464,12 +373,12 @@ desired duration of the movement. A \textit{yield return null} in the while loop
 ensures that each of its iterations are separated in a way where only one
 iteration is executed per frame. A set of two of these coroutines are combined
 in the \textit{PressButton} coroutine which combines the movement of the hand
-from its origin position to the button and the movement back to the origin
+from its origin position to the button, and the movement back to the origin
 position.
 
 When the script receives a certain input from the player, and an animation is
-not already being played - which is monitored through the \textit{idle} boolean,
-the \textit{PressButtons} coroutine begins execution. This coroutine acts as the
+not already being played, which is monitored through the \textit{idle} boolean,
+then the \textit{PressButtons} coroutine begins execution. This coroutine acts as the
 main event loop for the entire animation sequence. The \textit{idle} boolean is
 then set to false in order to block the initiation of a subsequent animation
 sequence before the current one is finished. The \textit{HandAnimation}
@@ -479,12 +388,10 @@ variable which will later be used during the IK movements. Now that the baked
 animation part of the animation sequence is complete, the IK component of the
 rig must be enabled to use its functionality, and have the hand track the IK
 target. The \textit{PressButton} coroutine is then executed multiple times in
-a loop for every value in the \textit{buttonSequence} array. This can ideally be
-integrated with player input in a real game scenario, where the
-\textit{PressButton} coroutine is played in reaction to sequence entered by the
-player. After the pressing sequence is complete, the IK component must be
-disabled before playing the animation responsible for lowering the character's
-hand back to its default position. Lastly, the \textit{idle} boolean can be set
-back to true as the current animation sequence is complete the initiating of
-subsequent animations should not be blocked.
+a loop for every value in the \textit{buttonSequence} array. After the pressing
+sequence is complete, the IK component must be disabled before playing the
+animation responsible for lowering the character's hand back to its default
+position. Lastly, the \textit{idle} boolean can be set back to true as the
+current animation sequence is complete and the execution of another animation
+should not be blocked.
 

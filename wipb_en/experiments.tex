@@ -1,17 +1,17 @@
 \chapter{Experiments}
 The main purpose of this chapter of this paper is to compare animations
-generated procedurally with the use of Ik with baked animations. The comparison
+generated using IK with baked animations. The comparison
 is broken up into two categories - visual and performance. 
 
 \section{Baked animations}
  In order to conduct the experiments comprised of visual and performance
- comparisons, a second set of animations were created each of the examples which
+ comparisons, a second set of animations were created for each of the examples which
  are shown in the demo application. Below is an explanation of the process of
  creating this second set of animations.
 
 \subsubsection{Spider}
-The baked animation version of the spider was animated in Blender. The set
-consists of idle and walking animations which, in Blender, are placed on
+The baked animation version of the spider was animated in Blender. The model
+has both idle and walking animations which, in Blender, are placed on
 a single timeline, one after the other (Figure \ref{fig:timeline}). Once the model is imported
 into Unity, the animations can be broken up into their separate cases, as shown
 earlier in the "tools" chapter of this paper (Figure \ref{fig:anim_chunk}). 
@@ -26,7 +26,7 @@ earlier in the "tools" chapter of this paper (Figure \ref{fig:anim_chunk}).
 Once the animations have been imported, a new animation controller is created
 for the new spider. The animations are added, this time with the use of a blend
 tree (Figure \ref{fig:s_blendtree}) to, as the name suggests, blend between the
-animation smoothly CITE. A third animation state is added to the blend tree
+animation smoothly. A third animation state is added to the blend tree
 which is the equivalent of the walking animation, but the animation speed is set
 to a negative value. This plays the animation in reverse and is used when the
 spider is walking backwards. 
@@ -41,7 +41,7 @@ spider is walking backwards.
 A variable named \textit{spider\_movement} is created in order to control the
 animations that are to be played in a given situation, and the manner in which
 the transitions should be blended. The thresholds for each animation can be
-defined in the blend tree's configuration in the animator (Figure ref).
+defined in the blend tree's configuration in the animator (Figure \ref{fig:s_blendconf}).
 
 \begin{figure}[h!]
     \centering
@@ -53,12 +53,12 @@ defined in the blend tree's configuration in the animator (Figure ref).
 \end{figure}
 
 In the spiders movement script, this variable can then be set in reaction to
-certain inputs so that the proper animation is activated each given situation.
+certain inputs so that the proper animation is activated for each given situation.
 To achieve the transition blending, the \textit{spider\_movement} variable
 should not be set outright to the value which corresponds to the next animation
 state. Instead, the \textit{\_animator.SetFloat} method is used, where the
 \textit{\_animator} is a reference to the spider's Animator component. This
-method allows the value of spider\_movement to be interpolated from the value of
+method allows the value of \textit{spider\_movement} to be interpolated from the value of
 the current animation state to another desired value.
 \newline
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
@@ -72,7 +72,7 @@ This version of the spider has its movement based on the spider from the game
 Minecraft, which means that its rotation on the x and z axes is locked. The
 spider can rotate about the y-axis when turning to face a different direction,
 but it will not adjust to variations in the surface which it walks upon.
-Additionally, when the spider encounters a vertical wall, it begins moving
+Additionally, when the spider encounters a wall, it begins moving
 vertically instead of horizontally until it scales the entire obstacle.
 
 \subsubsection{Human}
@@ -118,13 +118,13 @@ which control the flow of the animation sequence. However, only the
 \textit{HandAnimation} coroutine is used as a building block for the sequence
 because the whole action is now constructed using baked animations. When the
 script receives an input and the animation is not already playing, the sequence
-begins by setting the \textit{idle} variable to true to prevent the sequence
+begins by setting the \textit{idle} variable to false in order to prevent the sequence
 from being repeated while it is still in progress. All required animation clips
 are then set off one after the other, starting with the animation to lift the
 hand. This is then followed by the animation clip which is responsible for
-hitting the button, and it is repeated in a loop for a number of times defined
+hitting the button, and it is repeated in a loop for the number of times defined
 by the button press count parameter. Finally, the animation clip for lowering
-the hand is executed, and the \textit{idle} boolean is set to false before
+the hand is executed, and the \textit{idle} boolean is set to true before
 terminating the sequence.
 
 \section{Visual Comparison}
@@ -138,7 +138,7 @@ approach through baked animations.
 
 \subsubsection{Spider}
 The walking animation, or any basic movement animation, is the core of what
-most characters will be doing a majority of the time. That being the case,
+most characters will be displaying a majority of the time. That being the case,
 a natural movement animation will contribute the most to the overall look and
 feel of the character. This difference can be clearly noticed by comparing the
 two version of the spider implemented in the demo application created for the
@@ -157,13 +157,13 @@ a flat surface, as seen in Figure \ref{fig:sp_flat}.
     \label{fig:sp_flat}
 \end{figure}
 
-However, this changes when as soon as the surface is uneven. The IK acting on
-the legs of the spider in Figure ref is able to use its ray casts to match the
-surface exactly, while the baked version of the spider doesn't have this
-mechanism, and its legs can be seen floating in the air (Figure
-\ref{fig:sp_round}). The same effect is observed when the spider is moving. The
-baked version's legs float when it is moving over uneven or slanted surfaces,
-which gives it an effect as if the spider was swimming through the air. 
+However, this changes when the surface is uneven. The IK acting on
+the legs of the spider on the right in Figure \ref{fig:sp_round} is able to use
+its ray casts to match the surface exactly, while the baked version of the
+spider (left) doesn't have this mechanism, and its legs can be seen floating in
+the air. The same effect is observed when the spider is moving. The baked
+version's legs float when it is moving over uneven or slanted surfaces, which
+makes it seem as if the spider was swimming through the air. 
 
 \begin{figure}[h!]
     \centering
@@ -198,7 +198,7 @@ fixed in one place until a leg movement is initiated. As a result, no matter the
 speed at which the spider is moving, the give the impression that they are
 placed on the floor and push away realistically. On the contrary, the baked
 animation is played at a certain speed, and it is very hard to match the
-animation speed to the movement speed so that the legs seem to stay in a fixed
+animation speed to the spider's movement speed so that the legs seem to stay in a fixed
 position on the ground while the spider is moving. This breaks the illusion of
 the legs pushing the spider forwards, as they instead glide on the surface out
 of sync.
@@ -232,7 +232,7 @@ looks quite natural, and looks no different from the IK version (Figure
     \label{fig:h_single}
 \end{figure}
 
-The difference start to be noticeable when the character is offset or rotated
+The difference starts to be noticeable when the character is offset or rotated
 from the default position. While the IK target leads the hand correctly to the
 button (Figure \ref{fig:h_ik_offset}), the baked animation has no knowledge of
 the characters surroundings, and misses its mark (Figure \ref{fig:h_b_offset}).
@@ -265,7 +265,7 @@ able to aim its hand at one specific point, consequently missing all the buttons
 pressed, the character repeats the press in a single spot which doesn't
 realistically convey the pressing of a sequence of buttons. This can be slightly
 improved by constructing the animation to aim at different buttons on the panel
-in a generic order. The downside of this patch is that it falls apart if there
+in a generic order. The downside of this approach is that it falls apart if there
 is a change in the amount of buttons, or their positions and configuration. 
 
 \begin{figure}[h!]
@@ -298,10 +298,10 @@ manner.
 
 
 \section{Performance Comparison}
-One thing to consider when procedurally implementing a task procedurally is the
+One thing to consider when implementing a task procedurally is the
 effect it may have on the performance of the application. Resorting to the use
 of code and calculations instead of executing a predefined sequence introduces
-the potential of increasing the CPU usage and slowing decreasing performance. An
+the potential of increasing the CPU usage and decreasing performance. An
 analysis was conducted on the examples created in the demo application using the
 Unity Profiler \cite{unity_profiler}. Each experiment was carried out by
 spawning 100 objects of each type and comparing the CPU usages both while they
@@ -324,11 +324,11 @@ to the IK version presented further down, most of the CPU usage comes from the
 spider was moving and when it was not. During the profiling, the state of the
 spider started out as idle, and then alternated between moving and idle at
 approximately each quarter of the graph presented. In the idle state, the CPU
-load for the selected usage categories remains steadily below 10 milliseconds.
-However, when the spider is moving the load rises, with an initial spike which
+usage for the selected categories remains steadily below 10 milliseconds.
+However, when the spider is moving the usage rises with an initial spike which
 is almost double that of the idle state, and then lowering to around 10
 milliseconds. The increase in CPU usage, as seen from the profiler, is mostly in
-the "scripts" usage category, which means that the animations themselves are not
+the "scripts" category, which means that the animations themselves are not
 influencing the performance of the application too much.
 
 \begin{figure}[h!]
@@ -363,17 +363,17 @@ The average CPU usage for the IK version of the spider is around half that of it
 baked counterpart. This is most likely due to the baked animation spider
 requiring more checks and calculations which pertain to the physics of its
 movement. The IK version does not need many physics checks as the simple ray
-cast system keeps the spider stuck to the surface and combined with the ik
-mechanism moves the spider along without the need for collision checking.
-However, this is true for the implementation presented in this demo application,
-and may not be the case if a given use case required the spider to be able to
-register collisions and be affected by gravity.
+cast system keeps the spider stuck to the surface, and combined with the IK
+mechanism it moves the spider along without the need for collision checking.
+However, this is relevant for the implementation presented in this demo
+application, and may not be the case if a given use case required the spider to
+be able to register collisions and be affected by gravity.
 
 \subsubsection{Human}
 The purpose of the human character in the demo application is to demonstrate
 a specific animation sequence executed through the means of baked and procedural
 animations. Because there are no collisions, movement, or other checks, the baked
-animation character's script contains almost no major calculations. Because
+animation character's script contains almost no major calculations. Since
 baked animations do not have a big influence on the CPU usage as seen earlier in
 the case of the spider, the performance of the application does not vary in
 relation to when the button pressing sequence is executed. Figure
@@ -394,12 +394,12 @@ observed
 In contrast, the procedurally animated human does require a few calculations
 during the animations sequence. While it does use baked animations for the
 beginning and end of the sequence, the middle section switches to using inverse
-kinematics, and the linear interpolation of the IK target between the hand's
-starting position and the button target positions. These calculations can be
+kinematics, and additionally the IK targets are interpolated between the hand's
+origin position and the button target positions. These calculations can be
 seen in Figure \ref{fig:pr_h_ik} where during the execution of the animation
 there is a noticeable spike in the "scripts" usage category. Other than that,
 the rest of the graph looks very similar to the baked animation variant, sitting
-at around 10 milliseconds of CPU usage.
+at around 1 milliseconds of CPU usage.
 
 \begin{figure}[h!]
     \centering

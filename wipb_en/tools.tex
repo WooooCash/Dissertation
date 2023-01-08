@@ -34,20 +34,18 @@ including the creation of 3D models, rigging, and animation.
 
 Blender offers the functionality of importing existing models in various formats
 including the \textit{collada} format \cite{collada} which is the default export
-option in MakeHuman. The models, which are already rigged, can then be animated
-using the Blender animation pose editor. Models can also be created from
-scratch. Blender offers a 3D modelling tool to create a desired mesh. A custom
-rig can also be constructed and attached to the created model. Weights can be
-painted on the meshes vertices for each bone to define how tightly they are
-bound, and how much the position of each vertex depends on the given bone
-position. 
+option in MakeHuman. Models can also be created from scratch. Blender offers
+a 3D modelling tool to create a desired mesh. A custom rig can also be
+constructed and attached to the created model. Weights can be painted on the
+mesh's vertices for each bone, to define how tightly they are bound, and how
+much the position of each vertex depends on the given bone position. 
 
 Lastly, an animation sequence can be created for an existing mesh and rig using
 the character animation pose editor. The user can define poses for different
 points in time by creating key frames on a timeline, and blender interpolates the
 bone positions in between the key frames. This is used to create baked animations
 for characters and objects, as well as defining animations that are later
-blended with IK constraints. An animated model can be then exported in the
+blended with IK procedural animations. An animated model can be exported in the
 \textit{fbx} format to be used in other software programs. Unity also supports
 importing a model from a \textit{.blend} file which is the extension of
 a blender project file. 
@@ -73,7 +71,7 @@ programs themselves to unpack the file.
 When importing an animated model into Unity, the import settings allow the user
 to break the animation into multiple parts based on start and end times (Figure
 \ref{fig:anim_chunk}). This is convenient, as it allows multiple animations made
-in Blender to be placed on one timeline one after the other as a single
+in Blender to be placed on a timeline one after the other as a single
 animation, which can then be broken up in Unity. It also allows the user to
 extract multiple different variations of the same animation, such as importing
 the full animation as one whole chunk and also breaking it up into separate
@@ -87,8 +85,8 @@ animations for different use cases.
 \end{figure}
 
 \subsection{Animator Controller}
-An Animator controller allows the user to maintain a set of animation clips and
-the associated transitions to control the flow between each clip in the form of
+An Animator controller allows the user to maintain a set of animation clips, and
+the associated transitions which control the flow between each clip in the form of
 a state machine (Figure \ref{fig:anim_state}). Animations must be added to an
 Animator controller in order to be used by a Unity \textit{GameObject}
 \cite{unity_animator}. States can also be controlled procedurally from scripts
@@ -110,8 +108,8 @@ category must have at least 15 bones which are organized in a way which
 resembles a human skeleton \cite{unity_humanoid_import}. Humanoid characters
 have a few additional functionalities. Namely, because of the criteria required
 to qualify as a humanoid model, these models are all similar in structure and as
-such, animation can be mapped from one humanoid model to another
-\cite{unity_humanoid_avatars}. Additionally, these models have built in
+such, animations can be mapped from one humanoid model to another
+\cite{unity_humanoid_avatars}. Additionally, these model's have built in
 functionality which allows the developer to procedurally control the models IK
 weights and positions using the \textit{SetIKPositionWeight,
 SetIKRotationWeight, SetIKPosition, SetIKRotation, SetLookAtPosition,
@@ -130,7 +128,7 @@ component, a mix of predefined constraints can be added to enhance the rig
 paper is the \textit{Chain IK Constraint} which implements the FABRIK algorithm.
 This constraint was useful in creating a proof of concept for the spider before
 creating the FABRIK script. It also provided a good basis for the public
-interface that such a script should have to function well in the Unity
+interface which such a script should have to function well in the Unity
 environment.
 
 \begin{figure}

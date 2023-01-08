@@ -2,28 +2,28 @@
 Inverse kinematics is applied in various fields, mainly robotics and computer
 graphics. However, it is applied to a few unique problems, such as the
 prediction of protein structure \cite{ccd_protein}. It has also found its uses in
-rehabilitation medicine due to its miomechanical modelling ability. Over time,
+rehabilitation medicine due to its biomechanical modelling ability. Over time,
 many approaches have surfaced in order to solve the IK problem. There are
 multiple families of solutions \cite{Aristidou2011} which suit different use
 cases. Among others, trigonometric solutions can be used to solve certain IK
 problems analytically, however, these solutions are often limited to solving two
 bone IK scenarios. More recently neural networks have also been used as a tool
-to solve IK problems \cite{nn_IK}. This paper will go over the iterative and heuristic
-approaches which provide less complex solutions with the expansion of kinematic
-chain lengths and degrees of freedom.
+to solve IK problems \cite{nn_IK}. This paper will go over the iterative and
+heuristic approaches which provide less complex solutions when increasing the
+kinematic chain length and degrees of freedom.
 
 \section{Kinematics}
 Kinematics is a branch of physics and a subdivision of classical mechanics
 concerned with the geometrically possible motion of a body or system of bodies
 without consideration of the forces involved \cite{kinematics_britannica}.
 A kinematic chain is a tree like hierarchical structure of joint transforms
-which are connected. Because the relationship between joints is hierarchical,
-a transformation which is applied to a given joint affects all of its descendant
-nodes. When manipulating a kinematic chain, transformations in the form of
-rotations and translations are applied to joint transforms in order to achieve
-a desired position of one or multiple transforms called the end effectors. The
-problem of kinematics can be subdivided into two approaches which each present
-their own problem and solution.
+which are connected to each other. Because the relationship between joints is
+hierarchical, a transformation which is applied to a given joint affects all of
+its descendant nodes. When manipulating a kinematic chain, transformations in
+the form of rotations and translations are applied to joint transforms in order
+to achieve a desired position of one or multiple transforms called the end
+effectors. The problem of kinematics can be subdivided into two approaches which
+each present their own problem and solution.
 
 \begin{itemize}
     \item The problem of \textit{Forward Kinematics} which has to do with the
@@ -31,7 +31,7 @@ their own problem and solution.
         a set of transformations being applied to the kinematic chain to which
         the end effector belongs.
     \item The problem of \textit{Inverse Kinematics} which pertains to the
-        search for a configuration of joint transformations for kinematic
+        search for a configuration of joint transformations for a kinematic
         chain which allow the end effector to reach a predefined target
         position.
 \end{itemize}
@@ -71,22 +71,23 @@ ref).
     \caption{An IK problem with no solution where the target is unreachable
     because the length of the first segment is greater than the summed length of
     the rest of the kinematic chain \(d_1 - \sum_{i=2}^{n}d_i > dt\). This creates
-    a radius around the root where if its distance to the target is smaller, it
-    indicates an unreachable target.  } \label{fig:unreachable_dist2}
+    a radius around the root where if the root's distance to the target is
+    smaller than the radius, the target is unreachable.
+} \label{fig:unreachable_dist2}
 \end{figure}
 
-Another reason for the lack of solutions to an IK problem can be the
+Another reason for the lack of solutions to an IK problem can be an
 over-constraining of the problem. Constraints in an IK problem are used to
-dictate the range of motion that each joint. Constraints might limit the joint's degrees of
+dictate the range of motion of each joint. Constraints might limit the joint's degrees of
 freedom by reducing the dimensions in which it can perform its rotational and
 translational transformations. Such constraints are often modelled after joints
-which are present in the domain of biomechanics, such as hinge joints, ball
-joints, pivot joints. A constraint can also limit the extent of a joint's
-ability to bend which is defined by the allowed angle of the joint's rotation in
-relation to the rotation of its parent node. If too many of such constraints are
-added to a kinematic chain, it may have blind spots for which it is unable to
-find a configuration of transformations which can bend the chain to reach the
-target (Figure\ref{fig:unreachable_angles}).
+which are present in the human body, such as hinge joints, ball joints, or pivot
+joints. A constraint can also limit the extent of a joint's ability to bend
+which is defined by the allowed angle of the joint's rotation in relation to the
+rotation of its parent node. If too many of such constraints are added to
+a kinematic chain, it may have blind spots for which it is unable to find
+a configuration of transformations which can bend the chain to reach the target
+(Figure\ref{fig:unreachable_angles}).
 
 \begin{figure}
     \centering
@@ -99,7 +100,7 @@ target (Figure\ref{fig:unreachable_angles}).
 \end{figure}
 
 If a kinematic chain has more than one joint which is classified as an end
-effector with its own separate target, a problem with not solutions can be
+effector with its own separate target, a problem with no solutions can be
 defined in a way that prevents both end effectors from reaching their target.
 If at least one end effector is unable to reach its target then the problem can
 be said to be unsolvable.
@@ -133,7 +134,7 @@ are a function of the chain's configuration.
 The above equation presents the FK problem where the position of an end effector is
 calculated based on the given configuration of the chain. To define the IK
 problem, a configuration of scalars must be found based on the given final
-positions of the set of end effectors.
+positions of the end effectors.
 
 \begin{equation}
     \theta = f^{-1}(s)
@@ -147,13 +148,13 @@ algorithms.
 
 \section{IK Algorithms}
 \subsection{Jacobian Inverse}
-This approach to the IK problem offers a linear approximation through an
-iterative calculation which estimates a change to the given configuration of
-joint scalars necessary to reduce the distance between an end effector and its
-desired destination. This is done through the use of a matrix \(J\) called the
-Jacobian which contains partial derivatives of the entire kinematic chain
-relative to the set of end effectors. \(J\) is a function of the chain
-configuration's joint scalars:
+This approach to the IK problem \cite{BALESTRINO19842435, wolovich, Baillieul} offers
+a linear approximation through an iterative calculation which estimates a change
+to the given configuration of joint scalars necessary to reduce the distance
+between an end effector and its desired destination. This is done through the
+use of a matrix \(J\) called the Jacobian matrix which contains partial derivatives of
+the entire kinematic chain relative to the set of end effectors. \(J\) is
+a function of the chain configuration's joint scalars:
 \(\theta\):
 \begin{equation}
     J(\theta)_{ij} = \left(\frac{\partial s_i}{\partial \theta_j}\right)_{ij}
@@ -188,7 +189,7 @@ due to the modification of the configuration is then estimated as
 \end{equation}
 
 and the changes made to the joint scalars should be done in a way where
-\(\vec{s}\) is as close to \(\vec{e}\) which is a set of desired changes in position
+\(\vec{s}\) is as close to \(\vec{e}\) which is a vector of desired changes in position
 for each of the chain's end effectors, defined as \(e_i = \mbox{t}_i - s_i\).
 Due to this relation between \(\vec{s}\) and \(\vec{e}\), the FK equation can
 be rewritten:
@@ -204,10 +205,10 @@ and thus the IK problem for the Jacobian method is as follows:
 \end{equation}
 
 A solution to this Jacobian method of the IK problem is not always simple due to
-the possibility of a non-invertible matrix, or singularities in the form of
-a row of zeros which prevents a change of the chain's configurations which
-achieves the sought-after change in end effector positions. Certain methods have
-been brought forward to surmount these challenges.
+the possibility of a non-invertible matrix, or singularities which prevent
+changes of the chain's configurations which achieve the sought-after result in
+end effector positions. Certain methods have been brought forward to surmount
+these challenges.
 
 \subsubsection{Pseudo-Inverse}
 To address the problem of non-invertible Jacobian matrices, the Jacobian
@@ -227,8 +228,7 @@ not. The pseudo-inverse matrix is defined as
 \end{equation}
 
 Where the pseudo-inverse falls short is when approaching singularities. In these
-cases, the resulting values become unstable leading to oscillations and
-difficulties with converging the end effector positions with their targets.
+cases, the resulting values become unstable leading to oscillations.
 
 \subsubsection{Jacobian Transpose}
 Another way to overcome the case where \(J\) is a non-invertible matrix is to
@@ -239,29 +239,30 @@ transpose, with a coefficient \(\alpha\):
     \Delta \theta = \alpha J^T \vec{e}
 \end{equation}
 
-In order to minimize the distance between the end effectors and their targets
-\(\vec{e}\), the coefficient \(\alpha\) is calculated which results in the
-smallest value of \(\vec{e}\) after each iteration. The equation which models
-this calculation is as follows
+In order to minimize the distance of each \(\vec{e}\) between  the end effectors and
+their targets, the coefficient \(\alpha\) is calculated with the goal of
+achieving the smallest value of \(\vec{e}\) after each iteration. The equation
+which models this calculation is as follows
 
 \begin{equation}
     \alpha = \frac
         {
-            \langle\vec{e}, J J^T \vec{e}\rangle
+            \langle\vec{e}, J J^T \pvec{e}\rangle
         }
         {
-            \langle J J^T \vec{e},J J^T \vec{e} \rangle
+            \langle J J^T \vec{e},J J^T \pvec{e} \rangle
         }
 \end{equation}
 
 where the angular brackets represent a dot product operation between the two
 values contained inside them. The value of the coefficient \(\alpha\) must be
-small enough to avoid oscillations, and due to this the process is slow and
-requires many iterations to achieve a desired configuration.
+small enough to avoid oscillations, and due to this the process of converging
+end effectors on the targets is slow and requires many iterations to achieve
+a desired configuration.
 
 \subsubsection{Other Jacobian methods}
-A multitude approaches to the IK problem using Jacobian methods have been
-suggested, some of which are variations or combinations of other presented
+A multitude of approaches to the IK problem using Jacobian methods have been
+suggested, some of which are variations or combinations of the presented
 methods. Among others, the Single Value Decomposition method extends the
 pseudo-inverse method with orthogonal matrices, the Damped Least Squares method
 helps avoid problems with singularities present in the pseudo-inverse method,
@@ -292,25 +293,26 @@ equations and heavy computations, and instead act as techniques to achieve an
 approximate solution iteratively in a much more simple way. These methods are
 very popular in the domain of computer graphics and animation, due to the
 problems not needing extremely accurate solutions but benefiting from a simple
-and fast approach.
+and fast approach in the real-time environment of video games.
 
 \subsubsection{Cyclic Coordinate Descent}
-The Cyclic Coordinate Descent (CCD) algorithm is one of the simplest and most
-used IK solutions used in the computer games industry. It also finds
+The Cyclic Coordinate Descent (CCD) algorithm \cite{ccd} is one of the simplest and most
+used IK solutions in the computer games industry. It also finds
 applications in robotics as well as the already mentioned protein structure
-prediction. 
+prediction \cite{ccd_protein}. 
 
-The algorithm acts on each joint transform seperatly, minimizing the distance
+The algorithm acts on each joint transform separately, minimizing the distance
 between the end effector and the target by finding the appropriate angle by
 which it should rotate the given joint. The iteration begins at the end of the
-chain, excluding the end effector. The desired angle of rotation is found by
-defining vectors which begin at the current joint and point at the chain's end
-effector and the target respectively. The angle between these two vectors is the
-angle by which the current joint should be rotated in order to place the end
-effector on the line spanning between the current joint and the target, thus
-reducing the distance between the end effector and the target as much as
-possible (Figure \ref{fig:ccd}). The algorithm is repeated iteratively until the
-distance between the end effector and the target is smaller than some threshold.
+chain, excluding the end effector. The desired angle of rotation is calculated by
+finding lines, one of which passes through the current joint and the end
+effector, while the other passes through the current joint and the target. The
+angle between these two lines is the angle by which the current joint should
+be rotated in order to place the end effector on the line spanning between the
+current joint and the target, thus reducing the distance between the end
+effector and the target as much as possible (Figure \ref{fig:ccd}). The
+algorithm is repeated iteratively until the distance between the end effector
+and the target is smaller than some threshold.
 
 \begin{figure}
     \centering
@@ -329,21 +331,21 @@ partly due to the fact that the joints closer to the end effector have a high
 impact on the resolution of the problem, and the joints further away have
 a smaller impact. The unequal distribution of adjustments in the chain's
 configuration lead to chaotic animations. The algorithm also has a lesser
-affinity to solving IK problems with multiple end effectors, and to overcome
+affinity for solving IK problems with multiple end effectors, and to overcome
 this, a system with multiple end effectors must first be broken down into
 independent chains.
 
 \subsubsection{Forward and Backward Reaching Inverse Kinematics algorithm}
-The Forward and Backward Reaching Inverse Kinematics (FABRIK) algorithm gained
-popularity as another heuristic approach to IK implementation for computer
-graphics and video games. 
+The Forward and Backward Reaching Inverse Kinematics (FABRIK) algorithm
+\cite{Aristidou2011} is another heuristic approach to the IK problem which
+gained popularity in computer graphics and video games. 
 
 Like the CCD algorithm, FABRIK iterates over the joints of a kinematic chain,
 adjusting them one at a time. However, this algorithm involves two passes per
 iteration where, as the name suggests, one pass is done starting from the end
 effector iterating towards the root, while the second pass is done in a reversed
-order (see Figure \ref{fig:fabrik}). The algorithm starts by checking if the target is in reach before
-proceeding to iterate over the kinematic chain. 
+order (see Figure \ref{fig:fabrik}). The algorithm starts by checking if the
+target is in reach before proceeding to iterate over the kinematic chain. 
 
 \begin{figure}[!h]
     \centering
@@ -351,7 +353,7 @@ proceeding to iterate over the kinematic chain.
     \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.png}
     \caption{An iteration of the FABRIK algorithm where (a) through (d) are
     detailed steps of the forward pass while (e) and (f) show the solution of
-    the backward pass. Soure: \cite{Aristidou2011}}
+    the backward pass. Source: \cite{Aristidou2011}}
     \label{fig:fabrik}
 \end{figure}
 
@@ -369,12 +371,12 @@ Thus, the forward pass of the algorithm can be modeled by
 
 where \(\lambda_i\) is a coefficient which ensures that the linear interpolation
 preserves the distance between joint positions \(\mbox{p}_i\) and
-\(\mbox{p}_{i+1}\). Once the forward pass is finished, the root is displaced
-from its original position, and in order to rectify this a backwards pass is
-initiated in a reverse order which starts by setting the root back to its
-original position. The iteration proceeds very similarly to the forwards pass,
-this time interpolating each joint \(\mbox{p}_i\) between its current position
-and the new position of \(\mbox{p}_{i-1}\). The backwards pass is then
+\(\mbox{p}_{i+1}\). When the forward pass is finished, the root ends up being
+displaced from its original position, and in order to rectify this a backwards
+pass is initiated in a reverse order which starts by setting the root back to
+its original position. The iteration proceeds very similarly to the forwards
+pass, this time interpolating each joint \(\mbox{p}_i\) between its current
+position and the new position of \(\mbox{p}_{i-1}\). The backwards pass is then
 
 \begin{equation}
     \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i-1} + \lambda_i \mbox{p}_i
@@ -382,7 +384,7 @@ and the new position of \(\mbox{p}_{i-1}\). The backwards pass is then
 
 The iterations are repeated until the distance between the end effector and the
 target are smaller than some threshold, at which point the problem can be
-considered as solved.
+considered solved.
 
 The FABRIK algorithm is very fast due to its calculations relying on adjusting
 positions along a line instead of calculating joint angles. This also majorly
@@ -393,13 +395,13 @@ along the chain. Additionally, the FABRIK algorithm is a good fit for computer
 graphics and animation because of its ability to handle multiple end effectors
 well and to be constrained in multiple ways.
 
-For the purpose of this paper, the author has chosen the FABRIK algorithm as the
+For the purpose of this paper, the FABRIK algorithm was chosen as the
 algorithm to be implemented in the demo application. The choice helps avoid the
-problems around singularities with the Jacobian methods, the complex
-implementations and heavy calculations of the Newton methods, and instead
-provides a fast and lightweight algorithm which is simple to implement and has
-a better chance of producing more natural kinematic chain configurations than
-the CCD algorithm. The FABRIK algorithm also finds its implementations in
+problems with singularities which exist when using the Jacobian methods, the
+complex implementations and heavy calculations of the Newton methods, and
+instead provides a fast and lightweight algorithm which is simple to implement
+and has a better chance of producing more natural kinematic chain configurations
+than the CCD algorithm. The FABRIK algorithm also finds its implementations in
 many software programs, including the built-in Unity \textit{Animation Rigging}
 package \cite{unity_animation_rigging}.
 
