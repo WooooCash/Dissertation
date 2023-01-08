@@ -1,1 +1,29 @@
 \chapter{Conclusion} 
+The aim of this paper was to gain a better understanding of the basic algorithms
+used in inverse kinematics, discover the built-in functionalities that the Unity
+engine offers for such implementation, and compare the IK procedural animations
+to a classic baked animation approach through visual and performance based
+metrics. The aim was achieved. 
+
+In the second chapter, the theory behind existing IK
+algorithms was analyzed. As a result of this analysis, the heuristic FABRIK
+algorithm was chosen for its speed and simple implementation which distinguishes
+itself from other approaches by avoiding problems such as instabilities and
+complex calculations.
+
+In the third chapter, an overview was made of technologies used in the
+implementation of the demo application. Among others, the features provided by
+the Unity game engine which enable and facilitate the use of IK were outlined.
+
+The third and fourth chapters served to display the implementation details of
+both the IK solutions and their baked animation counterparts, as well as compare
+them in the visual and performance categories. In terms of visual realism and
+natural motion, the IK animations proved to be superior in terms of precise
+interaction with the surrounding environment, and the adaptability of the
+characters to varying situations. The human animation sequence demonstrated that
+the procedural animations using inverse kinematics result in a higher CPU usage
+compared to baked animations. However, the spider movement animation countered
+this by showing that in certain cases, the procedural approach to animation and
+movement can eliminate the need for various calculations such as physics checks,
+and can overall result in a lower net CPU usage compared to a character which
+has baked animation.
