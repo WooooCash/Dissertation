@@ -339,19 +339,8 @@ target to know where to return to after it is done pressing a given button. To
 be able to set the origin to the appropriate position, a reference to the hand
 transform is taken in as the last parameter of the script.
 
-
-\begin{figure}
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=0.8\textwidth]{grafika/button_press_ik_params.png}
-    \caption{The diagonals referencing the spiders legs which are used when
-    checking if a target is allowed to begin moving, where A and D are on an
-opposite diagonal to B and C}
-    \label{fig:diagonals}
-\end{figure}
-
 The main functionality of the script revolves around Unity's coroutines.
-Coroutines enable a method to pause it's execution and then continue where it
+Coroutines enable a method to pause its execution and then continue where it
 left off on the next frame \cite{unity_coroutines}. This allows the method to
 spread a task over multiple frames. It is useful when chaining together a series
 of events which must wait for a previous event to finish its task before
