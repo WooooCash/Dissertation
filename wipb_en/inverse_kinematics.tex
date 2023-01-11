@@ -38,6 +38,23 @@ passed in if the use case requires it to function in a desired manner.
     \label{fig:params}
 \end{figure}
 
+Before any transformations are applied to the joint transforms, their positions
+are copied. All operations and calculations are performed on the copied
+transforms and at the end of the full pass, the new positions are copied back to
+the kinematic chain.
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Joint transforms are copied at the start. Operations are performed on
+these copied joints, before applying them back to the kinematic
+chain},captionpos=b, label=transform_copy, language={[Sharp]c}]
+void LateUpdate()
+{
+    CopyTempPositions();
+    ...
+    ApplyTempPositions();
+}
+\end{lstlisting}
+
 The first case which the algorithm must cover is if the distance from the root
 to the target object is greater than the sum of distances between each adjacent
 bone transform in the defined kinematic chain. In this case, the target is out
@@ -49,17 +66,47 @@ optimization in the implementation is the use of square magnitudes when
 comparing distances to avoid the calculation of square roots, thus reducing the
 computational costs.
 
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
+reach},captionpos=b, label=stretch, language={[Sharp]c}]
+void LateUpdate()
+{
+    ...
+    float distRootToTargetSqr = (
+        target.position - chainRoot.position
+    ).sqrMagnitude;
+    if (distRootToTargetSqr > totalDistance * totalDistance)
+    {
+        StretchToTarget();
+    } else {
+        ...
+    }
+    ...
+}
+
+void StretchToTarget()
+{
+    for (var i = 0; i < chainLen; i++)
+    {
+        float jointDistToTarget = (
+            target.position - tempPositions[i]
+        ).magnitude;
+        var lambda = jointDistances[i] / jointDistToTarget;
+
+        tempPositions[i + 1] =
+            (1 - lambda) * tempPositions[i] + lambda * target.position;
+    }
+}
+\end{lstlisting}
+
 If the target is within the reach of the kinematic chain, the iterative process
 of forward and backward passes, after which the algorithm is named, is executed.
-Before each iteration, the positions of the joint transforms are copied. All
-operations and calculations are performed on these copied transforms and at the
-end of the full pass, the new positions are then copied back to the kinematic
-chain. It is also important to note that the modification of the transforms is
-done in Unity's \textit{LateUpdate} function. When using a mix of inverse
-kinematics and baked animation, the object to which the IK script is attached
-will have Unity's built-in \textit{Animator} component attached as well. If the
-custom IK script updates joint transforms in the \textit{Update} method,
-then their attributes may be overwritten by the \textit{Animator} component. 
+It is also important to note that the modification of the transforms is done in
+Unity's \textit{LateUpdate} function. When using a mix of inverse kinematics and
+baked animation, the object to which the IK script is attached will have Unity's
+built-in \textit{Animator} component attached as well. If the custom IK script
+updates joint transforms in the \textit{Update} method, then their attributes
+may be overwritten by the \textit{Animator} component. 
+
 
 The forward pass of the algorithm iterates through the chain, starting from the
 end effector and ending at the root. At the start, the end effector's position
@@ -68,6 +115,22 @@ spans between the end effector and the following joint. This neighbor's position
 is then interpolated along the vector so that the original distance between the
 two nodes is kept the same. The same operation is performed for each pair of
 neighboring nodes throughout the pass. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={FABRIK forward reaching pass},captionpos=b, label=forwards, language={[Sharp]c}]
+void ForwardReachingPass()
+{
+    tempPositions[chainLen] = target.position;
+    for (var i = chainLen - 1; i >= 0; i--)
+    {
+        var dist = (tempPositions[i + 1] - tempPositions[i]).magnitude;
+        var lambda = jointDistances[i] / dist;
+        tempPositions[i] =
+            (1 - lambda) * tempPositions[i + 1]
+            + lambda * tempPositions[i];
+    }
+}
+\end{lstlisting}
 
 When the forward pass is complete, the root node is displaced from its original
 position. This is undesired, as the root's node position should not be affected
@@ -83,6 +146,32 @@ algorithm, and as such it does not lead to an exact result. Instead, it aims to
 approximate the correct solution and solves the problem in a less complex and
 more optimized way. Again, the square distances are used to avoid the
 calculation of square roots. 
+
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Main iteration loop of FABRIK},captionpos=b, label=full_loop, language={[Sharp]c}]
+void LateUpdate()
+{
+    ...
+    else
+    {
+        var distEffectorToTargetSqr = (
+            tempPositions[chainLen] - target.position
+        ).sqrMagnitude;
+        while (distEffectorToTargetSqr > tolerance * tolerance)
+        {
+            ForwardReachingPass();
+            BackwardReachingPass();
+
+            distEffectorToTargetSqr = (
+                tempPositions[chainLen] - target.position
+            ).sqrMagnitude;
+        }
+        ...
+    }
+    ...
+}
+\end{lstlisting}
 
 While the basic FABRIK algorithm allows a kinematic chain adjust so that the end
 effector reaches a defined target, the lack of control over this process can
@@ -113,6 +202,47 @@ joint keeps its relation to its preceding and succeeding joints (the angle
 between vectors pointing from the joint to both surrounding joints is the same),
 but it is rotated in order to be positioned as close to the pole target as
 possible.
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Pole target constraint},captionpos=b, label=poles, language={[Sharp]c}]
+void LateUpdate()
+{
+    ...
+        while (distEffectorToTargetSqr > tolerance * tolerance)
+        {
+            ...
+        }
+        if (pole != null)
+            BendToPole();
+    }
+    ...
+}
+
+void BendToPole()
+{
+    for (int i = 1; i < chainLen; ++i)
+    {
+        var plane = new Plane(
+            tempPositions[i + 1] - tempPositions[i - 1],
+            tempPositions[i - 1]
+        );
+        var projectedPole = plane.ClosestPointOnPlane((pole.position));
+        var projectedBone = plane.ClosestPointOnPlane(
+            tempPositions[i]
+        );
+        var angle = Vector3.SignedAngle(
+            projectedBone - tempPositions[i - 1],
+            projectedPole - tempPositions[i - 1],
+            plane.normal
+        );
+        tempPositions[i] =
+            Quaternion.AngleAxis(angle, plane.normal)
+                * (tempPositions[i] - tempPositions[i - 1])
+            + tempPositions[i - 1];
+    }
+}
+\end{lstlisting}
+
 
 \begin{figure}[!h]
     \centering
@@ -187,6 +317,7 @@ raycast hit points each frame, though their scripts must have knowledge of the
 hit positions at any given time. Given this, a separate set of objects are set
 to track the raycast hit points each frame.
 
+
 \subsubsection{Target Logic}
 In order for the spider's movement to seem realistic, the targets controlling
 each leg must adhere to a set of rules pertaining to their movement. As
@@ -233,6 +364,21 @@ only caveat is that in the first half of the movement, the destination vector's
 height component is increased with an offset to achieve an arc-like movement.
 This produces the effect of lifting the spider's leg.
 
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Movement logic for the legs' IK targets},captionpos=b,
+label=target_move, language={[Sharp]c}]
+    float distRemaining = Vector3.Distance(transform.position, _moveTo);
+    float heightOffset =
+        distRemaining > _totalDist / 2.0f ? heightRise : 0.0f;
+    transform.position = Vector3.MoveTowards(
+        transform.position,
+        new Vector3(_moveTo.x, _moveTo.y + heightOffset, _moveTo.z),
+        Time.deltaTime / 0.1f
+    );
+    if (Vector3.Distance(transform.position, _moveTo) < 0.001f)
+        Grounded = true;
+\end{lstlisting}
+
 \subsubsection{General Movement}
 The main movement script for the IK spider implementation brings the whole
 system together. It has three main objectives:
@@ -261,6 +407,20 @@ between the newfound up vector and the spider's right vector. This new vector is
 what will be used to determine the direction of movement when the spider
 receives input from the user.
 
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Calculating the spider's rotation},captionpos=b, label=rotation, language={[Sharp]c}]
+Quaternion calculateRotation()
+{
+    Vector3 v1 = frLeg.position - blLeg.position;
+    Vector3 v2 = flLeg.position - brLeg.position;
+    
+    _up = Vector3.Cross(v2, v1);
+    _forwards = Vector3.Cross(transform.right, _up);
+    return Quaternion.LookRotation( _forwards, _up) ;
+}
+\end{lstlisting}
+
 The second objective - reacting according to input - is quite simple once the
 local directional axes are determined. When the script detects a non-zero value
 on either the \textit{Horizontal} or \textit{Vertical} axis, it reacts
@@ -273,6 +433,38 @@ movement. This is done because the raycasts must be slightly ahead of the
 default leg positions so that the legs end up moving in a natural manner.
 The \textit{Horizontal} axis is responsible for rotating the spider about its
 local up axis which allows the spider to turn around. 
+
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+% caption={Adjusting the raycast positions so that they are always ahead of the
+% spider in the direction in which it is moving. The  variable is the
+% input from the  axis.},captionpos=b, label=ray_offset, language={[Sharp]c}]
+%     if (Mathf.Abs(yVal) > 0.9f)
+%         rays.position = transform.position + _forwards.normalized * yVal * 0.3f + _up.normalized * 1.095f;
+% \end{lstlisting}
+
+The second objective - reacting according to input - is quite simple once the
+local directional axes are determined. When the script detects a non-zero value
+on either the \textit{Horizontal} or \textit{Vertical} axis, it reacts
+accordingly by moving the spider along with all the raycast objects. The
+\textit{Vertical} axis corresponds to the forward and backward movement of the
+spider. The script reacts by simply moving the spider's main body along the
+local forward axis mentioned previously. Additionally, the raycasting objects
+are offset either forwards or backward depending on the direction of the
+movement. This is done because the raycasts must be slightly ahead of the
+default leg positions so that the legs end up moving in a natural manner.
+The \textit{Horizontal} axis is responsible for rotating the spider about its
+local up axis which allows the spider to turn around. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={The raycasts which scan the terrain for leg placement positions are
+offset in the direction in which the spider is walking. The \textit{yVal}
+variable is the value of the \textit{Vertical} axis input},captionpos=b,
+label=ray_offset, language={[Sharp]c}]
+    if (Mathf.Abs(yVal) > 0.9f)
+        rays.position = transform.position
+            + _forwards.normalized * yVal * 0.3f
+            + _up.normalized * 1.095f;
+\end{lstlisting}
 
 Finally, the spider's height off of the surface must be regulated each frame.
 The lack of a gravitational force acting on the body to keep it flush with the

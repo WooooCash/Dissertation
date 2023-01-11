@@ -3,45 +3,44 @@
 Animation is the technique of displaying different positions of a character or
 object in rapid succession to create the illusion of movement. It is used in
 various forms of entertainment, such as movies and video games. In the latter,
-unlike in the former, the animation sequences are performed in real time and
-therefore impose additional constraints. Without the freedom to process a single
-frame for minutes or hours during the rendering of the scene, the animator must
-compromise on the quality and realism of the sequence in order to optimize for
-gameplay. One such optimization is the use of skeletal animation in which
-animation sequences are performed by manipulating a tree-like structure of
-interconnected bones, represented by transforms, to create the desired motion of
-the character. Furthermore, the interactive nature of video games makes it
-impossible for the artist to create predefined animation sequences for every
-possible situation that may occur in the game. For example, an animation of
-a hand pressing a button is only valid if the character to which the hand
+the animation sequences are performed in real time and therefore impose
+additional constraints. Without the freedom to process a single frame for
+minutes or hours during the rendering of the scene, the animator must compromise
+on the quality and realism of the sequence in order to optimize for gameplay.
+One such optimization is the use of skeletal animation in which animation
+sequences are performed by manipulating a tree-like structure of interconnected
+bones, represented by transforms, to create the desired motion of the character.
+Furthermore, the interactive nature of video games makes it impossible for the
+artist to create predefined animation, so called bake animations, sequences for
+every possible situation that may occur in the game. For example, an animation
+of a hand pressing a button is only valid if the character to which the hand
 belongs is placed exactly in a predefined position. If the button changes its
 size or position, the baked animation must be altered, or it simply loses its
-realism. As a result, predefined animation sequences are often generic and
-do not allow the character or object to interact naturally with their
-surroundings. Game developers have come up with many methods to improve the
-realism of animation in games such as playing cutscenes for critical
-interactions between a character and the world. However, this paper will focus
-on the use of procedural animation and, more specifically, the application of
-inverse kinematics to skeletal animations in video games.
+realism. As a result, predefined animation sequences are often generic and do
+not allow the character or object to interact naturally with their surroundings.
+Game developers have come up with many methods to improve the realism of
+animation in games such as playing cutscenes for critical interactions between
+a character and the world. However, this paper will focus on the use of
+procedural animation and, more specifically, the application of inverse
+kinematics to skeletal animations in video games.
 
 Inverse kinematics (IK) is a technique used in fields such as robotics and computer
 graphics to determine the joint angles of a kinematic chain that will result in
 a particular part of the chain, usually an end effector, reaching a specified
-position in 3D space. In computer graphics specifically, the technique is often
-used to animate the movement of characters and objects such that they interact
-with their surroundings in a more realistic manner. Inverse kinematics is even
-used in modeling and animation software such as Blender \cite{blender_ik2} to
-speed up the process of limb manipulation when creating a static animation.
+position in 3D space. In computer graphics, the technique is often used to
+animate the movement of characters and objects such that they interact with
+their surroundings in a more realistic manner. Inverse kinematics is even used
+in modeling and animation software such as Blender \cite{blender_ik2} to speed
+up the process of limb manipulation when creating a static animation.
 
-There are multiple approaches and algorithms that exist within the inverse
-kinematics domain, such as analytical methods, gradient descent, and
-optimization techniques. The choice of approach varies depending on the
-complexity of the use case, the desired realism of the animation, and system
-limitations.
+There are multiple approaches that exist within the inverse kinematics domain,
+such as analytical methods and optimization techniques. The choice of approach
+varies depending on the complexity of the use case, the desired realism of the
+animation, and system limitations.
 
 \section{Problem Formulation}
 
-The aim of this paper is to gain a better understanding of the basic algorithms
+The aim of this work is to gain a better understanding of the basic algorithms
 used in inverse kinematics and to discover the built-in functionalities that the
 Unity engine offers for such implementation. The project implementation will
 apply these concepts to create pairs of animations which consist of baked and
@@ -50,11 +49,11 @@ introducing additional constraints which will be required to keep the
 consistency and realism of the animations. The variations will then be compared
 through the lens of realism and performance.
 
-The author will begin by discussing the theory of the different approaches and
-algorithms used to solve the inverse kinematics problem, and the resulting
-choice of the algorithm to be used in the project implementation. The following
-sections will explain in depth the implementation of two use cases which
-demonstrate the purpose of inverse kinematics as a skeletal animation technique.
-Experiments will then be conducted to compare the inverse kinematics animations
-with their baked counterparts based on realism and performance. Finally,
-a summary and conclusion of important points will be presented.
+The author will begin by discussing the theory of the different methods used to
+solve the inverse kinematics problem, and the resulting choice of the algorithm
+to be used in the project implementation. The following sections will explain in
+depth the implementation of two use cases which demonstrate the purpose of
+inverse kinematics as a skeletal animation technique. Experiments will then be
+conducted to compare the inverse kinematics animations with their baked
+counterparts based on realism and performance. Finally, conclusion will be
+presented.

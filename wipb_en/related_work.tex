@@ -6,14 +6,14 @@ rehabilitation medicine due to its biomechanical modelling ability. Over time,
 many approaches have surfaced in order to solve the IK problem. There are
 multiple families of solutions \cite{Aristidou2011} which suit different use
 cases. Among others, trigonometric solutions can be used to solve certain IK
-problems analytically, however, these solutions are often limited to solving two
+problems analytically \cite{raheem_trig}, however, these solutions are often limited to solving two
 bone IK scenarios. More recently neural networks have also been used as a tool
 to solve IK problems \cite{nn_IK}. This paper will go over the iterative and
 heuristic approaches which provide less complex solutions when increasing the
 kinematic chain length and degrees of freedom.
 
 \section{Kinematics}
-Kinematics is a branch of physics and a subdivision of classical mechanics
+Kinematics is a branch of classical mechanics
 concerned with the geometrically possible motion of a body or system of bodies
 without consideration of the forces involved \cite{kinematics_britannica}.
 A kinematic chain is a tree like hierarchical structure of joint transforms
@@ -41,18 +41,19 @@ long as the set of joint transformations used as an input are known. To solve
 the FK problem, the transformations are applied to the kinematic chain, and the
 transform of the end effector is taken as an output. On the contrary, when
 dealing with IK, the given problem may have no solutions, one solution, or many
-solutions. 
+solutions. \\
 
-\subsubsection{No Solutions}
+\noindent\textit{No Solutions}
+
 An IK problem with no solutions can occur for several reasons. Most notably, and
 IK solution is impossible when the target is unreachable through the limitations
 of chain length. When the distance between the chain root and the target is
-larger than the sum of distances between each adjacent chain link (Figure
+larger than the sum of distances between each adjacent chain link (Fig.
 \ref{fig:unreachable_dist1}), it is impossible to achieve a solution, as the
 root of the chain is static and cannot be moved in order to allow the end
 effector to reach its target. Similarly, and unreachable case exists if the
-first bone segment is longer than the sum of the remaining bone segments (Figure
-ref).
+first bone segment is longer than the sum of the remaining bone segments (Fig.
+\ref{fig:unreachable_dist2}).
 
 \begin{figure}[!h]
     \centering
@@ -76,18 +77,18 @@ ref).
 } \label{fig:unreachable_dist2}
 \end{figure}
 
-Another reason for the lack of solutions to an IK problem can be an
-over-constraining of the problem. Constraints in an IK problem are used to
-dictate the range of motion of each joint. Constraints might limit the joint's degrees of
-freedom by reducing the dimensions in which it can perform its rotational and
-translational transformations. Such constraints are often modelled after joints
-which are present in the human body, such as hinge joints, ball joints, or pivot
-joints. A constraint can also limit the extent of a joint's ability to bend
-which is defined by the allowed angle of the joint's rotation in relation to the
-rotation of its parent node. If too many of such constraints are added to
-a kinematic chain, it may have blind spots for which it is unable to find
-a configuration of transformations which can bend the chain to reach the target
-(Figure\ref{fig:unreachable_angles}).
+Another reason for the lack of solutions to an IK problem can be its
+over-constraining. Constraints are used to dictate the range of motion of
+each joint. For example, they might limit the joint's degrees of freedom by
+reducing the dimensions in which it can perform its rotational and translational
+transformations. They are often modelled after joints which are present in the
+human body, such as hinge joints, ball joints, or pivot joints. A constraint can
+also limit the extent of a joint's ability to bend which is defined by the
+allowed angle of the joint's rotation in relation to the rotation of its parent
+node. If too many of such constraints are added to a kinematic chain, it may
+have blind spots for which it is unable to find a configuration of
+transformations which can bend the chain to reach the target (Fig.
+\ref{fig:unreachable_angles}).
 
 \begin{figure}
     \centering
@@ -103,19 +104,20 @@ If a kinematic chain has more than one joint which is classified as an end
 effector with its own separate target, a problem with no solutions can be
 defined in a way that prevents both end effectors from reaching their target.
 If at least one end effector is unable to reach its target then the problem can
-be said to be unsolvable.
+be said to be unsolvable. \\
 
-\subsubsection{One or many solutions}
+\noindent\textit{One or many solutions}
+
 When an IK problem is not limited by the cases mentioned above, it can have one,
 or many solutions depending on the case and constraints. More often than not the
-problem will have multiple available solutions, and if the kinematic chain is
+problem will have multiple solutions, and if the kinematic chain is
 unconstrained, the solution set for and IK problem grows very large.
 
-While the introduction of constraints can increase the cases for which an IK
-problem has only one solution, the simplest case to consider for an
-unconstrained kinematic chain is one where the chain must stretch to its full
-extent in order to reach the target. The sum of the chain's segment lengths
-\(d_i\) is equal to the distance from the root to the target \(dt\).
+While the introduction of constraints can decrease the number of solutions, the
+simplest case to consider for an unconstrained kinematic chain is one where the
+chain must stretch to its full extent in order to reach the target. The sum of
+the chain's segment lengths \(d_i\) is equal to the distance from the root to
+the target \(dt\):
 \begin{equation}
     \sum_{i=1}^{n}d_i = dt
 \end{equation}
@@ -126,7 +128,6 @@ scalars \(\theta_1, \dots, \theta_n\) are defined for each of the chain's \(n\)
 joints transforms. A set of \(k\) joints \(s_1, \dots, s_k\) is a subset of
 the kinematic chain called the end effectors, and these end effector's positions
 are a function of the chain's configuration.
-
 \begin{equation}
     s_i = f_i(\theta)
 \end{equation}
@@ -135,14 +136,13 @@ The above equation presents the FK problem where the position of an end effector
 calculated based on the given configuration of the chain. To define the IK
 problem, a configuration of scalars must be found based on the given final
 positions of the end effectors.
-
 \begin{equation}
     \theta = f^{-1}(s)
 \end{equation}
 
 The problem lies in inverting \(f\), as it is non-linear. Taking this into
 account, along with the fact that an IK problem may have no solutions, one
-solution, or many solutions, an approximation approach must be taken to solve
+solution, or many solutions, an approximation approach can be taken to solve
 the problem efficiently. This can be achieved with iterative and heuristic
 algorithms.
 
@@ -164,7 +164,6 @@ where \(n\) and \(k\) are the previously defined number of joints and number of
 end effectors in the chain respectively. Given the position \(\mbox{p}_j\) of
 the \(j\)th joint and its current rotational axis \(\mbox{v}_j\) each entry of
 the Jacobian matrix can be defined as
-
 \begin{equation}
     \frac{\partial s_i}{\partial \theta_j} = \mbox{v}_j \times (s_i - \mbox{p}_j)
 \end{equation}
@@ -174,7 +173,6 @@ effector positions \(\vec{s}\) and a column vector of target positions
 \(\vec{t}\), the Jacobian can be computed as \(J = J(\theta)\). With prime
 notation denoting a first derivative with respect to time, the forward dynamics
 equation can be presented as
-
 \begin{equation}
     \pvec{s}^\prime = J(\theta)\theta^\prime
 \end{equation}
@@ -183,7 +181,6 @@ A change to the kinematic chain's configuration \(\Delta \theta\) is then needed
 which when applied, updates the end effectors to minimize their distance to the
 targets. The resulting change in the end effector positions \(\Delta \vec{s}\)
 due to the modification of the configuration is then estimated as
-
 \begin{equation}
     \Delta \vec{s} \approx J \Delta \theta
 \end{equation}
@@ -193,13 +190,11 @@ and the changes made to the joint scalars should be done in a way where
 for each of the chain's end effectors, defined as \(e_i = \mbox{t}_i - s_i\).
 Due to this relation between \(\vec{s}\) and \(\vec{e}\), the FK equation can
 be rewritten:
-
 \begin{equation}
     \vec{e} = \Delta J(\theta)
 \end{equation}
 
 and thus the IK problem for the Jacobian method is as follows:
-
 \begin{equation}
     \Delta \theta = J^{-1} \vec{e}
 \end{equation}
@@ -208,35 +203,33 @@ A solution to this Jacobian method of the IK problem is not always simple due to
 the possibility of a non-invertible matrix, or singularities which prevent
 changes of the chain's configurations which achieve the sought-after result in
 end effector positions. Certain methods have been brought forward to surmount
-these challenges.
+these challenges. \\
 
-\subsubsection{Pseudo-Inverse}
+\noindent\textit{Pseudo-Inverse}
+
 To address the problem of non-invertible Jacobian matrices, the Jacobian
 Pseudo-inverse \(J^\dagger\), also called the \textit{Moore-Penrose} inverse can be used as
 a substitute:
-
 \begin{equation}
     \Delta \theta = J^{\dagger}\vec{e}
 \end{equation}
-
 The benefit of using the pseudo-inverse method is that the matrix \(J^\dagger\)
 is defined for every case of the Jacobian matrix, whether it is invertible or
 not. The pseudo-inverse matrix is defined as
-
 \begin{equation}
     J^\dagger = J^T (J J^T)^{-1}
 \end{equation}
 
 Where the pseudo-inverse falls short is when approaching singularities. In these
-cases, the resulting values become unstable leading to oscillations.
+cases, the resulting values become unstable leading to oscillations. \\
 
-\subsubsection{Jacobian Transpose}
+\noindent\textit{Jacobian Transpose}
+
 Another way to overcome the case where \(J\) is a non-invertible matrix is to
 use the matrix transpose instead. An so, the inverse is substituted with the
 transpose, with a coefficient \(\alpha\):
-
 \begin{equation}
-    \Delta \theta = \alpha J^T \vec{e}
+    \Delta \theta = \alpha J^T \vec{e}.
 \end{equation}
 
 In order to minimize the distance of each \(\vec{e}\) between  the end effectors and
@@ -254,13 +247,14 @@ which models this calculation is as follows
         }
 \end{equation}
 
-where the angular brackets represent a dot product operation between the two
+\noindent where the angular brackets represent a dot product operation between the two
 values contained inside them. The value of the coefficient \(\alpha\) must be
 small enough to avoid oscillations, and due to this the process of converging
 end effectors on the targets is slow and requires many iterations to achieve
-a desired configuration.
+a desired configuration. \\
 
-\subsubsection{Other Jacobian methods}
+\noindent\textit{Other Jacobian methods}
+
 A multitude of approaches to the IK problem using Jacobian methods have been
 suggested, some of which are variations or combinations of the presented
 methods. Among others, the Single Value Decomposition method extends the
@@ -293,9 +287,10 @@ equations and heavy computations, and instead act as techniques to achieve an
 approximate solution iteratively in a much more simple way. These methods are
 very popular in the domain of computer graphics and animation, due to the
 problems not needing extremely accurate solutions but benefiting from a simple
-and fast approach in the real-time environment of video games.
+and fast approach in the real-time environment of video games. \\
 
-\subsubsection{Cyclic Coordinate Descent}
+\noindent\textit{Cyclic Coordinate Descent}
+
 The Cyclic Coordinate Descent (CCD) algorithm \cite{ccd} is one of the simplest and most
 used IK solutions in the computer games industry. It also finds
 applications in robotics as well as the already mentioned protein structure
@@ -310,7 +305,7 @@ effector, while the other passes through the current joint and the target. The
 angle between these two lines is the angle by which the current joint should
 be rotated in order to place the end effector on the line spanning between the
 current joint and the target, thus reducing the distance between the end
-effector and the target as much as possible (Figure \ref{fig:ccd}). The
+effector and the target as much as possible (Fig. \ref{fig:ccd}). The
 algorithm is repeated iteratively until the distance between the end effector
 and the target is smaller than some threshold.
 
@@ -333,9 +328,10 @@ a smaller impact. The unequal distribution of adjustments in the chain's
 configuration lead to chaotic animations. The algorithm also has a lesser
 affinity for solving IK problems with multiple end effectors, and to overcome
 this, a system with multiple end effectors must first be broken down into
-independent chains.
+independent chains. \\
 
-\subsubsection{Forward and Backward Reaching Inverse Kinematics algorithm}
+\noindent\textit{Forward and Backward Reaching Inverse Kinematics}
+
 The Forward and Backward Reaching Inverse Kinematics (FABRIK) algorithm
 \cite{Aristidou2011} is another heuristic approach to the IK problem which
 gained popularity in computer graphics and video games. 
@@ -344,7 +340,7 @@ Like the CCD algorithm, FABRIK iterates over the joints of a kinematic chain,
 adjusting them one at a time. However, this algorithm involves two passes per
 iteration where, as the name suggests, one pass is done starting from the end
 effector iterating towards the root, while the second pass is done in a reversed
-order (see Figure \ref{fig:fabrik}). The algorithm starts by checking if the
+order as shown in Fig. \ref{fig:fabrik}. The algorithm starts by checking if the
 target is in reach before proceeding to iterate over the kinematic chain. 
 
 \begin{figure}[!h]
@@ -357,19 +353,19 @@ target is in reach before proceeding to iterate over the kinematic chain.
     \label{fig:fabrik}
 \end{figure}
 
-For a set of \(n\) joint positions \(p_1, \dots, p_n\) where \(p_1\) is the root
-and \(p_n\) is the end effector, the forward pass begins by setting the position
-of the end effector to that of the target. The next joint \(p_{n-1}\) is
-then linearly interpolated on a line which passes through its current position
-and the position of the previously affected joint, in this case, the end
-effector. The interpolation is done to preserve the distance between the joints.
-Thus, the forward pass of the algorithm can be modeled by 
-
+For a set of \(n\) joint positions \(\mbox{p}_1, \dots, \mbox{p}_n\) where
+\(\mbox{p}_1\) is the root and \(\mbox{p}_n\) is the end effector, the forward pass
+begins by setting the position of the end effector to that of the target. The
+next joint \(\mbox{p}_{n-1}\) is then linearly interpolated on a line which
+passes through its current position and the position of the previously affected
+joint, in this case, the end effector. The interpolation is done to preserve the
+distance between the joints. Thus, the forward pass of the algorithm can be
+modeled by 
 \begin{equation}
-    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i+1} + \lambda_i \mbox{p}_i
+    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i+1} + \lambda_i \mbox{p}_i,
 \end{equation}
 
-where \(\lambda_i\) is a coefficient which ensures that the linear interpolation
+\noindent where \(\lambda_i\) is a coefficient which ensures that the linear interpolation
 preserves the distance between joint positions \(\mbox{p}_i\) and
 \(\mbox{p}_{i+1}\). When the forward pass is finished, the root ends up being
 displaced from its original position, and in order to rectify this a backwards
@@ -377,9 +373,8 @@ pass is initiated in a reverse order which starts by setting the root back to
 its original position. The iteration proceeds very similarly to the forwards
 pass, this time interpolating each joint \(\mbox{p}_i\) between its current
 position and the new position of \(\mbox{p}_{i-1}\). The backwards pass is then
-
 \begin{equation}
-    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i-1} + \lambda_i \mbox{p}_i
+    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i-1} + \lambda_i \mbox{p}_i.
 \end{equation}
 
 The iterations are repeated until the distance between the end effector and the
