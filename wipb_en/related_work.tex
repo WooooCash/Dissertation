@@ -119,25 +119,28 @@ chain must stretch to its full extent in order to reach the target. The sum of
 the chain's segment lengths \(d_i\) is equal to the distance from the root to
 the target \(dt\):
 \begin{equation}
-    \sum_{i=1}^{n}d_i = dt
+    \sum_{i=1}^{n}d_i = dt.
 \end{equation}
 
 \section{Underlying principals}
 In order to describe the configuration of a given kinematic chain, a set of
-scalars \(\theta_1, \dots, \theta_n\) are defined for each of the chain's \(n\)
-joints transforms. A set of \(k\) joints \(s_1, \dots, s_k\) is a subset of
-the kinematic chain called the end effectors, and these end effector's positions
-are a function of the chain's configuration.
-\begin{equation}
-    s_i = f_i(\theta)
+scalars \(\theta_1, \dots, \theta_n\) called \textit{joint angles} are defined
+for each of the chain's \(n\) joints transforms. A set of \(k\) joint
+positions \(\mathbf{s}_1, \dots, \mathbf{s}_k\) is defined for the end
+effectors, where these positions are a function of the chain's configuration.
+With the joint angles in the form of a column vector \(\bm{\theta} = (\theta_1,
+\dots, \theta_n)^T\), and the end effectors as the vector \(\mathbf{s}
+= (\mathbf{s}_1, \dots, \mathbf{s}_k)^T\), their relation can be expressed as:
+\begin{equation} 
+    \mathbf{s} = f(\bm{\theta}).
 \end{equation}
 
-The above equation presents the FK problem where the position of an end effector is
-calculated based on the given configuration of the chain. To define the IK
-problem, a configuration of scalars must be found based on the given final
-positions of the end effectors.
+The above equation \cite{Aristidou:2018:IK_survey} presents the FK problem where
+the position of an end effector is calculated based on the given configuration
+of the chain. To define the IK problem, a configuration of scalars must be found
+based on the given final positions of the end effectors.
 \begin{equation}
-    \theta = f^{-1}(s)
+    \bm{\theta} = f^{-1}(\mathbf{s})
 \end{equation}
 
 The problem lies in inverting \(f\), as it is non-linear. Taking this into
@@ -147,57 +150,65 @@ the problem efficiently. This can be achieved with iterative and heuristic
 algorithms.
 
 \section{IK Algorithms}
-\subsection{Jacobian Inverse}
+The methods discussed in this chapter are numerical, which means that
+they take an iterative approach to achieve a solution. The numerical methods
+can be divided into the \textit{Jacobian}, \textit{Newton}, and
+\textit{Heuristic} categories. A comprehensive review of these methods is given
+by Aristidou and co-workers in \cite{Aristidou:2018:IK_survey}. For convenience,
+the overview of these methods will follow their work.
+
+\subsection{Jacobian methods}
 This approach to the IK problem \cite{BALESTRINO19842435, wolovich, Baillieul} offers
 a linear approximation through an iterative calculation which estimates a change
 to the given configuration of joint scalars necessary to reduce the distance
 between an end effector and its desired destination. This is done through the
-use of a matrix \(J\) called the Jacobian matrix which contains partial derivatives of
-the entire kinematic chain relative to the set of end effectors. \(J\) is
-a function of the chain configuration's joint scalars:
-\(\theta\):
+use of a matrix \(J\) called the Jacobian matrix which contains partial
+derivatives of the entire kinematic chain relative to the set of end effectors.
+\(J\) is a function of the chain configuration's joint angle scalars:
 \begin{equation}
-    J(\theta)_{ij} = \left(\frac{\partial s_i}{\partial \theta_j}\right)_{ij}
+    J(\bm{\theta})_{ij} = \left(\frac{\partial s_i}{\partial
+    \theta_j}\right)_{ij}
 \end{equation}
 
-where \(n\) and \(k\) are the previously defined number of joints and number of
-end effectors in the chain respectively. Given the position \(\mbox{p}_j\) of
-the \(j\)th joint and its current rotational axis \(\mbox{v}_j\) each entry of
-the Jacobian matrix can be defined as
+\noindent as provided by \cite{rbuss_ik_survey}, where \(n\) and \(k\) are the
+previously defined number of joints and number of end effectors in the chain
+respectively. Given the position \(\mathbf{p}_j\) of the \(j\)th joint and its
+current rotational axis \(\mathbf{v}_j\), each entry of the Jacobian matrix can
+be defined by the cross product
 \begin{equation}
-    \frac{\partial s_i}{\partial \theta_j} = \mbox{v}_j \times (s_i - \mbox{p}_j)
+    \frac{\partial s_i}{\partial \theta_j} = \mathbf{v}_j \times (\mathbf{s}_i
+    - \mathbf{p}_j).
 \end{equation}
 
-Using the configuration of joint values \(\theta\), a column vector of end
-effector positions \(\vec{s}\) and a column vector of target positions
-\(\vec{t}\), the Jacobian can be computed as \(J = J(\theta)\). With prime
-notation denoting a first derivative with respect to time, the forward dynamics
-equation can be presented as
+With prime notation denoting a first derivative with respect to time, the
+forward dynamics equation can be written as
 \begin{equation}
-    \pvec{s}^\prime = J(\theta)\theta^\prime
+    \mathbf{s}^\prime = J\bm{\theta}^\prime.
 \end{equation}
 
-A change to the kinematic chain's configuration \(\Delta \theta\) is then needed
-which when applied, updates the end effectors to minimize their distance to the
-targets. The resulting change in the end effector positions \(\Delta \vec{s}\)
-due to the modification of the configuration is then estimated as
+A change to the kinematic chain's configuration \(\Delta \bm{\theta}\) is then
+needed, which when applied, updates the end effectors to minimize their distance
+to the targets. The resulting change in the end effector positions \(\Delta
+\mathbf{s}\) due to the modification of the configuration is then approximated
+as
 \begin{equation}
-    \Delta \vec{s} \approx J \Delta \theta
+    \Delta \mathbf{s} \approx J \Delta \bm{\theta},
+    \label{eqn:fk_approx}
 \end{equation}
 
-and the changes made to the joint scalars should be done in a way where
-\(\vec{s}\) is as close to \(\vec{e}\) which is a vector of desired changes in position
-for each of the chain's end effectors, defined as \(e_i = \mbox{t}_i - s_i\).
-Due to this relation between \(\vec{s}\) and \(\vec{e}\), the FK equation can
-be rewritten:
-\begin{equation}
-    \vec{e} = \Delta J(\theta)
+\noindent and the changes made to the joint scalars should be done in a way
+where the change in end effector positions \(\Delta\mathbf{s}\) minimizes the
+error \(\mathbf{e}\), which is a vector of changes in position required for each
+of the chain's end effectors to reach their desired positions. Supposing that
+\(\mathbf{t}_i\) is the target position for the end effector \(i\), the errors
+can be defined as \(\mathbf{e}_i = \mathbf{t}_i - \mathbf{s}_i\). By applying a left
+matrix multiplication by \(J^{-1}\) to both sides of (\ref{eqn:fk_approx}), the
+IK problem for the Jacobian method is rewritten as follows: 
+\begin{equation} 
+    \Delta \theta \approx J^{-1}\mathbf{e},
 \end{equation}
-
-and thus the IK problem for the Jacobian method is as follows:
-\begin{equation}
-    \Delta \theta = J^{-1} \vec{e}
-\end{equation}
+\noindent where \(\Delta\mathbf{s}\) is substituted by \(\mathbf{e}\) due to
+them being approximately equal to each other.
 
 A solution to this Jacobian method of the IK problem is not always simple due to
 the possibility of a non-invertible matrix, or singularities which prevent
@@ -208,10 +219,11 @@ these challenges. \\
 \noindent\textit{Pseudo-Inverse}
 
 To address the problem of non-invertible Jacobian matrices, the Jacobian
-Pseudo-inverse \(J^\dagger\), also called the \textit{Moore-Penrose} inverse can be used as
+Pseudo-inverse \(J^\dagger\), also called the \textit{Moore-Penrose inverse}
+\cite{golub_matrix3} can be used as
 a substitute:
 \begin{equation}
-    \Delta \theta = J^{\dagger}\vec{e}
+    \Delta \theta = J^{\dagger}\mathbf{e}
 \end{equation}
 The benefit of using the pseudo-inverse method is that the matrix \(J^\dagger\)
 is defined for every case of the Jacobian matrix, whether it is invertible or
@@ -229,21 +241,21 @@ Another way to overcome the case where \(J\) is a non-invertible matrix is to
 use the matrix transpose instead. An so, the inverse is substituted with the
 transpose, with a coefficient \(\alpha\):
 \begin{equation}
-    \Delta \theta = \alpha J^T \vec{e}.
+    \Delta \theta = \alpha J^T \mathbf{e}.
 \end{equation}
 
-In order to minimize the distance of each \(\vec{e}\) between  the end effectors and
+In order to minimize the distance of each \(\mathbf{e}\) between  the end effectors and
 their targets, the coefficient \(\alpha\) is calculated with the goal of
-achieving the smallest value of \(\vec{e}\) after each iteration. The equation
+achieving the smallest value of \(\mathbf{e}\) after each iteration. The equation
 which models this calculation is as follows
 
 \begin{equation}
     \alpha = \frac
         {
-            \langle\vec{e}, J J^T \pvec{e}\rangle
+            \langle\mathbf{e}, J J^T \pvec{e}\rangle
         }
         {
-            \langle J J^T \vec{e},J J^T \pvec{e} \rangle
+            \langle J J^T \mathbf{e},J J^T \pvec{e} \rangle
         }
 \end{equation}
 
@@ -257,13 +269,17 @@ a desired configuration. \\
 
 A multitude of approaches to the IK problem using Jacobian methods have been
 suggested, some of which are variations or combinations of the presented
-methods. Among others, the Single Value Decomposition method extends the
-pseudo-inverse method with orthogonal matrices, the Damped Least Squares method
-helps avoid problems with singularities present in the pseudo-inverse method,
-the Pseudo-inverse Damped Lease Squares combines the two previously mentioned
-methods to improve their instability when nearing singularities, and the
-Selectively Damped Lease Squares method builds on the previous method to
-converge in fewer iterations and optimize for multiple end effectors.
+methods. Among others, the Singular Value Decomposition method \cite{num_recipes}
+extends the pseudo-inverse method with orthogonal matrices, the Damped
+Least Squares method \cite{Wampler1986ManipulatorIK} helps avoid problems with
+singularities present in the pseudo-inverse method, the Pseudo-inverse Damped
+Least Squares method \cite{maciejewski, num_recipes} combines the two previously
+mentioned methods to improve their instability when nearing singularities, and
+the Selectively Damped Lease Squares method \cite{buss_kim_sdls} builds on the
+previous method to converge in fewer iterations and optimize for multiple end
+effectors. A deep-learning approach to the Damped Lease Squares method was also
+proposed \cite{wang_dldls} with the aim of predicting the most optimal value for
+certain coefficients.
 
 \subsection{Newton Methods}
 The Newton methods are based on a second order Taylor series expansion of the
@@ -353,28 +369,28 @@ target is in reach before proceeding to iterate over the kinematic chain.
     \label{fig:fabrik}
 \end{figure}
 
-For a set of \(n\) joint positions \(\mbox{p}_1, \dots, \mbox{p}_n\) where
-\(\mbox{p}_1\) is the root and \(\mbox{p}_n\) is the end effector, the forward pass
+For a set of \(n\) joint positions \(\mathbf{p}_1, \dots, \mathbf{p}_n\) where
+\(\mathbf{p}_1\) is the root and \(\mathbf{p}_n\) is the end effector, the forward pass
 begins by setting the position of the end effector to that of the target. The
-next joint \(\mbox{p}_{n-1}\) is then linearly interpolated on a line which
+next joint \(\mathbf{p}_{n-1}\) is then linearly interpolated on a line which
 passes through its current position and the position of the previously affected
 joint, in this case, the end effector. The interpolation is done to preserve the
 distance between the joints. Thus, the forward pass of the algorithm can be
 modeled by 
 \begin{equation}
-    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i+1} + \lambda_i \mbox{p}_i,
+    \mathbf{p}_i = (1 - \lambda_i)\mathbf{p}_{i+1} + \lambda_i \mathbf{p}_i,
 \end{equation}
 
 \noindent where \(\lambda_i\) is a coefficient which ensures that the linear interpolation
-preserves the distance between joint positions \(\mbox{p}_i\) and
-\(\mbox{p}_{i+1}\). When the forward pass is finished, the root ends up being
+preserves the distance between joint positions \(\mathbf{p}_i\) and
+\(\mathbf{p}_{i+1}\). When the forward pass is finished, the root ends up being
 displaced from its original position, and in order to rectify this a backwards
 pass is initiated in a reverse order which starts by setting the root back to
 its original position. The iteration proceeds very similarly to the forwards
-pass, this time interpolating each joint \(\mbox{p}_i\) between its current
-position and the new position of \(\mbox{p}_{i-1}\). The backwards pass is then
+pass, this time interpolating each joint \(\mathbf{p}_i\) between its current
+position and the new position of \(\mathbf{p}_{i-1}\). The backwards pass is then
 \begin{equation}
-    \mbox{p}_i = (1 - \lambda_i)\mbox{p}_{i-1} + \lambda_i \mbox{p}_i.
+    \mathbf{p}_i = (1 - \lambda_i)\mathbf{p}_{i-1} + \lambda_i \mathbf{p}_i.
 \end{equation}
 
 The iterations are repeated until the distance between the end effector and the

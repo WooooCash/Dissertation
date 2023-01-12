@@ -1,5 +1,5 @@
 \chapter{Inverse Kinematics in the Unity Engine} 
-The demo application written for the purpose of this paper includes two separate
+The demo application written for the purpose of this work includes two separate
 use cases of skeletal animation using inverse kinematics in the Unity engine.
 The first example is that of a four legged spider which uses IK as a means to
 more naturally adjust its limbs to the terrain it moves around upon. The second
@@ -13,18 +13,17 @@ implementation of the FABRIK algorithm.
 
 
 \section{FABRIK implementation}
-This implementation of the FABRIK algorithm is based on the paper written by the
-author of the Unity engine FABRIK implementation \cite{Aristidou2011}. For the
+This implementation of the FABRIK algorithm is based on \cite{Aristidou2011}. For the
 purposes of this application, the basic algorithm is implemented without many
-additional constraints and limitation on the chain's degrees of freedom. The one
+additional constraints on the chain's degrees of freedom. The one
 constraint added on to this implementation is that of pole targets which will be
 further explained when discussing the code behind them.
 
 The script which implements the algorithm in this project takes in a few
-parameters required to set up the mechanism which are shown in Figure
+parameters required to set up the mechanism which are shown in Fig.
 \ref{fig:params}. First and foremost, the root and leaf nodes must be provided
 in order to define the kinematic chain which is to be manipulated. The next
-object which the script must have knowledge of is the target transform which the
+object which the script must know is the target transform which the
 end effector will attempt to move to. The script must also have a tolerance
 parameter which dictates how close the end effector must be to the target for
 the position to be considered as solved. All the aforementioned parameters are
@@ -140,12 +139,11 @@ at the beginning of the frame. The next node is then interpolated between its
 current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
-These two steps are repeated together until the end effector is within
+These two steps are repeated cyclically until the end effector is within
 a threshold distance of the target. The FABRIK algorithm is a heuristic
 algorithm, and as such it does not lead to an exact result. Instead, it aims to
-approximate the correct solution and solves the problem in a less complex and
-more optimized way. Again, the square distances are used to avoid the
-calculation of square roots. 
+approximate the correct solution and solves the problem in a less complex way.
+Again, the square distances are used to avoid the calculation of square roots. 
 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
@@ -188,20 +186,20 @@ of the iterated joints \(p[i]\), calculations must take into account the
 positions of their preceding joint \(p[i-1]\) and succeeding joint \(p[i+1]\).
 A plane is constructed at the position \(p[i-1]\), with a normal vector which
 points from \(p[i-1]\) to \(p[i+1]\). Both the pole and the currently
-manipulated joint are then projected onto the plane (Figure
+manipulated joint are then projected onto the plane (Fig.
 \ref{fig:pole_start}) using Unity plane's \textit{ClosestPointOnPlane} method.
 The \textit{Vector3.SignedAngle} method then allows an angle to be found between
-both projections by passing the plane's normal vector as the angle axis (Figure
+both projections by passing the plane's normal vector as the angle axis (Fig.
 \ref{fig:pole_projection}). Finally, the current joint's desired position is
 calculated by rotating the vector pointing from \(p[i-1]\) to \(p[i]\) around
 the plane's normal by the obtained angle, using the
 \textit{Quaternion.AngleAxis} method. This can be imagined as lining up the
 joint so that its planar projection exists on the line between the origin of the
-plane and the pole target's planar projection (Figure \ref{fig:pole_end}). The
-joint keeps its relation to its preceding and succeeding joints (the angle
-between vectors pointing from the joint to both surrounding joints is the same),
-but it is rotated in order to be positioned as close to the pole target as
-possible.
+plane and the pole target's planar projection as demonstrated in Fig.
+\ref{fig:pole_end}. The joint keeps its relation to its preceding and succeeding
+joints (the angle between vectors pointing from the joint to both surrounding
+joints is the same), but it is rotated in order to be positioned as close to the
+pole target as possible.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
 caption={Pole target constraint},captionpos=b, label=poles, language={[Sharp]c}]
@@ -250,29 +248,26 @@ void BendToPole()
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=0.6\linewidth]{grafika/pole_start.png}
-        \subcaption{The initial setup where a plane is constructed with the
-        vector from \textit{p[i+1]} to \textit{p[i-1]} as the normal. Both the
-        current joint \textit{p[i]} and the pole target are projected onto the
-        plane}
         \label{fig:pole_start}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=0.4\linewidth]{grafika/pole_projection.png}
-        \subcaption{A view of the plane and the angle between the
-            projections which dictates the new position of the joint
-            \textit{p[i]}}
         \label{fig:pole_projection}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=0.6\linewidth]{grafika/pole_end.png}
-        \subcaption{The final position of the joint as a result of the pole
-        target mechanism}
         \label{fig:pole_end}
     \end{subfigure}
     \caption{A diagram showing the concept behind the implemented pole target
-    mechanism}
+    mechanism. (a) shows the initial setup where a plane is constructed with the
+    vector from \textit{p[i+1]} to \textit{p[i-1]} as the normal. Both the
+    current joint \textit{p[i]} and the pole target are projected onto the
+    plane. (b) is a view of the plane, showing the angle between the
+    projections which dictates the new position of the joint \textit{p[i]'}. (c)
+    demonstrates the final position of the joint as a result of the pole target
+    mechanism.}
     \label{fig:pole_diagram}
 \end{figure}
 
@@ -332,7 +327,7 @@ target:
         distance between them is above a specified threshold.
 
     \item A target is only allowed to begin moving towards the raycast hit
-        point if both legs on the opposite diagonal are grounded (See Figure
+        point if both legs on the opposite diagonal are grounded (See Fig.
         \ref{fig:diagonals}).
 \end{itemize}
 
@@ -340,7 +335,7 @@ target:
 \begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.8\textwidth]{grafika/diagonals.png}
+    \includegraphics[width=0.4\textwidth]{grafika/diagonals2.png}
     \caption{The diagonals referencing the spiders legs which are used when
     checking if a target is allowed to begin moving, where A and D are on an
 opposite diagonal to B and C}
@@ -365,7 +360,7 @@ height component is increased with an offset to achieve an arc-like movement.
 This produces the effect of lifting the spider's leg.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Movement logic for the legs' IK targets},captionpos=b,
+caption={Execution logic for the legs' movement sequence},captionpos=b,
 label=target_move, language={[Sharp]c}]
     float distRemaining = Vector3.Distance(transform.position, _moveTo);
     float heightOffset =
@@ -531,21 +526,20 @@ target to know where to return to after it is done pressing a given button. To
 be able to set the origin to the appropriate position, a reference to the hand
 transform is taken in as the last parameter of the script.
 
-The main functionality of the script revolves around Unity's coroutines.
-Coroutines enable a method to pause its execution and then continue where it
-left off on the next frame \cite{unity_coroutines}. This allows the method to
-spread a task over multiple frames. It is useful when chaining together a series
-of events which must wait for a previous event to finish its task before
-beginning its own. The fundamental part of a coroutine is its \textit{yield}
-statement which is what pauses the methods execution. A yield may be used to
-wait for a certain amount of time, to wait for a certain boolean expression to
-evaluate as true, or it can initiate a nested coroutine and wait for it to end
-before continuing its own execution. The yield can also simply return a null
-value which pauses the execution of the method until the next frame, which can
-be useful to spread out a loop to execute each iteration in a separate frame. In
-this human animation sequence demo, nested coroutines are used to enhance
-readability and maintainability, allowing for easy reconfiguration of the main
-loop. 
+The script's functionality relies on Unity's coroutines \cite{unity_coroutines}.
+They enable a method to pause its execution and then continue where it left off
+on the next frame. This allows the method to spread a task over multiple frames.
+It is useful when chaining together a series of events which must wait for
+a previous event to finish its task before beginning its own. The fundamental
+part of a coroutine is its \textit{yield} statement which is what pauses the
+methods execution. A yield may be used to wait for a certain amount of time, to
+wait for a certain boolean expression to evaluate as true, or it can initiate
+a nested coroutine and wait for it to end before continuing its own execution.
+The yield can also simply return a null value which pauses the execution of the
+method until the next frame, which can be useful to spread out a loop to execute
+each iteration in a separate frame. In this human animation sequence demo,
+nested coroutines are used to enhance readability and maintainability, allowing
+for easy reconfiguration of the main loop. 
 
 The first coroutine which is created as a basic building block is the
 \textit{HandAnimation} coroutine which takes in an animation name as a string,
@@ -561,7 +555,7 @@ The second building block is the \textit{MoveToTarget} coroutine. This method
 takes in a destination vector and a duration. Its purpose is to move the IK
 target to a provided destination over a given amount of time. This is
 implemented by keeping track of the time elapsed since the beginning of the
-coroutine, and then linearly interpolating (lerping) the position of the target
+coroutine, and then linearly interpolating the position of the target
 in a while loop which checks to see if the time elapsed hasn't exceeded the
 desired duration of the movement. A \textit{yield return null} in the while loop
 ensures that each of its iterations are separated in a way where only one

@@ -8,12 +8,11 @@ built-in functionalities which make the mentioned tools an effective choice.
 MakeHuman is an open source tool for making 3D characters. It provides
 a convenient way of acquiring a human model which is customizable and can be
 exported in various formats in order to be used in other software programs. The
-key factors which make this tool suitable for use in the demo application is the
+key factors which make this tool suitable for use in the demo application are the
 options it provides regarding the complexity of the topology of the model's
-mesh, and the choice of skeleton rig alongside the fact that the exported model
-is already rigged and ready to be used in an animation software. One of the rig
-presets, which is shown in Fig. \ref{fig:mh_rig}, is specifically designed to be
-used for video games.
+mesh, and the choice of skeleton rig. The exported model is rigged and ready to
+be used in an animation software. One of the rig presets, which is shown in Fig.
+\ref{fig:mh_rig}, is specifically designed to be used for video games.
 
 \begin{figure}
     \centering
@@ -23,7 +22,7 @@ used for video games.
 \end{figure}
 
 \section{Blender}
-The tool of choice for modeling and animation used for the demo application is
+The tool for modeling and animation used for the demo application is
 Blender. It is a free and open source tool offering a suite of functionalities
 including the creation of 3D models, rigging, and animation. 
 
@@ -69,7 +68,7 @@ user's machine in order to import a model from project files, as Unity uses the
 programs themselves to unpack the file. 
 
 When importing an animated model into Unity, the import settings allow the user
-to break the animation into multiple parts based on start and end times (Figure
+to break the animation into multiple parts based on start and end times (Fig.
 \ref{fig:anim_chunk}). This is convenient, as it allows multiple animations made
 in Blender to be placed on a timeline one after the other as a single
 animation, which can then be broken up in Unity. It also allows the user to
@@ -85,13 +84,14 @@ animations for different use cases.
 \end{figure}
 
 \subsection{Animator Controller}
-An Animator controller allows the user to maintain a set of animation clips, and
-the associated transitions which control the flow between each clip in the form of
-a state machine (Figure \ref{fig:anim_state}). Animations must be added to an
-Animator controller in order to be used by a Unity \textit{GameObject}
-\cite{unity_animator}. States can also be controlled procedurally from scripts
-by accessing an Animator component which must be attached to the Unity
-\textit{GameObject} and must hold a reference to the given Animator controller.
+An \textit{Animator controller} allows the user to maintain a set of animation
+clips, and the associated transitions which control the flow between each clip
+in the form of a state machine (Fig. \ref{fig:anim_state}). Animations must be
+added to an \textit{Animator controller} in order to be used by a Unity
+\textit{GameObject} \cite{unity_animator}. States can also be controlled
+procedurally from scripts by accessing an \textit{Animator} component which must
+be attached to the Unity \textit{GameObject} and must hold a reference to the
+given \textit{Animator controller}.
  
 \begin{figure}
     \centering
@@ -100,7 +100,7 @@ by accessing an Animator component which must be attached to the Unity
     \label{fig:anim_state}
 \end{figure}
 
-The Animator controller also has built in IK functionality. This is only
+The \textit{Animator controller} also has built in IK functionality. This is only
 available for humanoid models which have a correctly configured avatar
 \cite{unity_ik}. A humanoid avatar is available for models which adhere to a set
 of defined general guidelines. In essence, a model which falls into the humanoid
@@ -114,7 +114,7 @@ functionality which allows the developer to procedurally control the models IK
 weights and positions using the \textit{SetIKPositionWeight,
 SetIKRotationWeight, SetIKPosition, SetIKRotation, SetLookAtPosition,
 bodyPosition, bodyRotation} functions \cite{unity_ik, unity_humanoid_avatars}.
-Because these methods aren't available to skeletal structures which do not fit
+Because these methods are not available to skeletal structures which do not fit
 the humanoid description, they are not applicable to the demo application
 created for this paper.
 
@@ -124,7 +124,7 @@ The Animation Rigging package is available in the Unity Package Manager, and it
 provides a much more general approach to the application of inverse kinematics
 to skeletal animations. After setting up a rig for a model with an Animator
 component, a mix of predefined constraints can be added to enhance the rig
-(Figure \ref{fig:ar_constraints}). The main constraint of interest for this
+(Fig. \ref{fig:ar_constraints}). The main constraint of interest for this
 paper is the \textit{Chain IK Constraint} which implements the FABRIK algorithm.
 This constraint was useful in creating a proof of concept for the spider before
 creating the FABRIK script. It also provided a good basis for the public

@@ -1,20 +1,21 @@
 \chapter{Experiments}
-The main purpose of this chapter of this paper is to compare animations
-generated using IK with baked animations. The comparison
-is broken up into two categories - visual and performance. 
+The main purpose of this chapter is to compare animations generated using IK
+with baked animations. The comparison is broken up into two categories - visual
+quality and performance. 
 
 \section{Baked animations}
- In order to conduct the experiments comprised of visual and performance
- comparisons, a second set of animations were created for each of the examples which
- are shown in the demo application. Below is an explanation of the process of
- creating this second set of animations.
+ In order to conduct the experiments, a second set of animations were created
+ for each of the examples which are shown in the demo application. Below is an
+ explanation of the process of creating this second set of animations. \\
 
-\subsubsection{Spider}
+\noindent\textit{Spider}
+
 The baked animation version of the spider was animated in Blender. The model
 has both idle and walking animations which, in Blender, are placed on
-a single timeline, one after the other (Figure \ref{fig:timeline}). Once the model is imported
-into Unity, the animations can be broken up into their separate cases, as shown
-earlier in the "tools" chapter of this paper (Figure \ref{fig:anim_chunk}). 
+a single timeline, one after the other, as shown in Fig. \ref{fig:timeline}.
+Once the model is imported into Unity, the animations can be broken up into
+their separate cases, as shown earlier in Chapter 3.3.1 (Figure
+\ref{fig:anim_chunk}). 
 
 \begin{figure}[h!]
     \centering
@@ -25,7 +26,7 @@ earlier in the "tools" chapter of this paper (Figure \ref{fig:anim_chunk}).
 
 Once the animations have been imported, a new animation controller is created
 for the new spider. The animations are added, this time with the use of a blend
-tree (Figure \ref{fig:s_blendtree}) to, as the name suggests, blend between the
+tree (Fig. \ref{fig:s_blendtree}) to, as the name suggests, blend between the
 animation smoothly. A third animation state is added to the blend tree
 which is the equivalent of the walking animation, but the animation speed is set
 to a negative value. This plays the animation in reverse and is used when the
@@ -68,7 +69,7 @@ caption={Transitioning to the spider's idle animation using the
         _animator.SetFloat("spider_movement", 0f, 0.05f, Time.deltaTime);
 \end{lstlisting}
 
-This version of the spider has its movement based on the spider from the game
+This version of the spider has its movement inspired by the spider from the game
 Minecraft, which means that its rotation on the x and z axes is locked. The
 spider can rotate about the y-axis when turning to face a different direction,
 but it will not adjust to variations in the surface which it walks upon.
@@ -136,7 +137,6 @@ might look in real life. Therefore, the visual integrity of the IK animation as
 it adapts to a plethora of scenarios is what sets it apart from a classic
 approach through baked animations. 
 
-\subsubsection{Spider}
 The walking animation, or any basic movement animation, is the core of what
 most characters will be displaying a majority of the time. That being the case,
 a natural movement animation will contribute the most to the overall look and
@@ -179,7 +179,7 @@ IK version is able to treat it the same as any other surface, the baked version
 keeps does not adjust its rotation, and instead climbs the wall head on (Figure
 \ref{fig:sp_wall}). This kind of rotation could have been implemented, however,
 the transition between floor and wall would be very unnatural either way and so
-an implementation inspired by the spiders in the popular game Minecraft was used
+an implementation inspired by the spiders in the game Minecraft was used
 instead.
 
 \begin{figure}[h!]
@@ -203,32 +203,29 @@ position on the ground while the spider is moving. This breaks the illusion of
 the legs pushing the spider forwards, as they instead glide on the surface out
 of sync.
 
-\subsubsection{Human}
-In a game where pressing buttons is not a core mechanic, the accuracy of such an
-animation sequence may not be important, and a generic animation can be used to
-convey the idea. However, in the event that the sequence of the buttons is
+In certain games, the accuracy of animation sequences creates a greater
+immersion for the player. In the event that the sequence of pressed buttons is
 important, such as a player needing to provide a specific input to hack a code
 to open a door, the realism of the game can be elevated through the use of
-inverse kinematics. The adaptability of a character's action can be seen in this
+inverse kinematics. The adaptability of a character's actions can be seen in this
 comparison between the baked and IK versions of the button press animation.
 
 When the character is only required to press a single button, while also having
 a proper position and orientation relative to the button, the baked animation
-looks quite natural, and looks no different from the IK version (Figure
-\ref{fig:h_single})
+looks quite natural, and looks no different from the IK version as shown in Fig.
+\ref{fig:h_single}.
 
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
     \begin{subfigure}{0.4\textwidth}
         \includegraphics[width=\linewidth]{grafika/h_b_single.png}
-        \subcaption{Baked animation}
     \end{subfigure}
     \begin{subfigure}{0.4\textwidth}
         \includegraphics[width=\linewidth]{grafika/h_ik_single.png}
-        \subcaption{IK animation}
     \end{subfigure}
-    \caption{A comparison of both models pressing a single button}
+    \caption{A comparison of both models pressing a single button. (a) is the
+    baked animation and (b) is the IK animation.}
     \label{fig:h_single}
 \end{figure}
 
@@ -260,22 +257,13 @@ played for the duration of the action.
 
 The next benefit of the procedural animation is its ability to adapt to a panel
 with multiple buttons. The character which is using the baked animation is only
-able to aim its hand at one specific point, consequently missing all the buttons
-(Figure \ref{fig:h_b_multiple}). In the case of a sequence of buttons being
-pressed, the character repeats the press in a single spot which doesn't
-realistically convey the pressing of a sequence of buttons. This can be slightly
-improved by constructing the animation to aim at different buttons on the panel
-in a generic order. The downside of this approach is that it falls apart if there
-is a change in the amount of buttons, or their positions and configuration. 
-
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/h_b_multiple.png}
-    \caption{The baked model executing the button press animation on a panel of
-    buttons}
-    \label{fig:h_b_multiple}
-\end{figure}
+able to aim its hand at one specific point, consequently missing all the
+buttons. In the case of a sequence of buttons being pressed, the character
+repeats the press in a single spot which doesn't realistically convey the
+pressing of a sequence of buttons. This can be slightly improved by constructing
+the animation to aim at different buttons on the panel in a generic order. The
+downside of this approach is that it falls apart if there is a change in the
+amount of buttons, or their positions and configuration. 
 
 Comparing this to the IK animation, as seen in Figure \ref{fig:h_ik_multiple},
 the IK target leads the hand to the appropriate position for each separate
@@ -316,7 +304,6 @@ they were not relevant to the analysis (Figure \ref{fig:profiler_settings}).
     \label{fig:profiler_settings}
 \end{figure}
 
-\subsubsection{Spider}
 Starting with the baked version of the spider, a hundred duplicates spawned
 simultaneously produced the result seen in Figure \ref{fig:pr_sp_b}. Similarly
 to the IK version presented further down, most of the CPU usage comes from the
@@ -369,7 +356,6 @@ However, this is relevant for the implementation presented in this demo
 application, and may not be the case if a given use case required the spider to
 be able to register collisions and be affected by gravity.
 
-\subsubsection{Human}
 The purpose of the human character in the demo application is to demonstrate
 a specific animation sequence executed through the means of baked and procedural
 animations. Because there are no collisions, movement, or other checks, the baked
