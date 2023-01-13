@@ -58,7 +58,7 @@ first bone segment is longer than the sum of the remaining bone segments (Fig.
 \begin{figure}[!h]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.5\textwidth]{grafika/unreachable_dist_1.png}
+    \includegraphics[width=0.5\textwidth]{grafika/unreachable_dist_1.eps}
     \caption{An IK problem with no solution where the target is unreachable
     because the sum of segment distances is less than the distance between the
     root and the target \(\sum_{i=1}^{n}d_i < dt\) }
@@ -68,7 +68,7 @@ first bone segment is longer than the sum of the remaining bone segments (Fig.
 \begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/unreachable_dist_2.png}
+    \includegraphics[width=0.4\textwidth]{grafika/unreachable_dist_2.eps}
     \caption{An IK problem with no solution where the target is unreachable
     because the length of the first segment is greater than the summed length of
     the rest of the kinematic chain \(d_1 - \sum_{i=2}^{n}d_i > dt\). This creates
@@ -93,7 +93,7 @@ transformations which can bend the chain to reach the target (Fig.
 \begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/unreachable_angles.png}
+    \includegraphics[width=0.4\textwidth]{grafika/unreachable_angles.eps}
     \caption{An IK problem with no solution where the rotational constraints
     placed on the joints prevent the end effector from being able to bend enough
     to reach the target}
@@ -362,7 +362,7 @@ target is in reach before proceeding to iterate over the kinematic chain.
 \begin{figure}[!h]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.png}
+    \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.eps}
     \caption{An iteration of the FABRIK algorithm where (a) through (d) are
     detailed steps of the forward pass while (e) and (f) show the solution of
     the backward pass. Source: \cite{Aristidou2011}}

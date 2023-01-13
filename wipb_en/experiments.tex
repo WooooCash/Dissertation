@@ -14,12 +14,12 @@ The baked animation version of the spider was animated in Blender. The model
 has both idle and walking animations which, in Blender, are placed on
 a single timeline, one after the other, as shown in Fig. \ref{fig:timeline}.
 Once the model is imported into Unity, the animations can be broken up into
-their separate cases, as shown earlier in Chapter 3.3.1 (Figure
+their separate cases, as shown earlier in Chapter 3.3.1 (Fig.
 \ref{fig:anim_chunk}). 
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.7\textwidth]{grafika/blender_timeline.png}
+    \includegraphics[width=0.7\textwidth]{grafika/blender_timeline.eps}
     \caption{Two animations on a single timeline}
     \label{fig:timeline}
 \end{figure}
@@ -34,7 +34,7 @@ spider is walking backwards.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.7\textwidth]{grafika/spider_blend.png}
+    \includegraphics[width=0.7\textwidth]{grafika/spider_blend.eps}
     \caption{Blend tree containing animations for the spider}
     \label{fig:s_blendtree}
 \end{figure}
@@ -42,12 +42,12 @@ spider is walking backwards.
 A variable named \textit{spider\_movement} is created in order to control the
 animations that are to be played in a given situation, and the manner in which
 the transitions should be blended. The thresholds for each animation can be
-defined in the blend tree's configuration in the animator (Figure \ref{fig:s_blendconf}).
+defined in the blend tree's configuration in the animator (Fig. \ref{fig:s_blendconf}).
 
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.7\textwidth]{grafika/spider_blendconf.png}
+    \includegraphics[width=0.7\textwidth]{grafika/spider_blendconf.eps}
     \caption{Configuration of the spider's blend tree which is dependent on
     the \textit{spider\_movement} variable}
     \label{fig:s_blendconf}
@@ -84,14 +84,14 @@ in the IK version of this animation sequence, described in the previous chapter,
 but the baked animation uses the full animation while the IK version uses only
 the beginning and the end. However, the animation is still broken up into three
 parts when imported into Unity: the raising of the hand, the button pressing
-motion, and the lowering of the hand (Figure \ref{fig:bp_clips}). This is done
+motion, and the lowering of the hand (Fig. \ref{fig:bp_clips}). This is done
 because when the character is pressing multiple buttons in a row, the hand
 should not be lowered to its starting position after every press.
 
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.7\textwidth]{grafika/bp_clips.png}
+    \includegraphics[width=0.7\textwidth]{grafika/bp_clips.eps}
     \caption{The full button press animation is broken up into 3 separate clips}
     \label{fig:bp_clips}
 \end{figure}
@@ -145,20 +145,20 @@ two version of the spider implemented in the demo application created for the
 purpose of this paper. 
 
 Starting with the idle position, both models look quite natural standing on
-a flat surface, as seen in Figure \ref{fig:sp_flat}.
+a flat surface, as seen in Fig. \ref{fig:sp_flat}.
 
 
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_flat.png}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_flat.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_flat.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_flat.eps}
     \caption{A comparison of both models standing on a flat surface}
     \label{fig:sp_flat}
 \end{figure}
 
 However, this changes when the surface is uneven. The IK acting on
-the legs of the spider on the right in Figure \ref{fig:sp_round} is able to use
+the legs of the spider on the right in Fig. \ref{fig:sp_round} is able to use
 its ray casts to match the surface exactly, while the baked version of the
 spider (left) doesn't have this mechanism, and its legs can be seen floating in
 the air. The same effect is observed when the spider is moving. The baked
@@ -168,15 +168,15 @@ makes it seem as if the spider was swimming through the air.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_round.png}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_round.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_round.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_round.eps}
     \caption{A comparison of both models standing on an uneven surface}
     \label{fig:sp_round}
 \end{figure}
 
 Another difference between the two spiders is how they climb walls. Whereas the
 IK version is able to treat it the same as any other surface, the baked version
-keeps does not adjust its rotation, and instead climbs the wall head on (Figure
+keeps does not adjust its rotation, and instead climbs the wall head on (Fig.
 \ref{fig:sp_wall}). This kind of rotation could have been implemented, however,
 the transition between floor and wall would be very unnatural either way and so
 an implementation inspired by the spiders in the game Minecraft was used
@@ -185,8 +185,8 @@ instead.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_wall.png}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_wall.png}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_b_wall.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_wall.eps}
     \caption{A comparison of both models scaling a wall}
     \label{fig:sp_wall}
 \end{figure}
@@ -219,10 +219,10 @@ looks quite natural, and looks no different from the IK version as shown in Fig.
     \centering
     \captionsetup{justification=centering}
     \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_b_single.png}
+        \includegraphics[width=\linewidth]{grafika/h_b_single.eps}
     \end{subfigure}
     \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_ik_single.png}
+        \includegraphics[width=\linewidth]{grafika/h_ik_single.eps}
     \end{subfigure}
     \caption{A comparison of both models pressing a single button. (a) is the
     baked animation and (b) is the IK animation.}
@@ -231,8 +231,8 @@ looks quite natural, and looks no different from the IK version as shown in Fig.
 
 The difference starts to be noticeable when the character is offset or rotated
 from the default position. While the IK target leads the hand correctly to the
-button (Figure \ref{fig:h_ik_offset}), the baked animation has no knowledge of
-the characters surroundings, and misses its mark (Figure \ref{fig:h_b_offset}).
+button (Fig. \ref{fig:h_ik_offset}), the baked animation has no knowledge of
+the characters surroundings, and misses its mark (Fig. \ref{fig:h_b_offset}).
 Due to this, for realism to be preserved when using a baked animation, either
 the character must be reoriented as part of the action, or a cutscene should be
 played for the duration of the action. 
@@ -241,12 +241,12 @@ played for the duration of the action.
     \centering
     \captionsetup{justification=centering}
     \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_b_offset.png}
+        \includegraphics[width=\linewidth]{grafika/h_b_offset.eps}
         \subcaption{Baked animation}
         \label{fig:h_b_offset}
     \end{subfigure}
     \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_ik_offset.png}
+        \includegraphics[width=\linewidth]{grafika/h_ik_offset.eps}
         \subcaption{IK animation}
         \label{fig:h_ik_offset}
     \end{subfigure}
@@ -265,7 +265,7 @@ the animation to aim at different buttons on the panel in a generic order. The
 downside of this approach is that it falls apart if there is a change in the
 amount of buttons, or their positions and configuration. 
 
-Comparing this to the IK animation, as seen in Figure \ref{fig:h_ik_multiple},
+Comparing this to the IK animation, as seen in Fig. \ref{fig:h_ik_multiple},
 the IK target leads the hand to the appropriate position for each separate
 button. This allows for a specific sequence of buttons - taking the door hacking
 example from before this would be a player's input - to be pressed in a way
@@ -275,10 +275,10 @@ manner.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/h_ik_1.png}
-    \includegraphics[width=0.4\textwidth]{grafika/h_ik_2.png}
-    \includegraphics[width=0.4\textwidth]{grafika/h_ik_3.png}
-    \includegraphics[width=0.4\textwidth]{grafika/h_ik_4.png}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_1.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_2.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_3.eps}
+    \includegraphics[width=0.4\textwidth]{grafika/h_ik_4.eps}
     \caption{The IK model pressing each of the four buttons on a panel}
     \label{fig:h_ik_multiple}
 \end{figure}
@@ -294,18 +294,18 @@ analysis was conducted on the examples created in the demo application using the
 Unity Profiler \cite{unity_profiler}. Each experiment was carried out by
 spawning 100 objects of each type and comparing the CPU usages both while they
 were idle and while they were moving. Some usage categories were discarded as
-they were not relevant to the analysis (Figure \ref{fig:profiler_settings}).
+they were not relevant to the analysis (Fig. \ref{fig:profiler_settings}).
 
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.5\textwidth]{grafika/profiler_settings.png}
+    \includegraphics[width=0.5\textwidth]{grafika/profiler_settings.eps}
     \caption{Usage categories selected when analyzing CPU usage}
     \label{fig:profiler_settings}
 \end{figure}
 
 Starting with the baked version of the spider, a hundred duplicates spawned
-simultaneously produced the result seen in Figure \ref{fig:pr_sp_b}. Similarly
+simultaneously produced the result seen in Fig. \ref{fig:pr_sp_b}. Similarly
 to the IK version presented further down, most of the CPU usage comes from the
 "scripts" usage category. A clear distinction can be made between when the
 spider was moving and when it was not. During the profiling, the state of the
@@ -321,14 +321,14 @@ influencing the performance of the application too much.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_sp_b.png}
+    \includegraphics[width=\textwidth]{grafika/pr_sp_b.eps}
     \caption{Profiling of a hundred instances of the baked animation spider for
     CPU usage}
     \label{fig:pr_sp_b}
 \end{figure}
 
 The IK version of the spider has a much more steady average regardless of its
-moving or idle state. In Figure \ref{fig:pr_sp_ik}, the graph rises minimally at the
+moving or idle state. In Fig. \ref{fig:pr_sp_ik}, the graph rises minimally at the
 halfway mark which is where the spiders were transitioned to a moving state.
 The lack of distinct change between states can be attributed to the fact that
 the IK calculations done on the kinematic chains and their respective targets
@@ -340,7 +340,7 @@ the forward movement vector when the spider receives input.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_sp_ik.png}
+    \includegraphics[width=\textwidth]{grafika/pr_sp_ik.eps}
     \caption{Profiling of a hundred instances of the procedurally animated
     spider for CPU usage}
     \label{fig:pr_sp_ik}
@@ -362,7 +362,7 @@ animations. Because there are no collisions, movement, or other checks, the bake
 animation character's script contains almost no major calculations. Since
 baked animations do not have a big influence on the CPU usage as seen earlier in
 the case of the spider, the performance of the application does not vary in
-relation to when the button pressing sequence is executed. Figure
+relation to when the button pressing sequence is executed. Fig.
 \ref{fig:pr_h_b} displays the results of profiling one hundred instances of the
 baked animation human characters executing the animation sequence
 simultaneously, and no spike in CPU usage, which hovers around 1ms, can be
@@ -371,7 +371,7 @@ observed
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_h_b.png}
+    \includegraphics[width=\textwidth]{grafika/pr_h_b.eps}
     \caption{Profiling of a hundred instances of the human character with baked
     animations for CPU usage}
     \label{fig:pr_h_b}
@@ -382,7 +382,7 @@ during the animations sequence. While it does use baked animations for the
 beginning and end of the sequence, the middle section switches to using inverse
 kinematics, and additionally the IK targets are interpolated between the hand's
 origin position and the button target positions. These calculations can be
-seen in Figure \ref{fig:pr_h_ik} where during the execution of the animation
+seen in Fig. \ref{fig:pr_h_ik} where during the execution of the animation
 there is a noticeable spike in the "scripts" usage category. Other than that,
 the rest of the graph looks very similar to the baked animation variant, sitting
 at around 1 milliseconds of CPU usage.
@@ -390,7 +390,7 @@ at around 1 milliseconds of CPU usage.
 \begin{figure}[h!]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_h_ik.png}
+    \includegraphics[width=\textwidth]{grafika/pr_h_ik.eps}
     \caption{Profiling of a hundred instances of the procedurally animated human
     for CPU usage}
     \label{fig:pr_h_ik}

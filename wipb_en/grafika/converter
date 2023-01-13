@@ -1,0 +1,6 @@
+#!/bin/bash
+
+shopt -s nullglob
+for i in *.png; do
+    convert $i -compress lzw $(echo "eps2:$i" | sed 's/.png/.eps/')
+done
