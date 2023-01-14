@@ -16,7 +16,7 @@ be used in an animation software. One of the rig presets, which is shown in Fig.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{grafika/make_human_rig.eps}
+    \includegraphics[width=0.9\textwidth]{grafika/make_human_rig.eps}
     \caption{MakeHuman rig selection}
     \label{fig:mh_rig}
 \end{figure}
@@ -123,19 +123,69 @@ created for this paper.
 The Animation Rigging package is available in the Unity Package Manager, and it
 provides a much more general approach to the application of inverse kinematics
 to skeletal animations. After setting up a rig for a model with an Animator
-component, a mix of predefined constraints can be added to enhance the rig
-(Fig. \ref{fig:ar_constraints}). The main constraint of interest for this
-paper is the \textit{Chain IK Constraint} which implements the FABRIK algorithm.
-This constraint was useful in creating a proof of concept for the spider before
-creating the FABRIK script. It also provided a good basis for the public
-interface which such a script should have to function well in the Unity
-environment.
+component, a mix of predefined constraints can be added to enhance the rig,
+which are briefly described in Table \ref{tbl:ar_constraints}. The main
+constraint of interest for this paper is the \textit{Chain IK Constraint} which
+implements the FABRIK algorithm. This constraint was useful in creating a proof
+of concept for the spider before creating the FABRIK script. It also provided
+a good basis for the public interface which such a script should have to
+function well in the Unity environment.
 
-\begin{figure}
+\begin{table}
     \centering
-    \includegraphics[width=0.3\textwidth]{grafika/ar_constraints.eps}
-    \caption{Predefined rig constraints available in Unity's Animation Rigging
-    package \cite{ar_constraints}}
-    \label{fig:ar_constraints}
-\end{figure}
+    \begin{tabular} { |m{5cm}|m{10cm}| }
+        \hline
+        Blend Constraint & \footnotesize Allows the constrained object to blend
+        between the position and rotation of two other objects. \\
+        \hline
+        Chain IK Constraint & \footnotesize Applies IK to a hierarchy of objects
+        defined by a root and tip. Implements the FABRIK solver. \\
+        \hline
+        Damped Transform & \footnotesize Damps the position and rotation
+        transform values from the source object to the constrained object in
+        a hierarchy, increasing in time delay for each next object. \\
+        \hline
+        Multi-Aim Constraint & \footnotesize Rotates an object to face a chosen
+        source object. Can have more than one source object with defined
+        weighting. \\
+        \hline
+        Multi-Parent Constraint & \footnotesize Moves and rotates an object as
+        if it is the child of another object in the hierarchy. Does not affect
+        scale, and it can have more than one source object with defined
+        weighting. \\
+        \hline
+        Multi-Position Constraint & \footnotesize Moves an object to follow
+        a source object. Can have more than one source object with defined
+        weighting. \\
+        \hline
+        Multi-Referential Constraint & \footnotesize Allows an object to act as
+        the parent to multiple referenced objects.\\
+        \hline
+        Multi-Rotation Constraint & \footnotesize Rotates an object to match the
+        rotation of its source object. Can have more than one source object with
+        defined weighting. \\
+        \hline
+        Override Transform & \footnotesize Allows a constrained object's
+        position and rotation to be overridden in world space, local space, or
+        pivot space, by the displacement of the override transform, or by
+        precise numerical values. \\
+        \hline
+        Twist Chain Constraint & \footnotesize Allows controlling world
+        rotations on both ends of an object chain hierarchy. The two rotations
+        are interpolated along the chain to create a smooth animated hierarchy.
+        \\
+        \hline
+        Twist Correction & \footnotesize Applies a defined percentage of the
+        rotation of a source object to chosen twist node objects. \\
+        \hline
+        Two Bone IK Constraint & \footnotesize Applies IK to a hierarchy
+        composed of 2 bones which allows the use of a one target and one hint
+        object for control. \\
+        \hline
 
+    \end{tabular}
+    \caption{An available set of predefined constraints from the Animation
+    Rigging package which can be applied to a rig
+\cite{unity_animation_rigging}.}
+    \label{tbl:ar_constraints}
+\end{table}

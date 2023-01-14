@@ -147,7 +147,8 @@ Again, the square distances are used to avoid the calculation of square roots.
 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Main iteration loop of FABRIK},captionpos=b, label=full_loop, language={[Sharp]c}]
+caption={Main iteration loop of FABRIK},captionpos=b, label=full_loop,
+language={[Sharp]c}, float=tp]
 void LateUpdate()
 {
     ...
@@ -202,7 +203,8 @@ joints is the same), but it is rotated in order to be positioned as close to the
 pole target as possible.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Pole target constraint},captionpos=b, label=poles, language={[Sharp]c}]
+caption={Pole target constraint},captionpos=b, label=poles, language={[Sharp]c},
+float=tp]
 void LateUpdate()
 {
     ...
@@ -215,7 +217,6 @@ void LateUpdate()
     }
     ...
 }
-
 void BendToPole()
 {
     for (int i = 1; i < chainLen; ++i)
@@ -242,22 +243,25 @@ void BendToPole()
 \end{lstlisting}
 
 
-\begin{figure}[!h]
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=0.6\linewidth]{grafika/pole_start.eps}
+        \subcaption{}
         \label{fig:pole_start}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=0.4\linewidth]{grafika/pole_projection.eps}
+        \includegraphics[width=0.3\linewidth]{grafika/pole_projection.eps}
+        \subcaption{}
         \label{fig:pole_projection}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=0.6\linewidth]{grafika/pole_end.eps}
+        \subcaption{}
         \label{fig:pole_end}
     \end{subfigure}
     \caption{A diagram showing the concept behind the implemented pole target

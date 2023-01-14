@@ -147,16 +147,6 @@ purpose of this paper.
 Starting with the idle position, both models look quite natural standing on
 a flat surface, as seen in Fig. \ref{fig:sp_flat}.
 
-
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_flat.eps}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_flat.eps}
-    \caption{A comparison of both models standing on a flat surface}
-    \label{fig:sp_flat}
-\end{figure}
-
 However, this changes when the surface is uneven. The IK acting on
 the legs of the spider on the right in Fig. \ref{fig:sp_round} is able to use
 its ray casts to match the surface exactly, while the baked version of the
@@ -164,15 +154,6 @@ spider (left) doesn't have this mechanism, and its legs can be seen floating in
 the air. The same effect is observed when the spider is moving. The baked
 version's legs float when it is moving over uneven or slanted surfaces, which
 makes it seem as if the spider was swimming through the air. 
-
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_round.eps}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_round.eps}
-    \caption{A comparison of both models standing on an uneven surface}
-    \label{fig:sp_round}
-\end{figure}
 
 Another difference between the two spiders is how they climb walls. Whereas the
 IK version is able to treat it the same as any other surface, the baked version
@@ -182,14 +163,38 @@ the transition between floor and wall would be very unnatural either way and so
 an implementation inspired by the spiders in the game Minecraft was used
 instead.
 
-\begin{figure}[h!]
+\begin{figure}[!h]
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_b_wall.eps}
-    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_wall.eps}
-    \caption{A comparison of both models scaling a wall}
-    \label{fig:sp_wall}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/sp_b_flat.eps}
+        \hspace{0.1cm}
+        \includegraphics[width=0.4\linewidth]{grafika/sp_ik_flat.eps}
+        \subcaption{}
+        \label{fig:sp_flat}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/sp_b_round.eps}
+        \hspace{0.1cm}
+        \includegraphics[width=0.4\linewidth]{grafika/sp_ik_round.eps}
+        \subcaption{}
+        \label{fig:sp_round}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/sp_b_wall.eps}
+        \hspace{0.1cm}
+        \includegraphics[width=0.4\linewidth]{grafika/sp_ik_wall.eps}
+        \subcaption{}
+        \label{fig:sp_wall}
+    \end{subfigure}
+    \caption{A comparison between the baked animation model (left) and IK
+    model (right) of the spider.}
+    \label{fig:spider_comparison}
 \end{figure}
+
 
 One important aspect to note when comparing the realism of both animations is
 how the legs move relative to the surface on which they stand. In the case of
@@ -215,45 +220,42 @@ a proper position and orientation relative to the button, the baked animation
 looks quite natural, and looks no different from the IK version as shown in Fig.
 \ref{fig:h_single}.
 
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_b_single.eps}
-    \end{subfigure}
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_ik_single.eps}
-    \end{subfigure}
-    \caption{A comparison of both models pressing a single button. (a) is the
-    baked animation and (b) is the IK animation.}
-    \label{fig:h_single}
-\end{figure}
 
 The difference starts to be noticeable when the character is offset or rotated
 from the default position. While the IK target leads the hand correctly to the
-button (Fig. \ref{fig:h_ik_offset}), the baked animation has no knowledge of
-the characters surroundings, and misses its mark (Fig. \ref{fig:h_b_offset}).
-Due to this, for realism to be preserved when using a baked animation, either
-the character must be reoriented as part of the action, or a cutscene should be
-played for the duration of the action. 
+button, the baked animation has no knowledge of the characters surroundings, and
+misses its mark (Fig. \ref{fig:h_offset}). Due to this, for realism to be
+preserved when using a baked animation, either the character must be reoriented
+as part of the action, or a cutscene should be played for the duration of the
+action. 
 
-\begin{figure}[h!]
+
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_b_offset.eps}
-        \subcaption{Baked animation}
-        \label{fig:h_b_offset}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/h_b_single.eps}
+        \hspace{0.1cm}
+        \includegraphics[width=0.4\linewidth]{grafika/h_ik_single.eps}
+        \subcaption{}
+        \label{fig:h_single}
     \end{subfigure}
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=\linewidth]{grafika/h_ik_offset.eps}
-        \subcaption{IK animation}
-        \label{fig:h_ik_offset}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.4\linewidth]{grafika/h_b_offset.eps}
+        \hspace{0.1cm}
+        \includegraphics[width=0.4\linewidth]{grafika/h_ik_offset.eps}
+        \subcaption{}
+        \label{fig:h_offset}
     \end{subfigure}
-    \caption{A comparison of both models pressing a single button after
-    offsetting the position and rotation of the characters}
-    \label{fig:h_offset}
+    \caption{A comparison between the baked animation model (left) and IK model
+    (right) of the human character. (a) shows both models executing the button
+    press animation while being positioned and oriented correctly. (b) shows the
+    models being offset and rotated from the default positioning.}
+    \label{fig:human_comparison}
 \end{figure}
+
 
 The next benefit of the procedural animation is its ability to adapt to a panel
 with multiple buttons. The character which is using the baked animation is only
@@ -276,8 +278,12 @@ manner.
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=0.4\textwidth]{grafika/h_ik_1.eps}
+        \hspace{0.1cm}
     \includegraphics[width=0.4\textwidth]{grafika/h_ik_2.eps}
+
+    \vspace{0.2cm}
     \includegraphics[width=0.4\textwidth]{grafika/h_ik_3.eps}
+        \hspace{0.1cm}
     \includegraphics[width=0.4\textwidth]{grafika/h_ik_4.eps}
     \caption{The IK model pressing each of the four buttons on a panel}
     \label{fig:h_ik_multiple}
@@ -294,15 +300,15 @@ analysis was conducted on the examples created in the demo application using the
 Unity Profiler \cite{unity_profiler}. Each experiment was carried out by
 spawning 100 objects of each type and comparing the CPU usages both while they
 were idle and while they were moving. Some usage categories were discarded as
-they were not relevant to the analysis (Fig. \ref{fig:profiler_settings}).
+they were not relevant to the analysis.
 
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=0.5\textwidth]{grafika/profiler_settings.eps}
-    \caption{Usage categories selected when analyzing CPU usage}
-    \label{fig:profiler_settings}
-\end{figure}
+% \begin{figure}[h!]
+%     \centering
+%     \captionsetup{justification=centering}
+%     \includegraphics[width=0.5\textwidth]{grafika/profiler_settings.eps}
+%     \caption{Usage categories selected when analyzing CPU usage}
+%     \label{fig:profiler_settings}
+% \end{figure}
 
 Starting with the baked version of the spider, a hundred duplicates spawned
 simultaneously produced the result seen in Fig. \ref{fig:pr_sp_b}. Similarly
@@ -318,15 +324,6 @@ milliseconds. The increase in CPU usage, as seen from the profiler, is mostly in
 the "scripts" category, which means that the animations themselves are not
 influencing the performance of the application too much.
 
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_sp_b.eps}
-    \caption{Profiling of a hundred instances of the baked animation spider for
-    CPU usage}
-    \label{fig:pr_sp_b}
-\end{figure}
-
 The IK version of the spider has a much more steady average regardless of its
 moving or idle state. In Fig. \ref{fig:pr_sp_ik}, the graph rises minimally at the
 halfway mark which is where the spiders were transitioned to a moving state.
@@ -337,13 +334,25 @@ raycasts and body rotation calculations which are executed no matter the state.
 The slight increase is most likely due to the calculations required to determine
 the forward movement vector when the spider receives input. 
 
-\begin{figure}[h!]
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_sp_ik.eps}
-    \caption{Profiling of a hundred instances of the procedurally animated
-    spider for CPU usage}
-    \label{fig:pr_sp_ik}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/pr_sp_b.eps}
+        \subcaption{}
+        \label{fig:pr_sp_b}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/pr_sp_ik.eps}
+        \subcaption{}
+        \label{fig:pr_sp_ik}
+    \end{subfigure}
+    \caption{A comparison between the CPU usage profiling of one hundred
+    instances of the spider baked animations (a) and with procedural IK
+    animations (b).}
+    \label{fig:pr_sp}
 \end{figure}
 
 The average CPU usage for the IK version of the spider is around half that of its
@@ -368,15 +377,6 @@ baked animation human characters executing the animation sequence
 simultaneously, and no spike in CPU usage, which hovers around 1ms, can be
 observed
 
-\begin{figure}[h!]
-    \centering
-    \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_h_b.eps}
-    \caption{Profiling of a hundred instances of the human character with baked
-    animations for CPU usage}
-    \label{fig:pr_h_b}
-\end{figure}
-
 In contrast, the procedurally animated human does require a few calculations
 during the animations sequence. While it does use baked animations for the
 beginning and end of the sequence, the middle section switches to using inverse
@@ -387,13 +387,24 @@ there is a noticeable spike in the "scripts" usage category. Other than that,
 the rest of the graph looks very similar to the baked animation variant, sitting
 at around 1 milliseconds of CPU usage.
 
-\begin{figure}[h!]
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=\textwidth]{grafika/pr_h_ik.eps}
-    \caption{Profiling of a hundred instances of the procedurally animated human
-    for CPU usage}
-    \label{fig:pr_h_ik}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/pr_h_b.eps}
+        \subcaption{}
+        \label{fig:pr_h_b}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/pr_h_ik.eps}
+        \subcaption{}
+        \label{fig:pr_h_ik}
+    \end{subfigure}
+    \caption{A comparison between the CPU usage profiling of one hundred
+    instances of the human character with baked animations (a) and with
+    procedural IK animations (b).}
+    \label{fig:pr_h}
 \end{figure}
-
 

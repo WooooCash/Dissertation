@@ -359,15 +359,60 @@ effector iterating towards the root, while the second pass is done in a reversed
 order as shown in Fig. \ref{fig:fabrik}. The algorithm starts by checking if the
 target is in reach before proceeding to iterate over the kinematic chain. 
 
-\begin{figure}[!h]
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.eps}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration1.eps}
+        \subcaption{}
+        \label{fig:fabrik1}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration2.eps}
+        \subcaption{}
+        \label{fig:fabrik2}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration3.eps}
+        \subcaption{}
+        \label{fig:fabrik3}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration4.eps}
+        \subcaption{}
+        \label{fig:fabrik4}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration5.eps}
+        \subcaption{}
+        \label{fig:fabrik5}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{grafika/fabrik_iteration6.eps}
+        \subcaption{}
+        \label{fig:fabrik6}
+    \end{subfigure}
     \caption{An iteration of the FABRIK algorithm where (a) through (d) are
     detailed steps of the forward pass while (e) and (f) show the solution of
     the backward pass. Source: \cite{Aristidou2011}}
-    \label{fig:fabrik}
+    \label{fig:fig:fabrik}
 \end{figure}
+
+% \begin{figure}[!h]
+%     \centering
+%     \captionsetup{justification=centering}
+%     \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.eps}
+%     \caption{An iteration of the FABRIK algorithm where (a) through (d) are
+%     detailed steps of the forward pass while (e) and (f) show the solution of
+%     the backward pass. Source: \cite{Aristidou2011}}
+%     \label{fig:fabrik}
+% \end{figure}
 
 For a set of \(n\) joint positions \(\mathbf{p}_1, \dots, \mathbf{p}_n\) where
 \(\mathbf{p}_1\) is the root and \(\mathbf{p}_n\) is the end effector, the forward pass
