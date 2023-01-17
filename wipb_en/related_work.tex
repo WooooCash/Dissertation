@@ -1,16 +1,16 @@
 \chapter{Related Work and Theory}
 Inverse kinematics is applied in various fields, mainly robotics and computer
 graphics. However, it is applied to a few unique problems, such as the
-prediction of protein structure \cite{ccd_protein}. It has also found its uses in
-rehabilitation medicine due to its biomechanical modelling ability. Over time,
-many approaches have surfaced in order to solve the IK problem. There are
+prediction of protein structure \cite{ccd_protein}. It has also found its uses
+in rehabilitation medicine due to its biomechanical modelling ability. Over
+time, many approaches have surfaced in order to solve the IK problem. There are
 multiple families of solutions \cite{Aristidou2011} which suit different use
 cases. Among others, trigonometric solutions can be used to solve certain IK
-problems analytically \cite{raheem_trig}, however, these solutions are often limited to solving two
-bone IK scenarios. More recently neural networks have also been used as a tool
-to solve IK problems \cite{nn_IK}. This paper will go over the iterative and
-heuristic approaches which provide less complex solutions when increasing the
-kinematic chain length and degrees of freedom.
+problems analytically \cite{raheem_trig}, however, these solutions are often
+limited to solving two bone IK scenarios. More recently neural networks have
+also been used as a tool to solve IK problems \cite{nn_IK}. This paper will go
+over the iterative and heuristic approaches which provide less complex solutions
+when increasing the kinematic chain length and degrees of freedom.
 
 \section{Kinematics}
 Kinematics is a branch of classical mechanics
@@ -282,20 +282,34 @@ proposed \cite{wang_dldls} with the aim of predicting the most optimal value for
 certain coefficients.
 
 \subsection{Newton Methods}
-The Newton methods are based on a second order Taylor series expansion of the
-function \(f(x)\) with \(H_f(x)\) being the Hessian matrix:
+The Newton methods approach IK as a minimization problem, and are based on
+a second order Taylor series expansion of \(f(x + \sigma)\):
 \begin{equation}
-    f(x + \sigma) \approx f(x) + |\nabla f(x)|^T \sigma + \frac{1}{2} \sigma^T H_f(x)
-    \sigma
+    f(x + \sigma) \approx f(x) + [\nabla f(x)]^T \sigma + \frac{1}{2} \sigma^T
+    \nabla^2 f(x) \sigma,
 \end{equation}
 
+\noindent where \(f(x)\) is the current joint configuration, \(f(x + \sigma)\)
+is the desired joint configuration, \(\sigma\) is the required modification to
+\(f(x)\) so that it satisfies \(f(x + \sigma)\), and \(\nabla^2 f(x)\) is the
+Hessian matrix. Following the method described in \cite{nocedal_newton}, the
+search direction \(p^N_k\) is
+\begin{equation}
+    p^N_k = [\nabla^2 f(x)]^{-1} \nabla f(x),
+\end{equation}
+
+\noindent where \(\nabla f(x)\) is the gradient of the objective function.
+Assuming the notation of the end effector position as \(e\) and goal position as
+\(g\), the gradient can be defined as the Jacobian \(\nabla f(x) = J(e - g)\).
+
 The Newton methods have the advantage over the Jacobian inverse methods in the
-smoothness of the movement and the lack of singularity problems which allows the
-iterative approach to avoid oscillations. However, the complexity of the Hessian
-matrix drastically raises the computational costs for each iteration. A few
-methods have been brought forward which aim to approximate the Hessian matrix
-to reduce the complexity of the problem, however the computational costs remain
-relatively high.
+smoothness of the movement and the lack of singularity problems, which allows
+this iterative approach to avoid oscillations. The methods also tend to converge
+in fewer iterations. However, the complexity of the Hessian matrix drastically
+raises the computational costs for each iteration. A few methods have been
+brought forward which aim to approximate the Hessian matrix to reduce the
+complexity of the problem, however the computational costs remain relatively
+high. 
 
 \subsection{Heuristic IK algorithms}
 Heuristic algorithms provide an approach which avoid the need for complex
