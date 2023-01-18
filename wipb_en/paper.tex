@@ -34,6 +34,23 @@ citecolor=black
 } 
 \begin{document}
 \maketitle
+\chapter*{}
+W klasycznej animacji szkieletowej kości reprezentowane są za pomocą pewnej
+struktury drzewiastej obiektów. Wykonywanie sekwencji animacji polega zwykle na
+aktualizacji parametrów tych obiektów (położenia i orientacji kości) w porządku
+od korzenia do liści. W przypadku kinematyki odwrotnej, jak sama nazwa wskazuje,
+porządek aktualizacji jest odwrotny tj. od danego liścia do określonego węzła
+nadrzędnego. Metody te pozwalają na proceduralne tworzenie sekwencji animacji
+umożliwiających wierniejsze odzwierciedlenie interakcji animowanego obiektu
+z otoczeniem bez konieczności ręcznego "wypalania" sekwencji animacji. W ramach
+tej pracy, autor zapoznał się z teorią i literaturą na temat animacji
+szkieletowej i kinematyki odwrotnej, a następnie zaimplementował aplikację
+demonstracyjną w silniku Unity. Aplikacja ma na celu porównanie animacji
+"wypalanych" z animacjami tworzonymi z wykorzystaniem kinematyki odwrotnej.
+Zostało to zrealizowane na przykładzie czworonoga, i sekwencji animacji
+człowieka. Wyżej wymienione techniki są porównane pod kątem efektu wizualnego
+oraz wydajnościowego. 
+
 \tableofcontents
 \thispagestyle{empty}
 \setcounter{page}{0}
@@ -52,6 +69,7 @@ citecolor=black
 \bibliography{bibliografia}%
 
 \listoffigures
+\listoftables
 
 
 \end{document}

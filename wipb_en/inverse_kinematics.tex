@@ -42,17 +42,17 @@ are copied. All operations and calculations are performed on the copied
 transforms and at the end of the full pass, the new positions are copied back to
 the kinematic chain.
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Joint transforms are copied at the start. Operations are performed on
-these copied joints, before applying them back to the kinematic
-chain},captionpos=b, label=transform_copy, language={[Sharp]c}]
-void LateUpdate()
-{
-    CopyTempPositions();
-    ...
-    ApplyTempPositions();
-}
-\end{lstlisting}
+% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+% caption={Joint transforms are copied at the start. Operations are performed on
+% these copied joints, before applying them back to the kinematic
+% chain},captionpos=b, label=transform_copy, language={[Sharp]c}]
+% void LateUpdate()
+% {
+%     CopyTempPositions();
+%     ...
+%     ApplyTempPositions();
+% }
+% \end{lstlisting}
 
 The first case which the algorithm must cover is if the distance from the root
 to the target object is greater than the sum of distances between each adjacent
@@ -61,27 +61,12 @@ of reach. Given that the bones in a skeleton are expected to keep a fixed
 length, the end effector will not be able to reach the target, and instead the
 kinematic chain straightens and extends in the direction of the target. There is
 no need to continue with the iterative portion of the algorithm. A minor
-optimization in the implementation is the use of square magnitudes when
-comparing distances to avoid the calculation of square roots, thus reducing the
-computational costs.
+optimization in the implementation, which can be seen later in Listing
+\ref{full_loop}, is the use of square magnitudes when comparing distances to
+avoid the calculation of square roots, thus reducing the computational costs.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single, caption={Target out of
-reach},captionpos=b, label=stretch, language={[Sharp]c}]
-void LateUpdate()
-{
-    ...
-    float distRootToTargetSqr = (
-        target.position - chainRoot.position
-    ).sqrMagnitude;
-    if (distRootToTargetSqr > totalDistance * totalDistance)
-    {
-        StretchToTarget();
-    } else {
-        ...
-    }
-    ...
-}
-
+reach. \textit{Fabrik.cs}},captionpos=b, label=stretch, language={[Sharp]c}]
 void StretchToTarget()
 {
     for (var i = 0; i < chainLen; i++)
@@ -116,7 +101,7 @@ two nodes is kept the same. The same operation is performed for each pair of
 neighboring nodes throughout the pass. 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={FABRIK forward reaching pass},captionpos=b, label=forwards, language={[Sharp]c}]
+caption={FABRIK forward reaching pass. \textit{Fabrik.cs}},captionpos=b, label=forwards, language={[Sharp]c}]
 void ForwardReachingPass()
 {
     tempPositions[chainLen] = target.position;
@@ -132,26 +117,33 @@ void ForwardReachingPass()
 \end{lstlisting}
 
 When the forward pass is complete, the root node is displaced from its original
-position. This is undesired, as the root's node position should not be affected
+position. This is undesired, as the root node's position should not be affected
 by the algorithm. To remedy this, the next step is to repeat the forwards pass,
-but this time in reverse. The root node's position is set equal to what it was
+but this time in reverse order. The root node's position is set equal to what it was
 at the beginning of the frame. The next node is then interpolated between its
 current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
 These two steps are repeated cyclically until the end effector is within
-a threshold distance of the target. The FABRIK algorithm is a heuristic
-algorithm, and as such it does not lead to an exact result. Instead, it aims to
-approximate the correct solution and solves the problem in a less complex way.
-Again, the square distances are used to avoid the calculation of square roots. 
-
+a threshold distance of the target. The FABRIK algorithm is heuristic, and as
+such it does not give an exact result. Instead, it aims to approximate the
+correct solution and solves the problem in a less complex way.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Main iteration loop of FABRIK},captionpos=b, label=full_loop,
-language={[Sharp]c}, float=tp]
+caption={Full execution of the FABRIK algorithm in each frame.
+\textit{Fabrik.cs}},captionpos=b, label=full_loop, language={[Sharp]c}]
 void LateUpdate()
 {
-    ...
+    if (!enableIk)
+        return;
+    CopyTempPositions();
+    float distRootToTargetSqr = (
+        target.position - chainRoot.position
+    ).sqrMagnitude;
+    if (distRootToTargetSqr > totalDistance * totalDistance)
+    {
+        StretchToTarget();
+    }
     else
     {
         var distEffectorToTargetSqr = (
@@ -166,9 +158,11 @@ void LateUpdate()
                 tempPositions[chainLen] - target.position
             ).sqrMagnitude;
         }
-        ...
+
+        if (pole != null)
+            BendToPole();
     }
-    ...
+    ApplyTempPositions();
 }
 \end{lstlisting}
 
@@ -203,20 +197,8 @@ joints is the same), but it is rotated in order to be positioned as close to the
 pole target as possible.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Pole target constraint},captionpos=b, label=poles, language={[Sharp]c},
+caption={Pole target constraint. \textit{Fabrik.cs}},captionpos=b, label=poles, language={[Sharp]c},
 float=tp]
-void LateUpdate()
-{
-    ...
-        while (distEffectorToTargetSqr > tolerance * tolerance)
-        {
-            ...
-        }
-        if (pole != null)
-            BendToPole();
-    }
-    ...
-}
 void BendToPole()
 {
     for (int i = 1; i < chainLen; ++i)
@@ -279,7 +261,7 @@ void BendToPole()
 The first use case for inverse kinematics in the demo application is that of
 a four legged spider. The algorithm is used to adjust the creature's limbs to
 uneven terrain, leading to a much more natural and realistic movement. The IK
-version of the spider does not have an Animator component, and the whole of the
+version of the spider does not have an \textit{Animator} component, and the whole of the
 animation and movement of the spider is done procedurally.
 \subsection{Project Setup}
 Each one of the spiders legs is treated as a separate kinematic chain. The
@@ -290,34 +272,54 @@ surface of the terrain under the spider, and mark the targets to which each leg
 should move.
 
 Raycasts are dispatched from above the spiders legs, and aim in the creatures
-local negative Y axis. This ensures that no matter what orientation the spider
+local negative Y axis as shown in \ref{fig:ray_casts_intro}. This ensures that no matter what orientation the spider
 finds itself in, the rays are always pointing at the surface which it is
 standing on. Masks are applied to the rays, making sure that only terrain
 objects are taken into account, while the creature's body itself is not. The ray
 cast hit point positions are then applied to each leg's respective target
 object. These targets serve as markers for the limbs end effectors. 
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{grafika/sp_ik_flat.eps}
+    \caption{One raycast for each leg is pointed at the spider's local negative
+    Y axis to scan the terrain.}
+    \label{fig:ray_casts_intro}
+\end{figure}
+
 \subsection{Scripts}
 With the project set up in this manner, scripts must now be added on to make the
 scene functional. A script is required for the main movement of the spider, the
-raycast logic, and the mechanism which controls the ik targets.
+raycast logic, and the mechanism which controls the ik targets.\\
 
-\subsubsection{Raycasts}
+\noindent\textit{Raycasts}
+
 The raycast objects contain a script component which dispatches the rays and
-sets the appropriate target positions. First, a mask must be established, which
+sets the appropriate hit target positions. First, a mask must be established, which
 will then be passed into the raycast operation. This is required so that only
 terrain is counted as a valid hit. The lack of such a mask may result in
-unexpected behavior, such as targets being set on the spider's body itself. The
+unexpected behavior, such as hit targets being set on the spider's body itself. The
 raycast object is then created, shooting in the local negative Y axis
 direction. This ensures that no matter the orientation of the creature, the rays
 are sent towards the surface that the spider is standing on. The targets
 controlling the spider's legs will not be updating their positions to the
 raycast hit points each frame, though their scripts must have knowledge of the
-hit positions at any given time. Given this, a separate set of objects are set
-to track the raycast hit points each frame.
+hit positions at any given time. Given this, a separate set of hit targets are set
+to track the raycast hit points each frame.\\
 
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Ray casts scanning for terrain. \textit{RayLogic.cs}},captionpos=b,
+label=rays, language={[Sharp]c}, float=tp]
+void Update()
+{
+    if (Physics.Raycast(transform.position, -transform.up, out var hit, 
+                        100.0f, terrainLayerMask))
+        HitTarget.position = hit.point;
+}
+\end{lstlisting}
 
-\subsubsection{Target Logic}
+\noindent\textit{Target Logic}
+
 In order for the spider's movement to seem realistic, the targets controlling
 each leg must adhere to a set of rules pertaining to their movement. As
 mentioned in the raycast section, the IK targets cannot simply be set to track
@@ -336,7 +338,7 @@ target:
 \end{itemize}
 
 
-\begin{figure}
+\begin{figure}[tp]
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=0.4\textwidth]{grafika/diagonals2.eps}
@@ -364,8 +366,23 @@ height component is increased with an offset to achieve an arc-like movement.
 This produces the effect of lifting the spider's leg.
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Execution logic for the legs' movement sequence},captionpos=b,
-label=target_move, language={[Sharp]c}]
+caption={The script's \textit{Update} method which contains eligibility checks
+and execution logic for the leg target's movement sequence.
+\textit{TargetLogic.cs}},captionpos=b, label=target_move, language={[Sharp]c},
+float=tp]
+if (Grounded) // eligiblity checks
+{
+    _distToTarget = 
+        Vector3.Distance(transform.position, RayTarget.position);
+    if (_distToTarget > DistanceThreshold && CanStep())
+    {
+        Grounded = false;
+        _moveTo = RayTarget.position;
+        _totalDist = _distToTarget;
+    }
+}
+else // movement sequence
+{
     float distRemaining = Vector3.Distance(transform.position, _moveTo);
     float heightOffset =
         distRemaining > _totalDist / 2.0f ? heightRise : 0.0f;
@@ -376,6 +393,7 @@ label=target_move, language={[Sharp]c}]
     );
     if (Vector3.Distance(transform.position, _moveTo) < 0.001f)
         Grounded = true;
+}
 \end{lstlisting}
 
 \subsubsection{General Movement}
@@ -408,7 +426,7 @@ receives input from the user.
 
 
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Calculating the spider's rotation},captionpos=b, label=rotation, language={[Sharp]c}]
+caption={Calculating the spider's rotation. \textit{IKSpiderMovement.cs}},captionpos=b, label=rotation, language={[Sharp]c}]
 Quaternion calculateRotation()
 {
     Vector3 v1 = frLeg.position - blLeg.position;
@@ -420,26 +438,6 @@ Quaternion calculateRotation()
 }
 \end{lstlisting}
 
-The second objective - reacting according to input - is quite simple once the
-local directional axes are determined. When the script detects a non-zero value
-on either the \textit{Horizontal} or \textit{Vertical} axis, it reacts
-accordingly by moving the spider along with all the raycast objects. The
-\textit{Vertical} axis corresponds to the forward and backward movement of the
-spider. The script reacts by simply moving the spider's main body along the
-local forward axis mentioned previously. Additionally, the raycasting objects
-are offset either forwards or backward depending on the direction of the
-movement. This is done because the raycasts must be slightly ahead of the
-default leg positions so that the legs end up moving in a natural manner.
-The \textit{Horizontal} axis is responsible for rotating the spider about its
-local up axis which allows the spider to turn around. 
-
-% \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-% caption={Adjusting the raycast positions so that they are always ahead of the
-% spider in the direction in which it is moving. The  variable is the
-% input from the  axis.},captionpos=b, label=ray_offset, language={[Sharp]c}]
-%     if (Mathf.Abs(yVal) > 0.9f)
-%         rays.position = transform.position + _forwards.normalized * yVal * 0.3f + _up.normalized * 1.095f;
-% \end{lstlisting}
 
 The second objective - reacting according to input - is quite simple once the
 local directional axes are determined. When the script detects a non-zero value
@@ -457,8 +455,8 @@ local up axis which allows the spider to turn around.
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
 caption={The raycasts which scan the terrain for leg placement positions are
 offset in the direction in which the spider is walking. The \textit{yVal}
-variable is the value of the \textit{Vertical} axis input},captionpos=b,
-label=ray_offset, language={[Sharp]c}]
+variable is the value of the \textit{Vertical} axis input. \textit{IKSpiderMovement.cs}},captionpos=b,
+label=ray_offset, language={[Sharp]c}, float=tp]
     if (Mathf.Abs(yVal) > 0.9f)
         rays.position = transform.position
             + _forwards.normalized * yVal * 0.3f
@@ -546,16 +544,33 @@ nested coroutines are used to enhance readability and maintainability, allowing
 for easy reconfiguration of the main loop. 
 
 The first coroutine which is created as a basic building block is the
-\textit{HandAnimation} coroutine which takes in an animation name as a string,
-executes the animation, and allows the calling function to continue its
-execution only after the animation is done. This is possible by checking the
-animators state info for the \textit{normalizedTime} attribute. This floating
-point value starts at 0 and grows as the animation plays through, with the end
-of the animation mapping to a value of 1. The coroutine can therefore yield
-a boolean expression checking if the \textit{normalizedTime} value is equal or
-greater than one. 
+\textit{HandAnimation} coroutine, presented in Listing \ref{first_coroutine},
+which takes in an animation name as a string, executes the animation, and allows
+the calling function to continue its execution only after the animation is done.
+This is possible by checking the animators state info for the
+\textit{normalizedTime} attribute. This floating point value starts at 0 and
+grows as the animation plays through, with the end of the animation mapping to
+a value of 1. The coroutine can therefore yield a boolean expression checking if
+the \textit{normalizedTime} value is equal or greater than one. 
 
-The second building block is the \textit{MoveToTarget} coroutine. This method
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={A coroutine which plays a designated animation and relinquishes control
+to the main loop once the animation is finished. \textit{IKPressButton.cs}},captionpos=b,
+label=first_coroutine, language={[Sharp]c}, float=tp]
+private IEnumerator HandAnimation(string animation)
+{
+    _animator.Play(animation, 0, 0f);
+    yield return new WaitForSeconds(0.2f);
+    yield return new WaitUntil(
+        () =>
+            _animator.GetCurrentAnimatorStateInfo(0).normalizedTime
+            >= 1.0f
+    );
+}
+\end{lstlisting}
+
+The second building block is the \textit{MoveToTarget} coroutine, shown in
+Listing \ref{second_coroutine}. This method
 takes in a destination vector and a duration. Its purpose is to move the IK
 target to a provided destination over a given amount of time. This is
 implemented by keeping track of the time elapsed since the beginning of the
@@ -568,22 +583,75 @@ in the \textit{PressButton} coroutine which combines the movement of the hand
 from its origin position to the button, and the movement back to the origin
 position.
 
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={The coroutine \textit{PressButton} executes two \textit{MoveToTarget}
+coroutines, moving the end effector's target to the specified button, and then
+back to the origin position. \textit{IKPressButton.cs}},captionpos=b,
+label=second_coroutine, language={[Sharp]c}, float=tp]
+private IEnumerator PressButton(Vector3 buttonPos)
+{
+    yield return StartCoroutine(
+        MoveToTarget(buttonPos, MOVEMENT_DURATION)
+    );
+    yield return StartCoroutine(
+        MoveToTarget(origin.position, MOVEMENT_DURATION)
+    );
+}
+private IEnumerator MoveToTarget(Vector3 destination, float duration)
+{
+    float time = 0;
+    var startPos = target.position;
+    while (time < duration)
+    {
+        target.position = Vector3.Lerp(
+            startPos,
+            destination,
+            time / duration
+        );
+        time += Time.deltaTime;
+        yield return null;
+    }
+}
+\end{lstlisting}
+
 When the script receives a certain input from the player, and an animation is
 not already being played, which is monitored through the \textit{idle} boolean,
-then the \textit{PressButtons} coroutine begins execution. This coroutine acts as the
-main event loop for the entire animation sequence. The \textit{idle} boolean is
-then set to false in order to block the initiation of a subsequent animation
-sequence before the current one is finished. The \textit{HandAnimation}
-coroutine is executed to play the baked animation of the hand, raising it to its
-origin position. The origin position is then saved in the \textit{origin}
-variable which will later be used during the IK movements. Now that the baked
-animation part of the animation sequence is complete, the IK component of the
-rig must be enabled to use its functionality, and have the hand track the IK
-target. The \textit{PressButton} coroutine is then executed multiple times in
-a loop for every value in the \textit{buttonSequence} array. After the pressing
-sequence is complete, the IK component must be disabled before playing the
-animation responsible for lowering the character's hand back to its default
-position. Lastly, the \textit{idle} boolean can be set back to true as the
-current animation sequence is complete and the execution of another animation
-should not be blocked.
-
+then the \textit{PressButtons} coroutine begins execution (Listing
+\ref{main_coroutine}. This coroutine acts as the main event loop for the entire
+animation sequence. The \textit{idle} boolean is then set to false in order to
+block the initiation of a subsequent animation sequence before the current one
+is finished. The \textit{HandAnimation} coroutine is executed to play the baked
+animation of the hand, raising it to its origin position. The origin position is
+then saved in the \textit{origin} variable which will later be used during the
+IK movements. Now that the baked animation part of the animation sequence is
+complete, the IK component of the rig must be enabled to use its functionality,
+and have the hand track the IK target. The \textit{PressButton} coroutine is
+then executed multiple times in a loop for every value in the
+\textit{buttonSequence} array. After the pressing sequence is complete, the IK
+component must be disabled before playing the animation responsible for lowering
+the character's hand back to its default position. Lastly, the \textit{idle}
+boolean can be set back to true as the current animation sequence is complete
+and the execution of another animation should not be blocked.
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={Reading input, and executing the main coroutine \textit{PressButtons}
+which plays the full animation sequence. \textit{IKPressButton.cs}},captionpos=b,
+label=main_coroutine, language={[Sharp]c}, float=tp]
+private void Update()
+{
+    if (idle && Input.GetButtonDown("P_KEY"))
+        StartCoroutine(PressButtons());
+}
+private IEnumerator PressButtons()
+{
+    idle = false;
+    yield return StartCoroutine(HandAnimation("hand_lift"));
+    _ik_component.enableIk = true;
+    for (var i = 0; i < buttonSequence.Length; i++)
+        yield return StartCoroutine(
+            PressButton(buttons[buttonSequence[i]].position)
+        );
+    _ik_component.enableIk = false;
+    yield return StartCoroutine(HandAnimation("hand_lower"));
+    idle = true;
+}
+\end{lstlisting}

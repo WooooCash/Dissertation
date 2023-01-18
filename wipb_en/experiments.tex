@@ -4,7 +4,7 @@ with baked animations. The comparison is broken up into two categories - visual
 quality and performance. 
 
 \section{Baked animations}
- In order to conduct the experiments, a second set of animations were created
+ In order to conduct the experiments, a second set of animations were prepared
  for each of the examples which are shown in the demo application. Below is an
  explanation of the process of creating this second set of animations. \\
 
@@ -63,20 +63,51 @@ method allows the value of \textit{spider\_movement} to be interpolated from the
 the current animation state to another desired value.
 \newline
 \begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
-caption={Transitioning to the spider's idle animation using the
-\textit{SetFloat} method},captionpos=b, label=stretch, language={[Sharp]c}]
+caption={Moving the baked version of the spider, and playing the appropriate
+animations by setting the \textit{spider\_movement} variable using the
+\textit{\_animator.SetFloat()} method.
+\textit{BakedSpiderMovement.cs}},captionpos=b, label=set_float,
+language={[Sharp]c}, float=tp]
+void SpiderMove()
+{
+    // Check grounded and gravity values
+    (...)
+    float verticalAxis = Input.GetAxis("Vertical");
+    float horizontalAxis = Input.GetAxis("Horizontal");
     if (verticalAxis == 0f && horizontalAxis == 0f)
-        _animator.SetFloat("spider_movement", 0f, 0.05f, Time.deltaTime);
+       _animator.SetFloat("spider_movement", 0.0f, 0.05f, Time.deltaTime);
+    else
+    {
+       var speed = verticalAxis * spiderSpeed;
+       //Wall climbing
+       if (Physics.Raycast(transform.position, transform.forward, 
+                           out var hit, 1.1f, layerMask))
+           spiderVelocity.y = speed * Time.deltaTime * 100.0f;
+       else
+           spiderVelocity.y = 0 < spiderVelocity.y ? 0 : spiderVelocity.y;
+       transform.Rotate(
+            0, horizontalAxis * rotateSpeed * Time.deltaTime, 0f
+       );
+       _controller.Move(speed * Time.deltaTime * transform.forward);
+       _animator.SetFloat("spider_movement", 
+            verticalAxis >= 0.0f ? 0.5f : 1.0f, 0.1f, Time.deltaTime);
+    }
+    //Applying Gravity
+    if (spiderVelocity.y < 0.0f)
+        spiderVelocity.y += gravity * Time.deltaTime;
+    _controller.Move(spiderVelocity * Time.deltaTime);
+}
 \end{lstlisting}
 
 This version of the spider has its movement inspired by the spider from the game
-Minecraft, which means that its rotation on the x and z axes is locked. The
+Minecraft \cite{minecraft}, which means that its rotation on the x and z axes is locked. The
 spider can rotate about the y-axis when turning to face a different direction,
 but it will not adjust to variations in the surface which it walks upon.
 Additionally, when the spider encounters a wall, it begins moving
-vertically instead of horizontally until it scales the entire obstacle.
+vertically instead of horizontally until it scales the entire obstacle.\\
 
-\subsubsection{Human}
+\noindent\textit{Human}
+
 The baked version of the human character, which performs an animation sequence
 consisting of pressing buttons, is animated in Blender. The animation plays one
 full sequence of pressing a single button. Chunks of the same animation are used
@@ -128,6 +159,25 @@ by the button press count parameter. Finally, the animation clip for lowering
 the hand is executed, and the \textit{idle} boolean is set to true before
 terminating the sequence.
 
+\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+caption={The main coroutine which plays the full animation sequence for the
+baked version of the human character. The \textit{HandAnimation} coroutine is
+analogous to the one used for the IK character in Listing \ref{first_coroutine}.
+\textit{PressButton.cs}},captionpos=b, label=set_float,
+language={[Sharp]c}, float=tp]
+IEnumerator PressButtons()
+{
+    idle = false;
+    yield return StartCoroutine(HandAnimation("hand_lift"));
+    
+    for (int i = 0; i < BUTTON_PRESS_COUNT; i++)
+        yield return StartCoroutine(HandAnimation("button_hit"));
+    
+    yield return StartCoroutine(HandAnimation("hand_lower"));
+    idle = true;
+}
+\end{lstlisting}
+
 \section{Visual Comparison}
 The goal of using inverse kinematics to procedurally animate a model in video
 games is to achieve a more natural interaction between a character and the
@@ -142,18 +192,17 @@ most characters will be displaying a majority of the time. That being the case,
 a natural movement animation will contribute the most to the overall look and
 feel of the character. This difference can be clearly noticed by comparing the
 two version of the spider implemented in the demo application created for the
-purpose of this paper. 
+purpose of this work. 
 
 Starting with the idle position, both models look quite natural standing on
-a flat surface, as seen in Fig. \ref{fig:sp_flat}.
-
-However, this changes when the surface is uneven. The IK acting on
-the legs of the spider on the right in Fig. \ref{fig:sp_round} is able to use
-its ray casts to match the surface exactly, while the baked version of the
-spider (left) doesn't have this mechanism, and its legs can be seen floating in
-the air. The same effect is observed when the spider is moving. The baked
-version's legs float when it is moving over uneven or slanted surfaces, which
-makes it seem as if the spider was swimming through the air. 
+a flat surface, as seen in Fig. \ref{fig:sp_flat}. However, this changes when
+the surface is uneven. The IK acting on the legs of the spider on the right in
+Fig. \ref{fig:sp_round} is able to use its ray casts to match the surface
+exactly, while the baked version of the spider (left) doesn't have this
+mechanism, and its legs can be seen floating in the air. The same effect is
+observed when the spider is moving. The baked version's legs float when it is
+moving over uneven or slanted surfaces, which makes it seem as if the spider was
+swimming through the air. 
 
 Another difference between the two spiders is how they climb walls. Whereas the
 IK version is able to treat it the same as any other surface, the baked version
@@ -205,8 +254,7 @@ placed on the floor and push away realistically. On the contrary, the baked
 animation is played at a certain speed, and it is very hard to match the
 animation speed to the spider's movement speed so that the legs seem to stay in a fixed
 position on the ground while the spider is moving. This breaks the illusion of
-the legs pushing the spider forwards, as they instead glide on the surface out
-of sync.
+the legs pushing the spider forwards, as they instead glide on the surface.
 
 In certain games, the accuracy of animation sequences creates a greater
 immersion for the player. In the event that the sequence of pressed buttons is
@@ -350,7 +398,7 @@ the forward movement vector when the spider receives input.
         \label{fig:pr_sp_ik}
     \end{subfigure}
     \caption{A comparison between the CPU usage profiling of one hundred
-    instances of the spider baked animations (a) and with procedural IK
+    instances of the spider baked animations (a) and procedural IK
     animations (b).}
     \label{fig:pr_sp}
 \end{figure}
@@ -403,7 +451,7 @@ at around 1 milliseconds of CPU usage.
         \label{fig:pr_h_ik}
     \end{subfigure}
     \caption{A comparison between the CPU usage profiling of one hundred
-    instances of the human character with baked animations (a) and with
+    instances of the human character with baked animations (a) and
     procedural IK animations (b).}
     \label{fig:pr_h}
 \end{figure}

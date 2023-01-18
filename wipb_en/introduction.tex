@@ -11,7 +11,7 @@ One such optimization is the use of skeletal animation in which animation
 sequences are performed by manipulating a tree-like structure of interconnected
 bones, represented by transforms, to create the desired motion of the character.
 Furthermore, the interactive nature of video games makes it impossible for the
-artist to create predefined animation, so called bake animations, sequences for
+artist to create predefined animation sequences, so called baked animations, for
 every possible situation that may occur in the game. For example, an animation
 of a hand pressing a button is only valid if the character to which the hand
 belongs is placed exactly in a predefined position. If the button changes its
@@ -31,7 +31,7 @@ position in 3D space. In computer graphics, the technique is often used to
 animate the movement of characters and objects such that they interact with
 their surroundings in a more realistic manner. Inverse kinematics is even used
 in modeling and animation software such as Blender \cite{blender_ik2} to speed
-up the process of limb manipulation when creating a static animation.
+up the process of limb manipulation when creating a baked animation.
 
 There are multiple approaches that exist within the inverse kinematics domain,
 such as analytical methods and optimization techniques. The choice of approach
@@ -55,5 +55,5 @@ to be used in the project implementation. The following sections will explain in
 depth the implementation of two use cases which demonstrate the purpose of
 inverse kinematics as a skeletal animation technique. Experiments will then be
 conducted to compare the inverse kinematics animations with their baked
-counterparts based on realism and performance. Finally, conclusion will be
+counterparts based on realism and performance. Finally, a conclusion will be
 presented.

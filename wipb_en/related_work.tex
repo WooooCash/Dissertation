@@ -12,18 +12,75 @@ also been used as a tool to solve IK problems \cite{nn_IK}. This paper will go
 over the iterative and heuristic approaches which provide less complex solutions
 when increasing the kinematic chain length and degrees of freedom.
 
+\section{Skeletal Animation}
+Skeletal animation is a popular technique used to animate characters and objects
+in computer graphics. It uses meshes and armatures as the two components
+which make up a single model. The mesh is an outer shell of vertices which acts
+as the "skin" of the model, and it is the visible representation of a character.
+The armature is an interconnected hierarchical structure of transforms, often
+referred to as joints, which each have a degree of influence on the mesh's
+vertices. Therefore, the manipulation of the armature's joint positions
+results in the deformation of the model's mesh, similarly to how one might
+imagine the human body follows the shape of its skeleton. This technique allows
+for the creation of animations by defining key poses for the armature on
+a timeline, which are then interpolated for the remainder of the frames. This
+process of animation, while reducing the control over detail, is much quicker
+than the manual sculpting and deformation of a characters mesh. It also allows
+for procedural control of the animations, such as the application of inverse
+kinematics to the tree-like hierarchy of joints.
+
+The position, rotation, and scale of each joint in a transformation hierarchy
+are often described using a transformation matrix which holds all three
+attributes, and can be multiplied with other matrices to combine their
+transformations. These matrices are usually defined in local space, which means
+the transformations are relative to those of its parent node. In order to find
+the positioning of a joint in the scene, these attributes must be converted to
+world space. A joint's world space transformation can be calculated as
+\begin{equation}
+    W = W_p M, 
+\end{equation}
+where \(W_p\) i the parent joint's world space transformation matrix, \(M\) is
+the current joint's local transformation matrix, and \(W\) is the current
+joint's world transformation matrix which represents its actual position in the
+scene. In the case of the root node of a transformation hierarchy, both world
+and local transformation matrices are equal to each other, because its parent
+node is the scene itself, and so \(W_p\) is an identity matrix.
+
+The process of controlling the deformations of a mesh using a set of deformation
+primitives is called skinning. Many methods exist to define the deformation of
+a mesh in relation to its armature, however, the basic idea behind them can be
+demonstrated using the Linear blend skinning method described in part one of
+\cite{skinning}. To describe the relation between joints and mesh vertices, we
+can define a set of \(m\) joint transformation matrices \(T_1, \dots, T_m\), and
+a set of \(n\) mesh vertex positions \(\mathbf{v}_1, \dots, \mathbf{v}_n\),
+where each vertex \(\mathbf{v}_i\) has a set of weights \(w_{i,1}, \dots,
+w_{i,m}\). A weight \(w_{i,j}\) represents the amount of influence of joint
+\(j\) on mesh vertex \(i\). The equation for a mesh vertex's deformed position
+\(\mathbf{v'}_i\) is as follows:
+\begin{equation}
+    \mathbf{v'}_i = \left(\sum_{j=1}^m w_{i,j} T_j \right) \mathbf{v}_i.
+\end{equation}
+
+As seen in the above equation, the deformed position of a mesh vertex is
+dependent on the combined transformations of the joints which have a non-zero
+weight for the given mesh vertex. Therefore, weights can be adjusted so that certain
+joints affect only certain vertices, and to varying extents. Once these weights are
+calibrated in a way which allows the mesh to adequately adapt to the armature's
+pose, skeletal animation becomes a powerful tool for the control of a model in
+computer graphics.
+
 \section{Kinematics}
-Kinematics is a branch of classical mechanics
-concerned with the geometrically possible motion of a body or system of bodies
-without consideration of the forces involved \cite{kinematics_britannica}.
-A kinematic chain is a tree like hierarchical structure of joint transforms
-which are connected to each other. Because the relationship between joints is
-hierarchical, a transformation which is applied to a given joint affects all of
-its descendant nodes. When manipulating a kinematic chain, transformations in
-the form of rotations and translations are applied to joint transforms in order
-to achieve a desired position of one or multiple transforms called the end
-effectors. The problem of kinematics can be subdivided into two approaches which
-each present their own problem and solution.
+Kinematics is a branch of classical mechanics concerned with the geometrically
+possible motion of a body or system of bodies without consideration of the
+forces involved \cite{kinematics_britannica}. A kinematic chain is a tree like
+hierarchical structure of joint transforms which are connected to each other.
+Because the relationship between joints is hierarchical, a transformation which
+is applied to a given joint affects all of its descendant nodes. When
+manipulating a kinematic chain, transformations in the form of rotations and
+translations are applied to joint transforms in order to achieve a desired
+position of one or multiple transforms called the end effectors. The problem of
+kinematics can be subdivided into two approaches which each present their own
+problem and solution.
 
 \begin{itemize}
     \item The problem of \textit{Forward Kinematics} which has to do with the
@@ -48,14 +105,14 @@ solutions. \\
 An IK problem with no solutions can occur for several reasons. Most notably, and
 IK solution is impossible when the target is unreachable through the limitations
 of chain length. When the distance between the chain root and the target is
-larger than the sum of distances between each adjacent chain link (Fig.
-\ref{fig:unreachable_dist1}), it is impossible to achieve a solution, as the
+larger than the sum of distances between each adjacent chain link as shown in Fig.
+\ref{fig:unreachable_dist1}, it is impossible to achieve a solution, as the
 root of the chain is static and cannot be moved in order to allow the end
-effector to reach its target. Similarly, and unreachable case exists if the
-first bone segment is longer than the sum of the remaining bone segments (Fig.
-\ref{fig:unreachable_dist2}).
+effector to reach its target. Similarly, as demonstrated in Fig.
+\ref{fig:unreachable_dist2}, an unreachable case exists if the first bone
+segment is longer than the sum of the remaining bone segments.
 
-\begin{figure}[!h]
+\begin{figure}
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=0.5\textwidth]{grafika/unreachable_dist_1.eps}
@@ -109,7 +166,7 @@ be said to be unsolvable. \\
 \noindent\textit{One or many solutions}
 
 When an IK problem is not limited by the cases mentioned above, it can have one,
-or many solutions depending on the case and constraints. More often than not the
+or many solutions depending on the case and constraints. More often the
 problem will have multiple solutions, and if the kinematic chain is
 unconstrained, the solution set for and IK problem grows very large.
 
@@ -138,9 +195,9 @@ With the joint angles in the form of a column vector \(\bm{\theta} = (\theta_1,
 The above equation \cite{Aristidou:2018:IK_survey} presents the FK problem where
 the position of an end effector is calculated based on the given configuration
 of the chain. To define the IK problem, a configuration of scalars must be found
-based on the given final positions of the end effectors.
+based on the given final positions of the end effectors:
 \begin{equation}
-    \bm{\theta} = f^{-1}(\mathbf{s})
+    \bm{\theta} = f^{-1}(\mathbf{s}).
 \end{equation}
 
 The problem lies in inverting \(f\), as it is non-linear. Taking this into
@@ -162,7 +219,7 @@ This approach to the IK problem \cite{BALESTRINO19842435, wolovich, Baillieul} o
 a linear approximation through an iterative calculation which estimates a change
 to the given configuration of joint scalars necessary to reduce the distance
 between an end effector and its desired destination. This is done through the
-use of a matrix \(J\) called the Jacobian matrix which contains partial
+use of a matrix \(J\) called the Jacobian matrix, which contains partial
 derivatives of the entire kinematic chain relative to the set of end effectors.
 \(J\) is a function of the chain configuration's joint angle scalars:
 \begin{equation}
@@ -223,13 +280,14 @@ Pseudo-inverse \(J^\dagger\), also called the \textit{Moore-Penrose inverse}
 \cite{golub_matrix3} can be used as
 a substitute:
 \begin{equation}
-    \Delta \theta = J^{\dagger}\mathbf{e}
+    \Delta \theta = J^{\dagger}\mathbf{e}.
 \end{equation}
+
 The benefit of using the pseudo-inverse method is that the matrix \(J^\dagger\)
 is defined for every case of the Jacobian matrix, whether it is invertible or
 not. The pseudo-inverse matrix is defined as
 \begin{equation}
-    J^\dagger = J^T (J J^T)^{-1}
+    J^\dagger = J^T (J J^T)^{-1}.
 \end{equation}
 
 Where the pseudo-inverse falls short is when approaching singularities. In these
@@ -247,7 +305,7 @@ transpose, with a coefficient \(\alpha\):
 In order to minimize the distance of each \(\mathbf{e}\) between  the end effectors and
 their targets, the coefficient \(\alpha\) is calculated with the goal of
 achieving the smallest value of \(\mathbf{e}\) after each iteration. The equation
-which models this calculation is as follows
+which models this calculation is as follows:
 
 \begin{equation}
     \alpha = \frac
@@ -256,10 +314,9 @@ which models this calculation is as follows
         }
         {
             \langle J J^T \mathbf{e},J J^T \pvec{e} \rangle
-        }
+        },
 \end{equation}
-
-\noindent where the angular brackets represent a dot product operation between the two
+where the angular brackets represent a dot product operation between the two
 values contained inside them. The value of the coefficient \(\alpha\) must be
 small enough to avoid oscillations, and due to this the process of converging
 end effectors on the targets is slow and requires many iterations to achieve
@@ -288,23 +345,22 @@ a second order Taylor series expansion of \(f(x + \sigma)\):
     f(x + \sigma) \approx f(x) + [\nabla f(x)]^T \sigma + \frac{1}{2} \sigma^T
     \nabla^2 f(x) \sigma,
 \end{equation}
-
-\noindent where \(f(x)\) is the current joint configuration, \(f(x + \sigma)\)
-is the desired joint configuration, \(\sigma\) is the required modification to
-\(f(x)\) so that it satisfies \(f(x + \sigma)\), and \(\nabla^2 f(x)\) is the
-Hessian matrix. Following the method described in \cite{nocedal_newton}, the
-search direction \(p^N_k\) is
+where \(f(x)\) is the current joint configuration, \(f(x + \sigma)\)
+is the desired joint configuration, and \(\sigma\) is the required modification to
+\(f(x)\) so that it satisfies \(f(x + \sigma)\). Lastly, \(\nabla^2 f(x)\) is
+the Hessian matrix, a square matrix of second-order partial derivatives as
+opposed to the first-order partial derivatives of the Jacobian matrix. Following
+the method described in \cite{nocedal_newton}, the search direction \(p^N_k\) is
 \begin{equation}
     p^N_k = [\nabla^2 f(x)]^{-1} \nabla f(x),
 \end{equation}
-
-\noindent where \(\nabla f(x)\) is the gradient of the objective function.
+where \(\nabla f(x)\) is the gradient of the objective function.
 Assuming the notation of the end effector position as \(e\) and goal position as
 \(g\), the gradient can be defined as the Jacobian \(\nabla f(x) = J(e - g)\).
 
 The Newton methods have the advantage over the Jacobian inverse methods in the
 smoothness of the movement and the lack of singularity problems, which allows
-this iterative approach to avoid oscillations. The methods also tend to converge
+them to avoid oscillations. The methods also tend to converge
 in fewer iterations. However, the complexity of the Hessian matrix drastically
 raises the computational costs for each iteration. A few methods have been
 brought forward which aim to approximate the Hessian matrix to reduce the
@@ -312,12 +368,12 @@ complexity of the problem, however the computational costs remain relatively
 high. 
 
 \subsection{Heuristic IK algorithms}
-Heuristic algorithms provide an approach which avoid the need for complex
-equations and heavy computations, and instead act as techniques to achieve an
-approximate solution iteratively in a much more simple way. These methods are
-very popular in the domain of computer graphics and animation, due to the
-problems not needing extremely accurate solutions but benefiting from a simple
-and fast approach in the real-time environment of video games. \\
+Heuristic algorithms avoid the need for complex equations and heavy
+computations, and instead act as techniques to achieve an approximate solution
+iteratively in a much more simple way. These methods are very popular in the
+domain of computer graphics and animation, due to the problems not needing
+extremely accurate solutions but benefiting from a simple and fast approach in
+the real-time environment of video games. \\
 
 \noindent\textit{Cyclic Coordinate Descent}
 
@@ -335,9 +391,9 @@ effector, while the other passes through the current joint and the target. The
 angle between these two lines is the angle by which the current joint should
 be rotated in order to place the end effector on the line spanning between the
 current joint and the target, thus reducing the distance between the end
-effector and the target as much as possible (Fig. \ref{fig:ccd}). The
-algorithm is repeated iteratively until the distance between the end effector
-and the target is smaller than some threshold.
+effector and the target as much as possible. This process is illustrated in Fig.
+\ref{fig:ccd}. The algorithm is repeated iteratively until the distance between the end
+effector and the target is smaller than some threshold.
 
 \begin{figure}
     \centering
@@ -415,10 +471,10 @@ target is in reach before proceeding to iterate over the kinematic chain.
     \caption{An iteration of the FABRIK algorithm where (a) through (d) are
     detailed steps of the forward pass while (e) and (f) show the solution of
     the backward pass. Source: \cite{Aristidou2011}}
-    \label{fig:fig:fabrik}
+    \label{fig:fabrik}
 \end{figure}
 
-% \begin{figure}[!h]
+% \begin{figure}
 %     \centering
 %     \captionsetup{justification=centering}
 %     \includegraphics[width=0.4\textwidth]{grafika/fabrik_iteration.eps}
