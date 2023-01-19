@@ -34,26 +34,53 @@ citecolor=black
 } 
 \begin{document}
 \maketitle
+\thispagestyle{empty}
 \chapter*{}
-\noindent\textbf{Animacja szkieletowa z wykorzystaniem kinematyki odwrotnej w silniku Unity}
+% \noindent\textbf{Animacja szkieletowa z wykorzystaniem kinematyki odwrotnej w silniku Unity}
 
-W klasycznej animacji szkieletowej kości reprezentowane są za pomocą pewnej
-struktury drzewiastej obiektów. Wykonywanie sekwencji animacji polega zwykle na
-aktualizacji parametrów tych obiektów (położenia i orientacji kości) w porządku
-od korzenia do liści. W przypadku kinematyki odwrotnej, jak sama nazwa wskazuje,
-porządek aktualizacji jest odwrotny tj. od danego liścia do określonego węzła
-nadrzędnego. Metody te pozwalają na proceduralne tworzenie sekwencji animacji
-umożliwiających wierniejsze odzwierciedlenie interakcji animowanego obiektu
-z otoczeniem bez konieczności ręcznego "wypalania" sekwencji animacji. W ramach
-tej pracy, autor zapoznał się z teorią i literaturą na temat animacji
-szkieletowej i kinematyki odwrotnej, a następnie zaimplementował aplikację
-demonstracyjną w silniku Unity. Aplikacja ma na celu porównanie animacji
-"wypalanych" z animacjami tworzonymi z wykorzystaniem kinematyki odwrotnej.
-Zostało to zrealizowane na przykładzie czworonoga, i sekwencji animacji
-człowieka. Wyżej wymienione techniki są porównane pod kątem efektu wizualnego
-oraz wydajnościowego. 
+% W klasycznej animacji szkieletowej kości reprezentowane są za pomocą pewnej
+% struktury drzewiastej obiektów. Wykonywanie sekwencji animacji polega zwykle na
+% aktualizacji parametrów tych obiektów (położenia i orientacji kości) w porządku
+% od korzenia do liści. W przypadku kinematyki odwrotnej, jak sama nazwa wskazuje,
+% porządek aktualizacji jest odwrotny tj. od danego liścia do określonego węzła
+% nadrzędnego. Metody te pozwalają na proceduralne tworzenie sekwencji animacji
+% umożliwiających wierniejsze odzwierciedlenie interakcji animowanego obiektu
+% z otoczeniem bez konieczności ręcznego "wypalania" sekwencji animacji. W ramach
+% tej pracy, autor zapoznał się z teorią i literaturą na temat animacji
+% szkieletowej i kinematyki odwrotnej, a następnie zaimplementował aplikację
+% demonstracyjną w silniku Unity. Aplikacja ma na celu porównanie animacji
+% "wypalanych" z animacjami tworzonymi z wykorzystaniem kinematyki odwrotnej.
+% Zostało to zrealizowane na przykładzie czworonoga, i sekwencji animacji
+% człowieka. Wyżej wymienione techniki są porównane pod kątem efektu wizualnego
+% oraz wydajnościowego. 
+
+\noindent Subject of diploma thesis
+
+\noindent\textbf{Skeletal Animation Using Inverse Kinematics in the Unity Engine}
+
+\begin{center}
+    SUMMARY
+\end{center}
+
+In standard skeletal animation, the skeleton is represented by a tree-like
+structure of transforms. Animation sequences are typically performed by updating
+the position and rotation attributes of these transforms in order, from the root
+to the leaves. When applying inverse kinematics to skeletal animation, the
+transforms are updated in reverse order, starting from a leaf and then working
+back up the chain to a selected node. This allows for a procedural approach to
+creating animation sequences which better reflect interactions between an
+animated object and environment, without the need to manually bake the animation
+sequence. For the purpose of this work, the author analyzed theory and
+literature concerning skeletal animation and inverse kinematics, and then
+implemented an application in the Unity engine. The aim of the application is to
+compare baked animations with procedural animations which make use of inverse
+kinematics. This was demonstrated using examples of a spider, and a human
+character's animation sequence. The two animation methods were compared in their
+visual quality and performance.
+\thispagestyle{empty}
 
 \tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
 \thispagestyle{empty}
 \setcounter{page}{0}
 \pagestyle{plain}
@@ -72,6 +99,7 @@ oraz wydajnościowego.
 
 \listoffigures
 \listoftables
+\lstlistoflistings
 
 
 \end{document}

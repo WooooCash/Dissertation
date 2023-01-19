@@ -115,13 +115,12 @@ Ja, \@autor, \ifthenelse{\equal{nie}{#1}}{nie wyrażam zgody}{wyrażam zgodę} n
       {\Huge\textsc{Temat: \@temat}\par}
       \begin{flushright}
           \vspace{\stretch{2}}
-          {\LARGE\textsc{Wykonawca: \@autor} \par}
-          \vskip 2em
-          ....................................\\podpis~~~~~~~~~~~~
+          {\Large\textsc{Wykonawca: \@autor} \par}
+          \vskip 4em
       \end{flushright}
       \begin{flushleft}
           \vspace{\stretch{1}}
-          {\LARGE\textsc{Promotor: \@promotor} \par}
+          {\Large\textsc{Opiekun Pracy Dyplomowej: \@promotor} \par}
       \end{flushleft}
       \vspace{\stretch{2}}
       {\LARGE\textsc{Białystok \number\year }\ r.\par}
