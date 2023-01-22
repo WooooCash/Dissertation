@@ -1,6 +1,6 @@
 \chapter{Tools} 
 Multiple tools were used in the process of creating the demo application for
-this paper including the Unity game engine, Blender as a modeling and animation
+this study including the Unity game engine, Blender as a modeling and animation
 software, and MakeHuman as a model creation tool. This chapter discusses the
 built-in functionalities which make the mentioned tools an effective choice.
 
@@ -44,19 +44,19 @@ depends on the given bone position.
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.4\textwidth]{grafika/weight_paint.eps}
-    \caption{Weight painting in blender. Source: \cite{unity_weights}}
+    \caption{Weight painting in Blender. Source: \cite{unity_weights}}
     \label{fig:weights}
 \end{figure}
 
 Lastly, an animation sequence can be created for an existing mesh and rig using
 the character animation pose editor. The user can define poses for different
-points in time by creating key frames on a timeline, and blender interpolates the
+points in time by creating key frames on a timeline, and Blender interpolates the
 bone positions in between the key frames. This is used to create baked animations
 for characters and objects, as well as defining animations that are later
 blended with IK procedural animations. An animated model can be exported in the
 \textit{fbx} format to be used in other software programs. Unity also supports
-importing a model from a \textit{.blend} file which is the extension of
-a blender project file. 
+importing a model from a \textit{blend} file which is the extension of
+a Blender project file. 
 
 
 \section{Unity}
@@ -118,7 +118,7 @@ resembles a human skeleton \cite{unity_humanoid_import}. Humanoid characters
 have a few additional functionalities. Namely, because of the criteria required
 to qualify as a humanoid model, these models are all similar in structure and as
 such, animations can be mapped from one humanoid model to another
-\cite{unity_humanoid_avatars}. Additionally, these model's have built in
+\cite{unity_humanoid_avatars}. Additionally, these models have built in
 functionality which allows the developer to procedurally control the models IK
 weights and positions using the \textit{SetIKPositionWeight,
 SetIKRotationWeight, SetIKPosition, SetIKRotation, SetLookAtPosition,
@@ -131,17 +131,20 @@ created for this paper.
 
 The Animation Rigging package is available in the Unity Package Manager, and it
 provides a much more general approach to the application of inverse kinematics
-to skeletal animations. After setting up a rig for a model with an Animator
-component, a mix of predefined constraints can be added to enhance the rig,
-which are briefly described in Table \ref{tbl:ar_constraints}. The main
-constraint of interest for this paper is the \textit{Chain IK Constraint} which
-implements the FABRIK algorithm. This constraint was useful in creating a proof
-of concept for the spider before creating the FABRIK script. It also provided
-a good basis for the public interface which such a script should have to
-function well in the Unity environment.
+to skeletal animations. After setting up a rig for a model with an
+\textit{Animator} component, a mix of predefined constraints can be added to
+enhance the rig, which are briefly described in Table \ref{tbl:ar_constraints}.
+The main constraint of interest for this paper is the \textit{Chain IK
+Constraint} which implements the FABRIK algorithm. This constraint was useful in
+creating a proof of concept for the spider before creating the FABRIK script. It
+also provided a good basis for the public interface which such a script should
+have to function well in the Unity environment.
 
 \begin{table}
     \centering
+    \caption{An available set of predefined constraints from the Animation
+    Rigging package which can be applied to a rig
+\cite{unity_animation_rigging}.}
     \begin{tabular} { |m{5cm}|m{10cm}| }
         \hline
         Blend Constraint & \footnotesize Allows the constrained object to blend
@@ -193,8 +196,5 @@ function well in the Unity environment.
         \hline
 
     \end{tabular}
-    \caption{An available set of predefined constraints from the Animation
-    Rigging package which can be applied to a rig
-\cite{unity_animation_rigging}.}
     \label{tbl:ar_constraints}
 \end{table}

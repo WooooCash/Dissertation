@@ -58,11 +58,11 @@ certain inputs so that the proper animation is activated for each given situatio
 To achieve the transition blending, the \textit{spider\_movement} variable
 should not be set outright to the value which corresponds to the next animation
 state. Instead, the \textit{\_animator.SetFloat} method is used, where the
-\textit{\_animator} is a reference to the spider's Animator component. This
+\textit{\_animator} is a reference to the spider's \textit{Animator} component. This
 method allows the value of \textit{spider\_movement} to be interpolated from the value of
 the current animation state to another desired value.
 \newline
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+\begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={Moving the baked version of the spider, and playing the appropriate
 animations by setting the \textit{spider\_movement} variable using the
 \textit{\_animator.SetFloat()} method.
@@ -100,8 +100,8 @@ void SpiderMove()
 \end{lstlisting}
 
 This version of the spider has its movement inspired by the spider from the game
-Minecraft \cite{minecraft}, which means that its rotation on the x and z axes is locked. The
-spider can rotate about the y-axis when turning to face a different direction,
+Minecraft \cite{minecraft}, which means that its rotation on the X and Z axes is locked. The
+spider can rotate about the Y-axis when turning to face a different direction,
 but it will not adjust to variations in the surface which it walks upon.
 Additionally, when the spider encounters a wall, it begins moving
 vertically instead of horizontally until it scales the entire obstacle.\\
@@ -159,7 +159,7 @@ by the button press count parameter. Finally, the animation clip for lowering
 the hand is executed, and the \textit{idle} boolean is set to true before
 terminating the sequence.
 
-\begin{lstlisting}[basicstyle=\footnotesize, numbers=none,frame=single,
+\begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={The main coroutine which plays the full animation sequence for the
 baked version of the human character. The \textit{HandAnimation} coroutine is
 analogous to the one used for the IK character in Listing \ref{first_coroutine}.

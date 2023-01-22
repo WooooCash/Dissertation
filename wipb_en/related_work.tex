@@ -49,7 +49,7 @@ node is the scene itself, and so \(W_p\) is an identity matrix.
 The process of controlling the deformations of a mesh using a set of deformation
 primitives is called skinning. Many methods exist to define the deformation of
 a mesh in relation to its armature, however, the basic idea behind them can be
-demonstrated using the Linear blend skinning method described in part one of
+demonstrated using the linear blend skinning method described in part one of
 \cite{skinning}. To describe the relation between joints and mesh vertices, we
 can define a set of \(m\) joint transformation matrices \(T_1, \dots, T_m\), and
 a set of \(n\) mesh vertex positions \(\mathbf{v}_1, \dots, \mathbf{v}_n\),
@@ -221,10 +221,11 @@ to the given configuration of joint scalars necessary to reduce the distance
 between an end effector and its desired destination. This is done through the
 use of a matrix \(J\) called the Jacobian matrix, which contains partial
 derivatives of the entire kinematic chain relative to the set of end effectors.
-\(J\) is a function of the chain configuration's joint angle scalars:
+\(J\) is a \(k \times n\) matrix whose entries are vectors in \(\mathbb{R}^3\),
+and it is a function of the chain configuration's joint angle scalars:
 \begin{equation}
-    J(\bm{\theta})_{ij} = \left(\frac{\partial s_i}{\partial
-    \theta_j}\right)_{ij}
+    J(\bm{\theta})_{ij} = \left(\frac{\partial \mathbf{s}_i}{\partial
+    \theta_j}\right)
 \end{equation}
 
 \noindent as provided by \cite{rbuss_ik_survey}, where \(n\) and \(k\) are the
@@ -233,7 +234,7 @@ respectively. Given the position \(\mathbf{p}_j\) of the \(j\)th joint and its
 current rotational axis \(\mathbf{v}_j\), each entry of the Jacobian matrix can
 be defined by the cross product
 \begin{equation}
-    \frac{\partial s_i}{\partial \theta_j} = \mathbf{v}_j \times (\mathbf{s}_i
+    \frac{\partial \mathbf{s}_i}{\partial \theta_j} = \mathbf{v}_j \times (\mathbf{s}_i
     - \mathbf{p}_j).
 \end{equation}
 
@@ -310,10 +311,10 @@ which models this calculation is as follows:
 \begin{equation}
     \alpha = \frac
         {
-            \langle\mathbf{e}, J J^T \pvec{e}\rangle
+            \langle\mathbf{e}, J J^T \mathbf{e}\rangle
         }
         {
-            \langle J J^T \mathbf{e},J J^T \pvec{e} \rangle
+            \langle J J^T \mathbf{e},J J^T \mathbf{e} \rangle
         },
 \end{equation}
 where the angular brackets represent a dot product operation between the two
@@ -346,17 +347,17 @@ a second order Taylor series expansion of \(f(x + \sigma)\):
     \nabla^2 f(x) \sigma,
 \end{equation}
 where \(f(x)\) is the current joint configuration, \(f(x + \sigma)\)
-is the desired joint configuration, and \(\sigma\) is the required modification to
-\(f(x)\) so that it satisfies \(f(x + \sigma)\). Lastly, \(\nabla^2 f(x)\) is
-the Hessian matrix, a square matrix of second-order partial derivatives as
-opposed to the first-order partial derivatives of the Jacobian matrix. Following
-the method described in \cite{nocedal_newton}, the search direction \(p^N_k\) is
+is the desired joint configuration, and \(\sigma\) is the required modification
+to \(f(x)\) so that it satisfies \(f(x + \sigma)\). Next, \(\nabla f(x)\) is
+the gradient of the objective function, where assuming the notation of the end
+effector position as \(e\) and goal position as \(g\), it can be defined as the
+Jacobian \(\nabla f(x) = J(e - g)\). Lastly, \(\nabla^2 f(x)\) is the Hessian
+matrix, a square matrix of second-order partial derivatives as opposed to the
+first-order partial derivatives of the Jacobian matrix. Following the method
+described in \cite{nocedal_newton}, the search direction \(p^N_k\) is
 \begin{equation}
-    p^N_k = [\nabla^2 f(x)]^{-1} \nabla f(x),
+    p^N_k = [\nabla^2 f(x)]^{-1} \nabla f(x).
 \end{equation}
-where \(\nabla f(x)\) is the gradient of the objective function.
-Assuming the notation of the end effector position as \(e\) and goal position as
-\(g\), the gradient can be defined as the Jacobian \(\nabla f(x) = J(e - g)\).
 
 The Newton methods have the advantage over the Jacobian inverse methods in the
 smoothness of the movement and the lack of singularity problems, which allows
@@ -493,7 +494,7 @@ joint, in this case, the end effector. The interpolation is done to preserve the
 distance between the joints. Thus, the forward pass of the algorithm can be
 modeled by 
 \begin{equation}
-    \mathbf{p}_i = (1 - \lambda_i)\mathbf{p}_{i+1} + \lambda_i \mathbf{p}_i,
+    \mathbf{p}_i := (1 - \lambda_i)\mathbf{p}_{i+1} + \lambda_i \mathbf{p}_i,
 \end{equation}
 
 \noindent where \(\lambda_i\) is a coefficient which ensures that the linear interpolation
@@ -505,7 +506,7 @@ its original position. The iteration proceeds very similarly to the forwards
 pass, this time interpolating each joint \(\mathbf{p}_i\) between its current
 position and the new position of \(\mathbf{p}_{i-1}\). The backwards pass is then
 \begin{equation}
-    \mathbf{p}_i = (1 - \lambda_i)\mathbf{p}_{i-1} + \lambda_i \mathbf{p}_i.
+    \mathbf{p}_i := (1 - \lambda_i)\mathbf{p}_{i-1} + \lambda_i \mathbf{p}_i.
 \end{equation}
 
 The iterations are repeated until the distance between the end effector and the
