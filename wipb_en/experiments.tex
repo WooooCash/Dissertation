@@ -53,20 +53,21 @@ defined in the blend tree's configuration in the animator (Fig. \ref{fig:s_blend
     \label{fig:s_blendconf}
 \end{figure}
 
-In the spiders movement script, this variable can then be set in reaction to
-certain inputs so that the proper animation is activated for each given situation.
-To achieve the transition blending, the \textit{spider\_movement} variable
-should not be set outright to the value which corresponds to the next animation
-state. Instead, the \textit{\_animator.SetFloat} method is used, where the
-\textit{\_animator} is a reference to the spider's \textit{Animator} component. This
-method allows the value of \textit{spider\_movement} to be interpolated from the value of
-the current animation state to another desired value.
+In the spiders movement script (Listing \ref{set_float}), this variable can then
+be set in reaction to certain inputs so that the proper animation is activated
+for each given situation. To achieve the transition blending, the
+\textit{spider\_movement} variable should not be set outright to the value which
+corresponds to the next animation state. Instead, the
+\textit{\_animator.SetFloat} method is used, where the \textit{\_animator} is
+a reference to the spider's \textit{Animator} component. This method allows the
+value of \textit{spider\_movement} to be interpolated from the value of the
+current animation state to another desired value.
 \newline
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={Moving the baked version of the spider, and playing the appropriate
 animations by setting the \textit{spider\_movement} variable using the
 \textit{\_animator.SetFloat()} method.
-\textit{BakedSpiderMovement.cs}},captionpos=b, label=set_float,
+\textit{BakedSpiderMovement.cs}},captionpos=t, label=set_float,
 language={[Sharp]c}, float=tp]
 void SpiderMove()
 {
@@ -157,13 +158,14 @@ hand. This is then followed by the animation clip which is responsible for
 hitting the button, and it is repeated in a loop for the number of times defined
 by the button press count parameter. Finally, the animation clip for lowering
 the hand is executed, and the \textit{idle} boolean is set to true before
-terminating the sequence.
+terminating the sequence. The main coroutine is presented in Listing
+\ref{b_press_buttons}.
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={The main coroutine which plays the full animation sequence for the
 baked version of the human character. The \textit{HandAnimation} coroutine is
 analogous to the one used for the IK character in Listing \ref{first_coroutine}.
-\textit{PressButton.cs}},captionpos=b, label=set_float,
+\textit{PressButton.cs}},captionpos=t, label=b_press_buttons,
 language={[Sharp]c}, float=tp]
 IEnumerator PressButtons()
 {
@@ -359,17 +361,15 @@ they were not relevant to the analysis.
 % \end{figure}
 
 Starting with the baked version of the spider, a hundred duplicates spawned
-simultaneously produced the result seen in Fig. \ref{fig:pr_sp_b}. Similarly
-to the IK version presented further down, most of the CPU usage comes from the
-"scripts" usage category. A clear distinction can be made between when the
-spider was moving and when it was not. During the profiling, the state of the
-spider started out as idle, and then alternated between moving and idle at
-approximately each quarter of the graph presented. In the idle state, the CPU
-usage for the selected categories remains steadily below 10 milliseconds.
-However, when the spider is moving the usage rises with an initial spike which
-is almost double that of the idle state, and then lowering to around 10
-milliseconds. The increase in CPU usage, as seen from the profiler, is mostly in
-the "scripts" category, which means that the animations themselves are not
+simultaneously produced the result seen in Fig. \ref{fig:pr_sp_b}. A clear
+distinction can be made between when the spider was moving and when it was not.
+During the profiling, the state of the spider started out as idle, switched to
+the moving state, and then returned to the idle state. While the spider is idle,
+the CPU usage for the selected categories remains steadily below 10
+milliseconds. However, when the spider is moving the usage rises with an initial
+spike which is almost double that of the idle state, and then lowering to around
+10 milliseconds. The increase in CPU usage, as seen from the profiler, is mostly
+in the "scripts" category, which means that the animations themselves are not
 influencing the performance of the application too much.
 
 The IK version of the spider has a much more steady average regardless of its
@@ -422,8 +422,8 @@ the case of the spider, the performance of the application does not vary in
 relation to when the button pressing sequence is executed. Fig.
 \ref{fig:pr_h_b} displays the results of profiling one hundred instances of the
 baked animation human characters executing the animation sequence
-simultaneously, and no spike in CPU usage, which hovers around 1ms, can be
-observed
+simultaneously. The CPU usage hovers around 1ms, and no major fluctuations can be
+observed.
 
 In contrast, the procedurally animated human does require a few calculations
 during the animations sequence. While it does use baked animations for the

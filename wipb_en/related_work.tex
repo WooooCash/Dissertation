@@ -365,8 +365,8 @@ them to avoid oscillations. The methods also tend to converge
 in fewer iterations. However, the complexity of the Hessian matrix drastically
 raises the computational costs for each iteration. A few methods have been
 brought forward which aim to approximate the Hessian matrix to reduce the
-complexity of the problem, however the computational costs remain relatively
-high. 
+complexity of the problem \cite{fletcher_newton, siciliano_1990,
+Chin1997ClosedformAG}, however the computational costs remain relatively high. 
 
 \subsection{Heuristic IK algorithms}
 Heuristic algorithms avoid the need for complex equations and heavy
@@ -399,10 +399,10 @@ effector and the target is smaller than some threshold.
 \begin{figure}
     \centering
     \captionsetup{justification=centering}
-    \includegraphics[width=0.4\textwidth]{grafika/ccd_1}
-    \includegraphics[width=0.4\textwidth]{grafika/ccd_2}
-    \includegraphics[width=0.4\textwidth]{grafika/ccd_3}
-    \includegraphics[width=0.4\textwidth]{grafika/ccd_4}
+    \topinset{\bfseries(1)}{\includegraphics[width=0.4\textwidth]{grafika/ccd_1}}{0.2in}{0.2in}
+    \topinset{\bfseries(2)}{\includegraphics[width=0.4\textwidth]{grafika/ccd_2}}{0.2in}{0.2in}
+    \topinset{\bfseries(3)}{\includegraphics[width=0.4\textwidth]{grafika/ccd_3}}{0.2in}{0.2in}
+    \topinset{\bfseries(4)}{\includegraphics[width=0.4\textwidth]{grafika/ccd_4}}{0.2in}{0.2in}
     \caption{A single pass of the CCD algorithm}
     \label{fig:ccd}
 \end{figure}

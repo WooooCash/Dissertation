@@ -59,11 +59,12 @@ to the target object is greater than the sum of distances between each adjacent
 bone transform in the defined kinematic chain. In this case, the target is out
 of reach. Given that the bones in a skeleton are expected to keep a fixed
 length, the end effector will not be able to reach the target, and instead the
-kinematic chain straightens and extends in the direction of the target. There is
-no need to continue with the iterative portion of the algorithm. A minor
-optimization in the implementation, which can be seen later in Listing
-\ref{full_loop}, is the use of square magnitudes when comparing distances to
-avoid the calculation of square roots, thus reducing the computational costs.
+kinematic chain straightens and extends in the direction of the target (Listing
+\ref{stretch}). There is no need to continue with the iterative portion of the
+algorithm. A minor optimization in the implementation, which can be seen later
+in Listing \ref{full_loop}, is the use of square magnitudes when comparing
+distances to avoid the calculation of square roots, thus reducing the
+computational costs.
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single, caption={Target out of
 reach. \textit{Fabrik.cs}},captionpos=t, label=stretch, language={[Sharp]c}]
@@ -97,10 +98,12 @@ is set to be equal to the position of the target. A vector is then defined which
 spans between the end effector and the following joint. This neighbour's position
 is then interpolated along the vector so that the original distance between the
 two nodes is kept the same. The same operation is performed for each pair of
-neighbouring nodes throughout the pass. 
+neighbouring nodes throughout the pass. The implementation is shown in Listing
+\ref{forwards}. 
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
-caption={FABRIK forward reaching pass. \textit{Fabrik.cs}},captionpos=t, label=forwards, language={[Sharp]c}]
+caption={FABRIK forward reaching pass. \textit{Fabrik.cs}},captionpos=t,
+label=forwards, language={[Sharp]c}, float=tp]
 void ForwardReachingPass()
 {
     tempPositions[chainLen] = target.position;
@@ -124,9 +127,10 @@ current position and the root to keep the initial bone length. As with the
 forward pass, this is repeated for each subsequent pair of nodes. 
 
 These two steps are repeated cyclically until the end effector is within
-a threshold distance of the target. The FABRIK algorithm is heuristic, and as
-such it does not give an exact result. Instead, it aims to approximate the
-correct solution and solves the problem in a less complex way.
+a threshold distance of the target, which can be seen in Listing
+\ref{full_loop}. The FABRIK algorithm is heuristic, and as such it does not give
+an exact result. Instead, it aims to approximate the correct solution and solves
+the problem in a less complex way.
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={Full execution of the FABRIK algorithm in each frame.
@@ -171,8 +175,9 @@ lead to unnatural poses in certain use cases, defeating the purpose of the
 procedural animations which are designed to produce a more natural effect. In
 order to achieve a higher degree of control in one of the use cases described in
 the following section, pole target constraints were implemented as an optional
-supplement to the existing algorithm. This approach to the pole target algorithm
-is inspired by a video demonstrating this concept \cite{youtube_ik}. 
+supplement to the existing algorithm, as presented in Listing \ref{poles}. This
+approach to the pole target algorithm is inspired by a video demonstrating this
+concept \cite{youtube_ik}. 
 
 The pole algorithm acts on every joint in a given kinematic chain excluding the
 root and the end effector which already have defined target positions. For each
@@ -290,7 +295,7 @@ limbs end effectors.
 \subsection{Scripts}
 With the project set up in this manner, scripts must now be added on to make the
 scene functional. A script is required for the main movement of the spider, the
-raycast logic, and the mechanism which controls the ik targets.\\
+raycast logic, and the mechanism which controls the IK targets.\\
 
 \noindent\textit{Raycasts}
 
@@ -300,12 +305,13 @@ established, which will then be passed into the raycast operation. This is
 required so that only terrain is counted as a valid hit. The lack of such a mask
 may result in unexpected behavior, such as hit targets being set on the spider's
 body itself. The raycast object is then created, shooting in the local negative
-Y axis direction. This ensures that no matter the orientation of the creature,
-the rays are sent towards the surface that the spider is standing on. The
-targets controlling the spider's legs will not be updating their positions to
-the raycast hit points each frame, though their scripts must have knowledge of
-the hit positions at any given time. Given this, a separate set of hit targets
-are set to track the raycast hit points each frame.\\
+Y axis direction, which can be seen in Listing \ref{rays}. This ensures that no
+matter the orientation of the creature, the rays are sent towards the surface
+that the spider is standing on. The targets controlling the spider's legs will
+not be updating their positions to the raycast hit points each frame, though
+their scripts must have knowledge of the hit positions at any given time. Given
+this, a separate set of hit targets are set to track the raycast hit points each
+frame.\\
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={Ray casts scanning for terrain. \textit{RayLogic.cs}},captionpos=t,
@@ -363,7 +369,8 @@ the movement sequence, and an arbitrary speed value, which is dependent on
 \textit{Time.deltaTime} to avoid variations when the frame rate changes. The
 only caveat is that in the first half of the movement, the destination vector's
 height component is increased with an offset to achieve an arc-like movement.
-This produces the effect of lifting the spider's leg.
+This produces the effect of lifting the spider's leg. The implementation of this
+logic is presented in Listing \ref{target_move}.
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={The script's \textit{Update} method which contains eligibility checks
@@ -412,17 +419,17 @@ system together. It has three main objectives:
 
 \end{itemize}
 
-The first objective - calculating the rotation of the spider - is what allows it
-to scale walls and walk upside down on the ceiling. The rotation is determined
-based on the limb positions at the beginning of each \textit{Update} call.
-First, two vectors are constructed from the end effectors of both sets of
-diagonally opposed legs. The local up vector of the spider is then calculated by
-taking the cross product of these two vectors. This determines the orientation
-of the spider's main body, and it also affects the direction in which the four legs'
-rays are cast. The local forward vector is then obtained from the cross product
-between the newfound up vector and the spider's right vector. This new vector is
-what will be used to determine the direction of movement when the spider
-receives input from the user.
+The first objective - calculating the rotation of the spider (Listing
+\ref{rotation}) - is what allows it to scale walls and walk upside down on the
+ceiling. The rotation is determined based on the limb positions at the beginning
+of each \textit{Update} call. First, two vectors are constructed from the end
+effectors of both sets of diagonally opposed legs. The local up vector of the
+spider is then calculated by taking the cross product of these two vectors. This
+determines the orientation of the spider's main body, and it also affects the
+direction in which the four legs' rays are cast. The local forward vector is
+then obtained from the cross product between the newfound up vector and the
+spider's right vector. This new vector is what will be used to determine the
+direction of movement when the spider receives input from the user.
 
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
@@ -449,10 +456,11 @@ accordingly by moving the spider along with all the raycast objects. The
 spider. The script reacts by simply moving the spider's main body along the
 local forward axis mentioned previously. Additionally, the raycasting objects
 are offset either forwards or backward depending on the direction of the
-movement. This is done because the raycasts must be slightly ahead of the
-default leg positions so that the legs end up moving in a natural manner.
-The \textit{Horizontal} axis is responsible for rotating the spider about its
-local up axis which allows the spider to turn around. 
+movement, as shown in Listing \ref{ray_offset}. This is done because the
+raycasts must be slightly ahead of the default leg positions so that the legs
+end up moving in a natural manner. The \textit{Horizontal} axis is responsible
+for rotating the spider about its local up axis which allows the spider to turn
+around. 
 
 \begin{lstlisting}[basicstyle=\linespread{0.9}\footnotesize\ttfamily, numbers=none,frame=single,
 caption={The raycasts which scan the terrain for leg placement positions are

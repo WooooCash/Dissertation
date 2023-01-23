@@ -12,6 +12,24 @@
    volume = {26},
    year = {2017},
 }
+@book{fletcher_newton,
+  title={Practical Methods of Optimization},
+  edition={Second},
+  author={Fletcher, R.},
+  year={1987},
+  publisher={Wiley-Interscience}
+}
+@article{siciliano_1990, 
+    title={A closed-loop inverse kinematic scheme for on-line joint-based robot control}, 
+    volume={8}, 
+    DOI={10.1017/S0263574700000096}, 
+    number={3}, 
+    journal={Robotica}, 
+    publisher={Cambridge University Press}, 
+    author={Siciliano, Bruno}, 
+    year={1990}, 
+    pages={231–243}
+}
 @Book{nocedal_newton,
   Title                    = {Numerical Optimization},
   Author                   = {Jorge Nocedal and Stephen J. Wright},
@@ -106,12 +124,12 @@
     year = {2004},
     month = {05},
     pages = {},
-    title = {Introduction to inverse kinematics with Jacobian transpose, pseudoinverse and damped least squares methods},
+    title = {Introduction to inverse kinematics with {Jacobian} transpose, pseudoinverse and damped least squares methods},
     volume = {17},
     journal = {IEEE Transactions in Robotics and Automation}
 }
 @article{Aristidou2011,
-   abstract = {Inverse Kinematics is defined as the problem of determining a set of appropriate joint configurations for which the end effectors move to desired positions as smoothly, rapidly, and as accurately as possible. However, many of the currently available methods suffer from high computational cost and production of unrealistic poses. In this paper, a novel heuristic method, called Forward And Backward Reaching Inverse Kinematics (FABRIK), is described and compared with some of the most popular existing methods regarding reliability, computational cost and conversion criteria. FABRIK avoids the use of rotational angles or matrices, and instead finds each joint position via locating a point on a line. Thus, it converges in few iterations, has low computational cost and produces visually realistic poses. Constraints can easily be incorporated within FABRIK and multiple chains with multiple end effectors are also supported. © 2011 Elsevier Inc. All rights reserved.},
+   abstract = {Inverse Kinematics is defined as the problem of determining a set of appropriate joint configurations for which the end effectors move to desired positions as smoothly, rapidly, and as accurately as possible. However, many of the currently available methods suffer from high computational cost and production of unrealistic poses. In this paper, a novel heuristic method, called Forward And Backward Reaching Inverse Kinematics ({FABRIK}), is described and compared with some of the most popular existing methods regarding reliability, computational cost and conversion criteria. FABRIK avoids the use of rotational angles or matrices, and instead finds each joint position via locating a point on a line. Thus, it converges in few iterations, has low computational cost and produces visually realistic poses. Constraints can easily be incorporated within FABRIK and multiple chains with multiple end effectors are also supported. © 2011 Elsevier Inc. All rights reserved.},
    author = {Andreas Aristidou and Joan Lasenby},
    doi = {10.1016/j.gmod.2011.05.003},
    issn = {15240703},
@@ -119,9 +137,17 @@
    journal = {Graphical Models},
    keywords = {Human animation,Inverse Kinematics,Joint configuration,Motion reconstruction},
    month = {9},
-   title = {FABRIK: A fast, iterative solver for the Inverse Kinematics problem},
+   title = {{FABRIK}: A fast, iterative solver for the Inverse Kinematics problem},
    volume = {73},
    year = {2011},
+}
+@article{Chin1997ClosedformAG,
+  title={Closed-form and generalized inverse kinematics solutions for the analysis of human motion},
+  author={Kwan Wu Chin and B.R. von Konsky and Alan Marriott},
+  journal={Proceedings of the IEEE Conference of Engineering in Medicine and Biology Society},
+  year={1997},
+  volume={5},
+  pages={1911-1914}
 }
 @article{ccd_protein,
     author = {Canutescu, Adrian and Dunbrack, Roland},
@@ -162,13 +188,13 @@ doi={10.1109/ROBOT.1985.1087234}}
 
 @article{ccd,
 author = { Ben   Kenwright },
-title = {Inverse Kinematics – Cyclic Coordinate Descent (CCD)},
+title = {Inverse Kinematics – Cyclic Coordinate Descent ({CCD})},
 journal = {Journal of Graphics Tools},
 volume = {16},
 number = {4},
 pages = {177-217},
 year  = {2012},
-publisher = {Taylor & Francis},
+publisher = {Taylor \& Francis},
 doi = {10.1080/2165347X.2013.823362},
 
 URL = { 
@@ -236,7 +262,7 @@ eprint = {
 }
 
 @MISC{unity_import,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Animation from external sources},
   howpublished = {\url{https://docs.unity3d.com/Manual/AnimationsImport.html}},
   year = "2022",
@@ -244,7 +270,7 @@ eprint = {
 }
 
 @MISC{unity_weights,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Sculpting \& Painting - Weight Paint},
   howpublished = {\url{https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/introduction.html}},
   year = "2023",
@@ -257,7 +283,7 @@ eprint = {
   year = {2014},
 }
 @MISC{unity_animation_rigging,
-  author = {Unity Packages},
+  author = {{Unity Packages}},
   title = {Animation Rigging - ChainIkConstraint},
   howpublished = {\url{https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.0/manual/constraints/ChainIKConstraint.html}},
   year = "2020",
@@ -268,10 +294,10 @@ eprint = {
   title = {Minecraft},
   howpublished = {\url{https://www.minecraft.net/en-us}},
   year = "2022",
-  note = {Accessed: 2023-01-02}
+  note = {Accessed: 2023-01-10}
 }
 @MISC{unity_animator,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Animation Controller},
   howpublished = {\url{https://docs.unity3d.com/Manual/class-AnimatorController.html}},
   year = "2022",
@@ -286,7 +312,7 @@ eprint = {
 }
 
 @MISC{unity_ik,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Inverse Kinematics},
   howpublished = {\url{https://docs.unity3d.com/Manual/InverseKinematics.html}},
   year = "2022",
@@ -294,7 +320,7 @@ eprint = {
 }
 
 @MISC{unity_humanoid_avatars,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Humanoid Avatars},
   howpublished = {\url{https://docs.unity3d.com/Manual/AvatarCreationandSetup.html}},
   year = "2022",
@@ -310,7 +336,7 @@ eprint = {
 }
 
 @MISC{unity_humanoid_import,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Importing a model with humanoid animations},
   howpublished = {\url{https://docs.unity3d.com/Manual/ConfiguringtheAvatar.html}},
   year = "2022",
@@ -318,7 +344,7 @@ eprint = {
 }
 
 @MISC{unity_coroutines,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Coroutines},
   howpublished = {\url{https://docs.unity3d.com/Manual/Coroutines.html}},
   year = "2022",
@@ -326,7 +352,7 @@ eprint = {
 }
 
 @MISC{unity_profiler,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Profiler overview},
   howpublished = {\url{https://docs.unity3d.com/Manual/Profiler.html}},
   year = "2022",
@@ -334,7 +360,7 @@ eprint = {
 }
 
 @MISC{ar_constraints,
-  author = {Unity User Manual},
+  author = {{Unity User Manual}},
   title = {Animation Rigging - Constraint Components},
   howpublished = {\url{https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.0/manual/ConstraintComponents.html}},
   year = "2020",
@@ -362,12 +388,3 @@ eprint = {
    year = {1991},
 }
 
-@article{jacobian,
-    author = {Buss, Samuel},
-    year = {2004},
-    month = {05},
-    pages = {},
-    title = {Introduction to inverse kinematics with Jacobian transpose, pseudoinverse and damped least squares methods},
-    volume = {17},
-    journal = {IEEE Transactions in Robotics and Automation}
-}
